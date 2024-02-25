@@ -32,4 +32,5 @@
 ### Use-Case диаграмма
 ![usecase](./docs/usecase.png)
 
-### 
+### ER диаграмма
+![er](./docs/er.png)
