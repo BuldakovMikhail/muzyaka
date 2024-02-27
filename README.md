@@ -58,3 +58,12 @@
 
 
 ### BPMN
+
+#### Вход в систему
+![auth](./docs/auth_bpmn.png)
+
+#### Поиск похожих треков
+![same](./docs/same_bpmn.png)
+
+#### Добавление новых треков
+![add](./docs/add_bpmn.png)
