@@ -89,4 +89,5 @@
 #### Диаграмма компонентов
 ![components](./docs/components.png)
 
-#### 
+#### Диаграмма классов
+![classes](./docs/classdiag.png)
