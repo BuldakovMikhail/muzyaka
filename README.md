@@ -77,3 +77,16 @@
 
 ### Лаб 2
 
+#### Описание типа приложения и технологического стека
+
+Тип приложения: Web MPA
+
+Стек: 
+- Backend: Go
+- Frontend: HTML, CSS, JS
+- Data Base: Postgres
+
+#### Диаграмма компонентов
+![components](./docs/components.png)
+
+#### 
