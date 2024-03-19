@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2024-03-19T05:23:24.209Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0" etag="R5vOEgiEBFBq9bWSQjr4" version="24.0.7" type="device">
+<mxfile host="app.diagrams.net" modified="2024-03-19T05:37:53.412Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0" etag="Zmkb8hHSsH4lSczsOZfY" version="24.0.7" type="device">
   <diagram name="Страница — 1" id="3PLtPe2viCMwDkzXamIu">
-    <mxGraphModel dx="2736" dy="2147" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2140" dy="1842" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -335,7 +335,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="2HSZdOFJDdNtO-0qa2Qu-266" value="TrackService" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="630" y="-610" width="140" height="182" as="geometry" />
+          <mxGeometry x="630" y="-610" width="140" height="156" as="geometry" />
         </mxCell>
         <mxCell id="2HSZdOFJDdNtO-0qa2Qu-267" value="+ GetTrackById()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-266" vertex="1">
           <mxGeometry y="26" width="140" height="26" as="geometry" />
@@ -349,11 +349,8 @@
         <mxCell id="2HSZdOFJDdNtO-0qa2Qu-270" value="+ DeleteTrackById()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-266" vertex="1">
           <mxGeometry y="104" width="140" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="2HSZdOFJDdNtO-0qa2Qu-429" value="+ GetSameTracks()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-266" vertex="1">
-          <mxGeometry y="130" width="140" height="26" as="geometry" />
-        </mxCell>
         <mxCell id="utCYuwPVrzCHGT_Fp5_d-2" value="+ GetAudiofile()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="2HSZdOFJDdNtO-0qa2Qu-266">
-          <mxGeometry y="156" width="140" height="26" as="geometry" />
+          <mxGeometry y="130" width="140" height="26" as="geometry" />
         </mxCell>
         <mxCell id="2HSZdOFJDdNtO-0qa2Qu-271" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="2HSZdOFJDdNtO-0qa2Qu-260" edge="1" target="utCYuwPVrzCHGT_Fp5_d-2">
           <mxGeometry width="160" relative="1" as="geometry">
@@ -474,10 +471,10 @@
         <mxCell id="2HSZdOFJDdNtO-0qa2Qu-310" value="+ DeletePlaylistById()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-306" vertex="1">
           <mxGeometry y="104" width="140" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="2HSZdOFJDdNtO-0qa2Qu-311" value="+ AddAudioFile()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-306" vertex="1">
+        <mxCell id="2HSZdOFJDdNtO-0qa2Qu-311" value="+ AddTrack()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-306" vertex="1">
           <mxGeometry y="130" width="140" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="2HSZdOFJDdNtO-0qa2Qu-312" value="+ DeleteAudioFile()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-306" vertex="1">
+        <mxCell id="2HSZdOFJDdNtO-0qa2Qu-312" value="+ DeleteTrack()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-306" vertex="1">
           <mxGeometry y="156" width="140" height="26" as="geometry" />
         </mxCell>
         <mxCell id="2HSZdOFJDdNtO-0qa2Qu-314" value="+ ChangeCover()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-306" vertex="1">
@@ -504,10 +501,10 @@
         <mxCell id="2HSZdOFJDdNtO-0qa2Qu-320" value="+ DeletePlaylistById()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-316" vertex="1">
           <mxGeometry y="104" width="140" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="2HSZdOFJDdNtO-0qa2Qu-321" value="+ AddAudioFile()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-316" vertex="1">
+        <mxCell id="2HSZdOFJDdNtO-0qa2Qu-321" value="+&amp;nbsp;AddTrack()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-316" vertex="1">
           <mxGeometry y="130" width="140" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="2HSZdOFJDdNtO-0qa2Qu-322" value="+ DeleteAudioFile()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-316" vertex="1">
+        <mxCell id="2HSZdOFJDdNtO-0qa2Qu-322" value="+ DeleteTrack()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-316" vertex="1">
           <mxGeometry y="156" width="140" height="26" as="geometry" />
         </mxCell>
         <mxCell id="2HSZdOFJDdNtO-0qa2Qu-323" value="+ ChangeCover()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2HSZdOFJDdNtO-0qa2Qu-316" vertex="1">
