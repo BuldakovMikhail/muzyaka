@@ -17,6 +17,10 @@ type usecase struct {
 	musicianRep repository.MusicianRepository
 }
 
+func NewMusicianUseCase(rep repository.MusicianRepository) MusicianUseCase {
+	return &usecase{musicianRep: rep}
+}
+
 func (u *usecase) UpdatedMusician(musician *models.Musician) error {
 	err := u.musicianRep.UpdateMusician(musician)
 
