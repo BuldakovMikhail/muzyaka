@@ -2,6 +2,8 @@ package repository
 
 import "src/internal/models"
 
+//go:generate mockgen -source=repository.go -destination=mocks/mock.go
+
 type AlbumRepository interface {
 	GetAlbum(id uint64) (*models.Album, error)
 	UpdateAlbum(album *models.Album) error
