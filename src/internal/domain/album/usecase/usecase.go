@@ -20,6 +20,10 @@ type usecase struct {
 	albumRep repository.AlbumRepository
 }
 
+func NewAlbumUseCase(albumRepository repository.AlbumRepository) AlbumUseCase {
+	return &usecase{albumRep: albumRepository}
+}
+
 func (u *usecase) GetAlbum(id uint64) (*models.Album, error) {
 	res, err := u.albumRep.GetAlbum(id)
 

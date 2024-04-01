@@ -17,6 +17,10 @@ type usecase struct {
 	merchRep repository.MerchRepository
 }
 
+func NewMerchUseCase(merchRepository repository.MerchRepository) MerchUseCase {
+	return &usecase{merchRep: merchRepository}
+}
+
 func (u *usecase) GetMerch(id uint64) (*models.Merch, error) {
 	res, err := u.merchRep.GetMerch(id)
 
