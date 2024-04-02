@@ -17,6 +17,10 @@ type usecase struct {
 	userRep repository.UserRepository
 }
 
+func NewUserUseCase(rep repository.UserRepository) UserUseCase {
+	return &usecase{userRep: rep}
+}
+
 func (u *usecase) UpdateUser(user *models.User) error {
 	err := u.userRep.UpdateUser(user)
 

@@ -15,6 +15,10 @@ type usecase struct {
 	trackRep repository.TrackRepository
 }
 
+func NewTrackUseCase(rep repository.TrackRepository) TrackUseCase {
+	return &usecase{trackRep: rep}
+}
+
 func (u *usecase) GetTrack(id uint64) (*models.Track, error) {
 	res, err := u.trackRep.GetTrack(id)
 

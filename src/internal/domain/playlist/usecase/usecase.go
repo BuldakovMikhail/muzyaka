@@ -19,6 +19,10 @@ type usecase struct {
 	playlistRep repository.PlaylistRepository
 }
 
+func NewPlaylistUseCase(rep repository.PlaylistRepository) PlaylistUseCase {
+	return &usecase{playlistRep: rep}
+}
+
 func (u *usecase) UpdatedPlaylist(playlist *models.Playlist) error {
 	err := u.playlistRep.UpdatePlaylist(playlist)
 
