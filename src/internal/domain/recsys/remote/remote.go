@@ -5,3 +5,4 @@ type RecSysProvider interface {
 }
 
 // TODO: Implement GetRecs, maybe add Kafka
+// TODO: transact outbox, чтобы объед две записи в кафку и бд, таблица ивентов. Подумать про записи
