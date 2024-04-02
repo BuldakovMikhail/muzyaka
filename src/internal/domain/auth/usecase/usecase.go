@@ -12,12 +12,23 @@ import (
 type AuthUseCase interface {
 	SignUp(user *models.User) (*models.AuthToken, error)
 	SignIn(user *models.User) (*models.AuthToken, error)
+	Authorization(token *models.AuthToken, role string) (bool, error)
 }
 
 type usecase struct {
 	asyncKey string
 	duration time.Duration
 	userRep  repository.UserRepository
+}
+
+func NewAuthUseCase(key string,
+	duration time.Duration,
+	userRep repository.UserRepository) AuthUseCase {
+	return &usecase{
+		asyncKey: key,
+		duration: duration,
+		userRep:  userRep,
+	}
 }
 
 func (u *usecase) SignUp(user *models.User) (*models.AuthToken, error) {
@@ -73,4 +84,8 @@ func (u *usecase) SignIn(user *models.User) (*models.AuthToken, error) {
 
 	token := models.AuthToken{jwtToken}
 	return &token, nil
+}
+
+func (u *usecase) Authorization(token *models.AuthToken, role string) (bool, error) {
+	panic("implement")
 }
