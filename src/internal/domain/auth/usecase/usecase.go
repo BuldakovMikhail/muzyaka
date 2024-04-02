@@ -4,9 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 	"src/internal/domain/user/repository"
-	"src/internal/lib/jwt"
 	"src/internal/models"
-	"time"
 )
 
 type AuthUseCase interface {
@@ -16,18 +14,15 @@ type AuthUseCase interface {
 }
 
 type usecase struct {
-	asyncKey string
-	duration time.Duration
-	userRep  repository.UserRepository
+	userRep       repository.UserRepository
+	tokenProvider TokenProvider
 }
 
-func NewAuthUseCase(key string,
-	duration time.Duration,
+func NewAuthUseCase(tokenProvider TokenProvider,
 	userRep repository.UserRepository) AuthUseCase {
 	return &usecase{
-		asyncKey: key,
-		duration: duration,
-		userRep:  userRep,
+		tokenProvider: tokenProvider,
+		userRep:       userRep,
 	}
 }
 
@@ -52,14 +47,13 @@ func (u *usecase) SignUp(user *models.User) (*models.AuthToken, error) {
 		return nil, errors.Wrap(err, "auth.usecase.SignUp AddUser error")
 	}
 
-	jwtToken, err := jwt.NewToken(user, u.asyncKey, u.duration)
+	jwtToken, err := u.tokenProvider.GenerateToken(user)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "auth.usecase.SignUp token generation error")
 	}
 
-	token := models.AuthToken{jwtToken}
-	return &token, nil
+	return jwtToken, nil
 }
 
 func (u *usecase) SignIn(user *models.User) (*models.AuthToken, error) {
@@ -77,15 +71,19 @@ func (u *usecase) SignIn(user *models.User) (*models.AuthToken, error) {
 	}
 	user.Password = ""
 
-	jwtToken, err := jwt.NewToken(user, u.asyncKey, u.duration)
+	jwtToken, err := u.tokenProvider.GenerateToken(user)
 	if err != nil {
 		return nil, errors.Wrap(err, "auth.usecase.SignIn token generation error")
 	}
 
-	token := models.AuthToken{jwtToken}
-	return &token, nil
+	return jwtToken, nil
 }
 
 func (u *usecase) Authorization(token *models.AuthToken, role string) (bool, error) {
-	panic("implement")
+	tokenRole, err := u.tokenProvider.GetRole(token)
+	if err != nil {
+		return false, errors.Wrap(err, "auth.usecase.Authorization token parse error")
+	}
+
+	return tokenRole == role, nil
 }

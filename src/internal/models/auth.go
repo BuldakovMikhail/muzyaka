@@ -1,5 +1,5 @@
 package models
 
 type AuthToken struct {
-	Token string
+	Secret []byte
 }

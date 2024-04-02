@@ -1,27 +1,21 @@
 package jwt
 
-import (
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/pkg/errors"
-	"src/internal/models"
-	"time"
-)
-
-func NewToken(user *models.User, key string, duration time.Duration) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	claims := token.Claims.(jwt.MapClaims)
-	claims["uid"] = user.Id
-	claims["role"] = user.Role
-	claims["exp"] = time.Now().Add(duration).Unix()
-
-	tokenString, err := token.SignedString([]byte(key))
-	if err != nil {
-		return "", errors.Wrap(err, "lib.jwt.NewToken error in sign")
-	}
-
-	return tokenString, nil
-}
+//
+//func NewToken(user *models.User, key string, duration time.Duration) (string, error) {
+//	token := jwt.New(jwt.SigningMethodHS256)
+//
+//	claims := token.Claims.(jwt.MapClaims)
+//	claims["uid"] = user.Id
+//	claims["role"] = user.Role
+//	claims["exp"] = time.Now().Add(duration).Unix()
+//
+//	tokenString, err := token.SignedString([]byte(key))
+//	if err != nil {
+//		return "", errors.Wrap(err, "lib.jwt.NewToken error in sign")
+//	}
+//
+//	return tokenString, nil
+//}
 
 //func ParseToken() {
 //	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -39,5 +33,5 @@ func NewToken(user *models.User, key string, duration time.Duration) (string, er
 //	} else {
 //		fmt.Println(err)
 //	}
-//
+
 //}
