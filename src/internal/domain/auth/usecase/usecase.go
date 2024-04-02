@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"github.com/pkg/errors"
-	"golang.org/x/crypto/bcrypt"
 	"src/internal/domain/user/repository"
+	"src/internal/lib/jwt"
 	"src/internal/models"
 )
 
@@ -15,33 +15,29 @@ type AuthUseCase interface {
 
 type usecase struct {
 	userRep       repository.UserRepository
-	tokenProvider TokenProvider
+	tokenProvider jwt.TokenProvider
+	encryptor     Encryptor
 }
 
-func NewAuthUseCase(tokenProvider TokenProvider,
-	userRep repository.UserRepository) AuthUseCase {
+func NewAuthUseCase(tokenProvider jwt.TokenProvider,
+	userRep repository.UserRepository,
+	enc Encryptor) AuthUseCase {
 	return &usecase{
 		tokenProvider: tokenProvider,
 		userRep:       userRep,
+		encryptor:     enc,
 	}
 }
 
 func (u *usecase) SignUp(user *models.User) (*models.AuthToken, error) {
-	_, err := u.userRep.GetUser(user.Id)
-	if err != models.ErrNotFound && err != nil {
-		return nil, errors.Wrap(err, "auth.usecase.SignUp error while search for user")
-	} else if err == nil {
-		return nil, models.ErrAlredyExists
-	}
-
-	encPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	encPassword, err := u.encryptor.EncodePassword([]byte(user.Password))
 	if err != nil {
-		return nil, errors.Wrap(err, "auth.usecase.SignUp bcrypt error")
+		return nil, errors.Wrap(err, "auth.usecase.SignUp encode error")
 	}
 
-	user.Password = string(encPassword)
-	_, err = u.userRep.AddUser(user)
-	user.Password = ""
+	temp := user
+	temp.Password = string(encPassword)
+	_, err = u.userRep.AddUser(temp)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "auth.usecase.SignUp AddUser error")
@@ -53,6 +49,7 @@ func (u *usecase) SignUp(user *models.User) (*models.AuthToken, error) {
 		return nil, errors.Wrap(err, "auth.usecase.SignUp token generation error")
 	}
 
+	user.Password = ""
 	return jwtToken, nil
 }
 
@@ -63,11 +60,9 @@ func (u *usecase) SignIn(user *models.User) (*models.AuthToken, error) {
 		return nil, errors.Wrap(err, "auth.usecase.SignIn user get error")
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(repUser.Password), []byte(user.Password))
-	if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
-		return nil, models.ErrInvalidPassword
-	} else if err != nil {
-		return nil, errors.Wrap(err, "auth.usecase.SignIn bcrypt error")
+	err = u.encryptor.CompareHashAndPassword([]byte(repUser.Password), []byte(user.Password))
+	if err != nil {
+		return nil, errors.Wrap(err, "auth.usecase.SignIn compare error")
 	}
 	user.Password = ""
 
