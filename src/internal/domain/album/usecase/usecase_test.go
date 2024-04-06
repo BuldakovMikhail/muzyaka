@@ -250,7 +250,6 @@ func TestUsecase_AddTrack(t *testing.T) {
 				Performers: nil,
 				Name:       "test_name",
 				Genre:      "test_genre",
-				Embedding:  nil,
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.Track) {
 				r.EXPECT().AddTrackToAlbum(album_id, &track).Return(uint64(10), nil)
@@ -268,7 +267,6 @@ func TestUsecase_AddTrack(t *testing.T) {
 				Performers: nil,
 				Name:       "test_name",
 				Genre:      "test_genre",
-				Embedding:  nil,
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.Track) {
 				r.EXPECT().AddTrackToAlbum(album_id, &track).Return(uint64(0), errors.New("error in repo"))
@@ -378,7 +376,6 @@ func TestUsecase_GetAllTracks(t *testing.T) {
 					Performers: []string{"performer_1"},
 					Name:       "track_name_1",
 					Genre:      "track_genre_1",
-					Embedding:  []float64{1.1, 2.2, 3.3},
 				},
 				{
 					Id:         2,
@@ -388,7 +385,6 @@ func TestUsecase_GetAllTracks(t *testing.T) {
 					Performers: []string{"performer_2"},
 					Name:       "track_name_2",
 					Genre:      "track_genre_2",
-					Embedding:  []float64{4.4, 5.5, 6.6},
 				},
 			},
 			expectedErr: nil,

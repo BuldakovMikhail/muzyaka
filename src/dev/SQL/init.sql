@@ -1,6 +1,6 @@
 CREATE TYPE ALBUM_TYPE AS ENUM ('single', 'LP', 'EP');
 
-CREATE TABLE IF NOT EXISTS album (
+CREATE TABLE IF NOT EXISTS albums (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     cover VARCHAR(254) NOT NULL UNIQUE,
@@ -17,21 +17,21 @@ CREATE TABLE IF NOT EXISTS authors(
     name VARCHAR(254) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS track(
+CREATE TABLE IF NOT EXISTS tracks(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     source VARCHAR(254) NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL,
     genre INT REFERENCES genres(id)
 );
 
-CREATE TABLE IF NOT EXISTS track_authors(
+CREATE TABLE IF NOT EXISTS tracks_authors(
     producer_id INT NOT NULL REFERENCES authors(id),
-    track_id INT NOT NULL REFERENCES track(id),
+    track_id INT NOT NULL REFERENCES tracks(id),
     PRIMARY KEY (producer_id, track_id)
 );
 
-CREATE TABLE IF NOT EXISTS album_track(
-    album_id INT NOT NULL REFERENCES album(id) ON DELETE CASCADE,
-    track_id INT NOT NULL REFERENCES track(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS albums_tracks(
+    album_id INT NOT NULL REFERENCES albums(id) ON DELETE CASCADE,
+    track_id INT NOT NULL REFERENCES tracks(id) ON DELETE CASCADE,
     PRIMARY KEY (album_id, track_id)
 );

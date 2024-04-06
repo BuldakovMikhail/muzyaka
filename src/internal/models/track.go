@@ -8,5 +8,4 @@ type Track struct {
 	Performers []string
 	Name       string
 	Genre      string
-	Embedding  []float64
 }
