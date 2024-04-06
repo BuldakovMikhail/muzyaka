@@ -73,11 +73,11 @@ func (ar *albumRepository) AddTrackToAlbum(albumId uint64, track *models.Track) 
 
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
 		// Add track to tracks table
-		if err := tx.Create(pgTrack).Error; err != nil {
+		if err := tx.Create(&pgTrack).Error; err != nil {
 			return err
 		}
 		// Set album-track relation
-		if err := tx.Create(dao.AlbumTrack{AlbumId: albumId, TrackId: pgTrack.ID}).Error; err != nil {
+		if err := tx.Create(&dao.AlbumTrack{AlbumId: albumId, TrackId: pgTrack.ID}).Error; err != nil {
 			return err
 		}
 
@@ -87,7 +87,8 @@ func (ar *albumRepository) AddTrackToAlbum(albumId uint64, track *models.Track) 
 			return err
 		}
 
-		if err := tx.Create(dao.Outbox{
+		if err := tx.Create(&dao.Outbox{
+			ID:      0,
 			EventId: eventID,
 			TrackId: pgTrack.ID,
 			Type:    "add",
