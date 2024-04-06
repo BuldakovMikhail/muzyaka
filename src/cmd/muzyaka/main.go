@@ -19,6 +19,38 @@ func main() {
 	logger := setupLogger(cfg.Env)
 	logger.Info("Logger init")
 
+	//dsn := "host=localhost user=postgres password=postgres dbname=postgres port=32768"
+	//db, err := gorm.Open(postgres2.Open(dsn), &gorm.Config{})
+	//if err != nil {
+	//	logger.Error(err.Error())
+	//}
+	//
+	//rep := postgres.NewAlbumRepository(db)
+	//_, err = rep.AddAlbum(&models.Album{
+	//	Id:    0,
+	//	Name:  "Aboba2",
+	//	Cover: "aboba2.org",
+	//	Type:  "LP",
+	//})
+	//
+	//if err != nil {
+	//	logger.Error(err.Error())
+	//}
+
+	//_, err = rep.AddTrackToAlbum(1, &models.Track{
+	//	Id:         0,
+	//	Source:     "test",
+	//	Producers:  nil,
+	//	Authors:    nil,
+	//	Performers: nil,
+	//	Name:       "test",
+	//	Genre:      "test",
+	//})
+	//
+	//if err != nil {
+	//	logger.Error(err.Error())
+	//}
+
 	// TODO: Handlers
 
 	// TODO: server run

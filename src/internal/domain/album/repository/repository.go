@@ -14,4 +14,4 @@ type AlbumRepository interface {
 	GetAllTracksForAlbum(albumId uint64) ([]*models.Track, error)
 }
 
-// TODO: here will be outbox
+// TODO: Есть проблема, что альбом может быть без треков, подумать как ее решить.
