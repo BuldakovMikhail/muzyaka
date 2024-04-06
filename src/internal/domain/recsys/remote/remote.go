@@ -1,5 +1,6 @@
 package remote
 
+//go:generate mockgen -source=remote.go -destination=mocks/mock.go
 type RecSysProvider interface {
 	GetRecs(id uint64) ([]uint64, error)
 }

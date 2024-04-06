@@ -8,12 +8,19 @@ import (
 )
 
 type RecSysUseCase interface {
-	GetSameTracks(id uint64) ([]models.Track, error)
+	GetSameTracks(id uint64) ([]*models.Track, error)
 }
 
 type usecase struct {
 	recsProvider remote.RecSysProvider
 	trackRep     repository.TrackRepository
+}
+
+func NewRecSysUseCase(recs remote.RecSysProvider, repo repository.TrackRepository) RecSysUseCase {
+	return &usecase{
+		recsProvider: recs,
+		trackRep:     repo,
+	}
 }
 
 func (u *usecase) GetSameTracks(id uint64) ([]*models.Track, error) {
