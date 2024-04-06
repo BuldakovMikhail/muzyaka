@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS outbox(
+    id SERIAL PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    order_id INTEGER NOT NULL,
+    type VARCHAR(100) NOT NULL,
+    sent BOOLEAN DEFAULT FALSE
+);
