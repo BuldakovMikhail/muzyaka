@@ -1,4 +1,5 @@
 CREATE TYPE ALBUM_TYPE AS ENUM ('single', 'LP', 'EP');
+CREATE TYPE ROLE_TYPE AS ENUM ('user', 'musician', 'admin');
 
 CREATE TABLE IF NOT EXISTS albums (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -17,6 +18,16 @@ CREATE TABLE IF NOT EXISTS authors(
     name VARCHAR(254) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS producers(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(254) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS performers(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(254) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS tracks(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     source VARCHAR(254) NOT NULL UNIQUE,
@@ -25,13 +36,95 @@ CREATE TABLE IF NOT EXISTS tracks(
 );
 
 CREATE TABLE IF NOT EXISTS tracks_authors(
-    producer_id INT NOT NULL REFERENCES authors(id),
+    author_id INT NOT NULL REFERENCES authors(id),
     track_id INT NOT NULL REFERENCES tracks(id),
-    PRIMARY KEY (producer_id, track_id)
+    PRIMARY KEY (author_id, track_id)
 );
+
+CREATE TABLE IF NOT EXISTS tracks_producers(
+    producers_id INT NOT NULL REFERENCES producers(id),
+    track_id INT NOT NULL REFERENCES tracks(id),
+    PRIMARY KEY (producers_id, track_id)
+);
+
+CREATE TABLE IF NOT EXISTS tracks_performers(
+    performers_id INT NOT NULL REFERENCES performers(id),
+    track_id INT NOT NULL REFERENCES tracks(id),
+    PRIMARY KEY (performers_id, track_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS merch(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(254) NOT NULL,
+    description TEXT,
+    link VARCHAR(254) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS merch_photos(
+                                           photo_src VARCHAR(254) NOT NULL,
+                                           merch_id INT NOT NULL REFERENCES merch(id) ON DELETE CASCADE,
+                                           PRIMARY KEY (photo_src, merch_id)
+);
+
+CREATE TABLE IF NOT EXISTS musicians(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(254) NOT NULL,
+    description TEXT
+);
+
+CREATE TABLE IF NOT EXISTS musicians_photos(
+                                               photo_src VARCHAR(254) NOT NULL,
+                                               musician_id INT NOT NULL REFERENCES musicians(id) ON DELETE CASCADE,
+                                               PRIMARY KEY (photo_src, musician_id)
+);
+
+CREATE TABLE IF NOT EXISTS playlists(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(254) NOT NULL,
+    cover VARCHAR(254) NOT NULL,
+    description TEXT
+);
+
+CREATE TABLE IF NOT EXISTS users(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(254) NOT NULL UNIQUE,
+    password VARCHAR(128) NOT NULL,
+    role ROLE_TYPE DEFAULT 'user'
+);
+
+-- ----------------- LINKS ----------------------------------
 
 CREATE TABLE IF NOT EXISTS albums_tracks(
     album_id INT NOT NULL REFERENCES albums(id) ON DELETE CASCADE,
     track_id INT NOT NULL REFERENCES tracks(id) ON DELETE CASCADE,
     PRIMARY KEY (album_id, track_id)
 );
+
+CREATE TABLE IF NOT EXISTS musicians_albums(
+    album_id INT NOT NULL REFERENCES albums(id) ON DELETE CASCADE,
+    musician_id INT NOT NULL REFERENCES musicians(id) ON DELETE CASCADE,
+    PRIMARY KEY (album_id, musician_id)
+);
+
+CREATE TABLE IF NOT EXISTS merch_musicians(
+                                              merch_id INT NOT NULL REFERENCES merch(id) ON DELETE CASCADE,
+                                              musician_id INT NOT NULL REFERENCES musicians(id) ON DELETE CASCADE,
+                                              PRIMARY KEY (merch_id, musician_id)
+);
+
+CREATE TABLE IF NOT EXISTS playlists_tracks(
+                                              track_id INT NOT NULL REFERENCES tracks(id) ON DELETE CASCADE,
+                                              playlist_id INT NOT NULL REFERENCES playlists(id) ON DELETE CASCADE,
+                                              PRIMARY KEY (track_id, playlist_id)
+);
+
+CREATE TABLE IF NOT EXISTS users_playlists(
+                                               user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                                               playlist_id INT NOT NULL REFERENCES playlists(id) ON DELETE CASCADE,
+                                               is_favourite BOOLEAN NOT NULL DEFAULT FALSE,
+                                               is_public BOOLEAN NOT NULL DEFAULT FALSE,
+                                               PRIMARY KEY (user_id, playlist_id)
+);
+
