@@ -3,30 +3,46 @@ package dao
 import "src/internal/models"
 
 type Merch struct {
-	ID    uint64 `gorm:"column:id"`
-	Name  string `gorm:"column:name"`
-	Cover string `gorm:"column:cover"`
-	Type  string `gorm:"column:type"`
+	ID   uint64 `gorm:"column:id"`
+	Name string `gorm:"column:name"`
+	Desc string `gorm:"column:description"`
+	Link string `gorm:"column:link"`
 }
 
-func (Album) TableName() string {
-	return "albums"
+func (Merch) TableName() string {
+	return "merch"
 }
 
-func ToPostgresAlbum(e *models.Album) *Album {
-	return &Album{
-		ID:    e.Id,
-		Name:  e.Name,
-		Cover: e.Cover,
-		Type:  e.Type,
+type MerchPhotos struct {
+	MerchId   uint64 `gorm:"column:merch_id"`
+	PhotosSrc string `gorm:"column:photo_src"`
+}
+
+func (MerchPhotos) TableName() string {
+	return "merch_photos"
+}
+
+func ToPostgresMerch(e *models.Merch) *Merch {
+	return &Merch{
+		ID:   e.Id,
+		Name: e.Name,
+		Desc: e.Description,
+		Link: e.OrderUrl,
 	}
 }
 
-func ToModelAlbum(e *Album) *models.Album {
-	return &models.Album{
-		Id:    e.ID,
-		Name:  e.Name,
-		Cover: e.Cover,
-		Type:  e.Type,
+func ToModelMerch(e *Merch, mp []*MerchPhotos) *models.Merch {
+	var photos []string
+
+	for _, v := range mp {
+		photos = append(photos, v.PhotosSrc)
+	}
+
+	return &models.Merch{
+		Id:          e.ID,
+		Name:        e.Name,
+		Photos:      photos,
+		Description: e.Desc,
+		OrderUrl:    e.Link,
 	}
 }
