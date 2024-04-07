@@ -9,7 +9,7 @@ import (
 type AlbumUseCase interface {
 	GetAlbum(id uint64) (*models.Album, error)
 	UpdateAlbum(album *models.Album) error
-	AddAlbum(album *models.Album) (uint64, error)
+	AddAlbumWithTracks(album *models.Album, tracks []*models.Track) (uint64, error)
 	DeleteAlbum(id uint64) error
 	AddTrack(album_id uint64, track *models.Track) (uint64, error)
 	DeleteTrack(album_id uint64, track_id uint64) error
@@ -44,8 +44,8 @@ func (u *usecase) UpdateAlbum(album *models.Album) error {
 	return nil
 }
 
-func (u *usecase) AddAlbum(album *models.Album) (uint64, error) {
-	id, err := u.albumRep.AddAlbum(album)
+func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.Track) (uint64, error) {
+	id, err := u.albumRep.AddAlbumWithTracks(album, tracks)
 
 	if err != nil {
 		return 0, errors.Wrap(err, "album.usecase.AddAlbum error while add")

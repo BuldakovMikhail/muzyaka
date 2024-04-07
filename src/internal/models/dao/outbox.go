@@ -1,5 +1,11 @@
 package dao
 
+var (
+	TypeDelete = "delete"
+	TypeAdd    = "add"
+	TypeUpdate = "update"
+)
+
 type Outbox struct {
 	ID      uint64 `gorm:"column:id"`
 	EventId string `gorm:"column:event_id"`

@@ -40,20 +40,107 @@ func (ar *albumRepository) UpdateAlbum(album *models.Album) error {
 	return nil
 }
 
-func (ar *albumRepository) AddAlbum(album *models.Album) (uint64, error) {
+func (ar *albumRepository) AddAlbumWithTracks(album *models.Album, tracks []*models.Track) (uint64, error) {
 	pgAlbum := dao.ToPostgresAlbum(album)
-	tx := ar.db.Create(pgAlbum)
-	if tx.Error != nil {
-		return 0, errors.Wrap(tx.Error, "database error (table album)")
+	var pgTracks []*dao.Track
+
+	for _, v := range tracks {
+		var pgGenre dao.Genre
+		tx := ar.db.Where("name = ?", v.Genre).Take(&pgGenre)
+		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+			return 0, models.ErrInvalidGenre
+		} else if tx.Error != nil {
+			return 0, errors.Wrap(tx.Error, "database error (table album)")
+		}
+
+		pgTracks = append(pgTracks, &dao.Track{
+			ID:         0,
+			Source:     v.Source,
+			Name:       v.Name,
+			GenreRefer: pgGenre.ID,
+		})
+	}
+	err := ar.db.Transaction(func(tx *gorm.DB) error {
+		if err := ar.db.Create(pgAlbum).Error; err != nil {
+			return err
+		}
+
+		if err := ar.db.Create(&pgTracks).Error; err != nil {
+			return err
+		}
+
+		for _, v := range pgTracks {
+			if err := ar.db.Create(&dao.AlbumTrack{
+				AlbumId: pgAlbum.ID,
+				TrackId: v.ID,
+			}).Error; err != nil {
+				return err
+			}
+
+			eventID, err := uuid.GenerateUUID()
+			if err != nil {
+				return err
+			}
+
+			if err := ar.db.Create(&dao.Outbox{
+				ID:      0,
+				EventId: eventID,
+				TrackId: v.ID,
+				Type:    dao.TypeAdd,
+				Sent:    false,
+			}).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return 0, errors.Wrap(err, "database error (table album)")
 	}
 
 	return pgAlbum.ID, nil
 }
 
 func (ar *albumRepository) DeleteAlbum(id uint64) error {
-	tx := ar.db.Delete(&dao.Album{}, id)
-	if tx.Error != nil {
-		return errors.Wrap(tx.Error, "database error (table album)")
+
+	err := ar.db.Transaction(func(tx *gorm.DB) error {
+		var relations []*dao.AlbumTrack
+		if err := ar.db.Limit(models.MaxLimit).Find(&relations, "album_id = ?", id).Error; err != nil {
+			return err
+		}
+
+		for _, v := range relations {
+			if err := ar.db.Delete(&dao.Track{}, v.TrackId).Error; err != nil {
+				return err
+			}
+
+			eventID, err := uuid.GenerateUUID()
+			if err != nil {
+				return err
+			}
+
+			if err := ar.db.Create(&dao.Outbox{
+				ID:      0,
+				EventId: eventID,
+				TrackId: v.TrackId,
+				Type:    dao.TypeDelete,
+				Sent:    false,
+			}).Error; err != nil {
+				return err
+			}
+		}
+
+		if err := ar.db.Delete(&dao.Album{}, id).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return errors.Wrap(err, "database error (table album)")
 	}
 
 	return nil
@@ -91,7 +178,7 @@ func (ar *albumRepository) AddTrackToAlbum(albumId uint64, track *models.Track) 
 			ID:      0,
 			EventId: eventID,
 			TrackId: pgTrack.ID,
-			Type:    "add",
+			Type:    dao.TypeAdd,
 			Sent:    false,
 		}).Error; err != nil {
 			return err
@@ -108,16 +195,50 @@ func (ar *albumRepository) AddTrackToAlbum(albumId uint64, track *models.Track) 
 }
 
 func (ar *albumRepository) DeleteTrackFromAlbum(albumId uint64, trackId uint64) error {
-	tx := ar.db.Delete(dao.Track{}, trackId)
-	if tx.Error != nil {
-		return errors.Wrap(tx.Error, "database error (table album)")
+	err := ar.db.Transaction(func(tx *gorm.DB) error {
+		if err := ar.db.Delete(dao.Track{}, trackId).Error; err != nil {
+			return err
+		}
+
+		eventID, err := uuid.GenerateUUID()
+		if err != nil {
+			return err
+		}
+
+		if err := ar.db.Create(&dao.Outbox{
+			ID:      0,
+			EventId: eventID,
+			TrackId: trackId,
+			Type:    dao.TypeDelete,
+			Sent:    false,
+		}).Error; err != nil {
+			return err
+		}
+
+		res := ar.db.Limit(1).Find(&dao.AlbumTrack{}, "album_id = ?", albumId)
+		if res.Error != nil {
+			return res.Error
+		}
+
+		// Delete album if no tracks left
+		if res.RowsAffected <= 0 {
+			if err := ar.db.Delete(&dao.Album{}, albumId).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return errors.Wrap(err, "database error (table album)")
 	}
 
 	return nil
 }
 
 func (ar *albumRepository) GetAllTracksForAlbum(albumId uint64) ([]*models.Track, error) {
-	var relations []dao.AlbumTrack
+	var relations []*dao.AlbumTrack
 	tx := ar.db.Limit(models.MaxLimit).Find(&relations, "album_id = ?", albumId)
 	if tx.Error != nil {
 		return nil, errors.Wrap(tx.Error, "database error (table album)")
@@ -128,7 +249,7 @@ func (ar *albumRepository) GetAllTracksForAlbum(albumId uint64) ([]*models.Track
 		ids = append(ids, v.TrackId)
 	}
 
-	var pgTracks []dao.Track
+	var pgTracks []*dao.Track
 	tx = ar.db.Find(&pgTracks, ids)
 	if tx.Error != nil {
 		return nil, errors.Wrap(tx.Error, "database error (table album)")

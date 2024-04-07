@@ -129,53 +129,73 @@ func TestUsecase_UpdateAlbum(t *testing.T) {
 	}
 }
 
-func TestUsecase_AddAlbum(t *testing.T) {
-	type mock func(r *mock_repository.MockAlbumRepository, album models.Album)
+func TestUseCase_AddAlbumWithTracks(t *testing.T) {
+	type mock func(r *mock_repository.MockAlbumRepository, album *models.Album, tracks []*models.Track)
 
 	testTable := []struct {
-		name          string
-		inputAlbum    models.Album
-		mock          mock
-		expectedValue uint64
-		expectedErr   error
+		name        string
+		inputAlbum  *models.Album
+		inputTracks []*models.Track
+		mock        mock
+		expectedID  uint64
+		expectedErr error
 	}{
 		{
-			name:       "Usual test",
-			inputAlbum: models.Album{0, "test_name", "test_url", "test_type"},
-			mock: func(r *mock_repository.MockAlbumRepository, album models.Album) {
-				r.EXPECT().AddAlbum(&album).Return(uint64(1), nil)
+			name: "Usual test",
+			inputAlbum: &models.Album{
+				Id:    1,
+				Name:  "Test Album",
+				Cover: "Test Cover",
+				Type:  "LP",
 			},
-			expectedValue: 1,
-			expectedErr:   nil,
+			inputTracks: []*models.Track{
+				{Id: 1, Name: "Track 1"},
+				{Id: 2, Name: "Track 2"},
+			},
+			mock: func(r *mock_repository.MockAlbumRepository, album *models.Album, tracks []*models.Track) {
+				r.EXPECT().AddAlbumWithTracks(album, tracks).Return(uint64(1), nil)
+			},
+			expectedID:  1,
+			expectedErr: nil,
 		},
 		{
-			name:       "Repo fail test",
-			inputAlbum: models.Album{0, "test_name", "test_url", "test_type"},
-			mock: func(r *mock_repository.MockAlbumRepository, album models.Album) {
-				r.EXPECT().AddAlbum(&album).Return(uint64(0), errors.New("error in repo"))
+			name: "Repo fail test",
+			inputAlbum: &models.Album{
+				Id:    0,
+				Name:  "Invalid Album",
+				Cover: "Test Cover",
+				Type:  "LP",
 			},
-			expectedValue: 0,
-			expectedErr:   errors.Wrap(errors.New("error in repo"), "album.usecase.AddAlbum error while add"),
+			inputTracks: []*models.Track{
+				{Id: 1, Name: "Track 1"},
+				{Id: 2, Name: "Track 2"},
+			},
+			mock: func(r *mock_repository.MockAlbumRepository, album *models.Album, tracks []*models.Track) {
+				r.EXPECT().AddAlbumWithTracks(album, tracks).Return(uint64(0), errors.New("error in repo"))
+			},
+			expectedID:  0,
+			expectedErr: errors.Wrap(errors.New("error in repo"), "album.usecase.AddAlbum error while add"),
 		},
 	}
 
 	for _, tc := range testTable {
 		t.Run(tc.name, func(t *testing.T) {
-			// Init Dependencies
-			c := gomock.NewController(t)
-			defer c.Finish()
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
 
-			repo := mock_repository.NewMockAlbumRepository(c)
-			tc.mock(repo, tc.inputAlbum)
+			repo := mock_repository.NewMockAlbumRepository(ctrl)
+			tc.mock(repo, tc.inputAlbum, tc.inputTracks)
 
-			s := NewAlbumUseCase(repo)
-			res, err := s.AddAlbum(&tc.inputAlbum)
+			u := NewAlbumUseCase(repo)
+			id, err := u.AddAlbumWithTracks(tc.inputAlbum, tc.inputTracks)
 
-			assert.Equal(t, tc.expectedValue, res)
-			if tc.expectedErr == nil {
-				assert.Nil(t, err)
+			assert.Equal(t, tc.expectedID, id)
+
+			if tc.expectedErr != nil {
+				assert.Error(t, err)
+				assert.EqualError(t, err, tc.expectedErr.Error())
 			} else {
-				assert.Equal(t, err.Error(), tc.expectedErr.Error())
+				assert.NoError(t, err)
 			}
 		})
 	}

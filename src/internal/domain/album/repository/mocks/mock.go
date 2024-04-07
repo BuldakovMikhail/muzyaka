@@ -34,19 +34,19 @@ func (m *MockAlbumRepository) EXPECT() *MockAlbumRepositoryMockRecorder {
 	return m.recorder
 }
 
-// AddAlbum mocks base method.
-func (m *MockAlbumRepository) AddAlbum(album *models.Album) (uint64, error) {
+// AddAlbumWithTracks mocks base method.
+func (m *MockAlbumRepository) AddAlbumWithTracks(album *models.Album, tracks []*models.Track) (uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddAlbum", album)
+	ret := m.ctrl.Call(m, "AddAlbumWithTracks", album, tracks)
 	ret0, _ := ret[0].(uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// AddAlbum indicates an expected call of AddAlbum.
-func (mr *MockAlbumRepositoryMockRecorder) AddAlbum(album interface{}) *gomock.Call {
+// AddAlbumWithTracks indicates an expected call of AddAlbumWithTracks.
+func (mr *MockAlbumRepositoryMockRecorder) AddAlbumWithTracks(album, tracks interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddAlbum", reflect.TypeOf((*MockAlbumRepository)(nil).AddAlbum), album)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddAlbumWithTracks", reflect.TypeOf((*MockAlbumRepository)(nil).AddAlbumWithTracks), album, tracks)
 }
 
 // AddTrackToAlbum mocks base method.
