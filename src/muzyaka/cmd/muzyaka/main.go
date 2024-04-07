@@ -1,12 +1,9 @@
 package main
 
 import (
-	postgres2 "gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"log/slog"
 	"os"
 	"src/internal/config"
-	"src/internal/domain/album/repository/postgres"
 	"src/internal/lib/logger/handlers/slogpretty"
 )
 
@@ -22,14 +19,18 @@ func main() {
 	logger := setupLogger(cfg.Env)
 	logger.Info("Logger init")
 
-	dsn := "host=localhost user=postgres password=postgres dbname=postgres port=32768"
-	db, err := gorm.Open(postgres2.Open(dsn), &gorm.Config{})
-	if err != nil {
-		logger.Error(err.Error())
-	}
+	//dsn := "host=localhost user=postgres password=postgres dbname=postgres port=32768"
+	//db, err := gorm.Open(postgres2.Open(dsn), &gorm.Config{})
+	//if err != nil {
+	//	logger.Error(err.Error())
+	//}
 	//
-	rep := postgres.NewAlbumRepository(db)
-	err = rep.DeleteAlbum(1)
+	//pr, err := kafka.NewProducer("localhost:29092")
+	//op := outbox_producer.New(pr, db, "outbox")
+	//op.ProduceMessages()
+	//
+	//rep := postgres.NewAlbumRepository(db)
+	//err = rep.DeleteAlbum(1)
 	//_, err = rep.AddAlbum(&models.Album{
 	//	Id:    0,
 	//	Name:  "Aboba2",
@@ -37,9 +38,9 @@ func main() {
 	//	Type:  "LP",
 	//})
 	//
-	if err != nil {
-		logger.Error(err.Error())
-	}
+	//if err != nil {
+	//	logger.Error(err.Error())
+	//}
 
 	//_, err = rep.AddTrackToAlbum(1, &models.Track{
 	//	Id:         0,
