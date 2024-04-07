@@ -107,7 +107,7 @@ func (ar *albumRepository) DeleteAlbum(id uint64) error {
 
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
 		var relations []*dao.AlbumTrack
-		if err := ar.db.Limit(models.MaxLimit).Find(&relations, "album_id = ?", id).Error; err != nil {
+		if err := ar.db.Limit(dao.MaxLimit).Find(&relations, "album_id = ?", id).Error; err != nil {
 			return err
 		}
 
@@ -239,7 +239,7 @@ func (ar *albumRepository) DeleteTrackFromAlbum(albumId uint64, trackId uint64) 
 
 func (ar *albumRepository) GetAllTracksForAlbum(albumId uint64) ([]*models.Track, error) {
 	var relations []*dao.AlbumTrack
-	tx := ar.db.Limit(models.MaxLimit).Find(&relations, "album_id = ?", albumId)
+	tx := ar.db.Limit(dao.MaxLimit).Find(&relations, "album_id = ?", albumId)
 	if tx.Error != nil {
 		return nil, errors.Wrap(tx.Error, "database error (table album)")
 	}
