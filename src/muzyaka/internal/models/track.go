@@ -1,11 +1,9 @@
 package models
 
 type Track struct {
-	Id         uint64
-	Source     string
-	Producers  []string
-	Authors    []string
-	Performers []string
-	Name       string
-	Genre      string
+	Id      uint64
+	Source  string
+	Authors []string
+	Name    string
+	Genre   string
 }

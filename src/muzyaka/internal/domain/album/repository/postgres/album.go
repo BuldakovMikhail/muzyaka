@@ -265,13 +265,11 @@ func (ar *albumRepository) GetAllTracksForAlbum(albumId uint64) ([]*models.Track
 
 		// TODO: fill all gaps
 		track := &models.Track{
-			Id:         v.ID,
-			Source:     v.Source,
-			Producers:  nil,
-			Authors:    nil,
-			Performers: nil,
-			Name:       v.Name,
-			Genre:      pgGenre.Name,
+			Id:      v.ID,
+			Source:  v.Source,
+			Authors: nil,
+			Name:    v.Name,
+			Genre:   pgGenre.Name,
 		}
 
 		tracks = append(tracks, track)

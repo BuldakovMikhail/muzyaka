@@ -21,11 +21,10 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 		{
 			name: "Usual test",
 			inputTrack: &models.Track{
-				Id:        1,
-				Name:      "Updated Track Name",
-				Source:    "updated_source.mp3",
-				Genre:     "Pop",
-				Producers: []string{"Producer1", "Producer2"},
+				Id:     1,
+				Name:   "Updated Track Name",
+				Source: "updated_source.mp3",
+				Genre:  "Pop",
 			},
 			mock: func(r *mock_repository.MockTrackRepository, track *models.Track) {
 				r.EXPECT().UpdateTrack(track).Return(nil)
@@ -35,11 +34,10 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 		{
 			name: "Repo fail test",
 			inputTrack: &models.Track{
-				Id:        2,
-				Name:      "Invalid Track",
-				Source:    "invalid_source.mp3",
-				Genre:     "Rock",
-				Producers: []string{"Producer3", "Producer4"},
+				Id:     2,
+				Name:   "Invalid Track",
+				Source: "invalid_source.mp3",
+				Genre:  "Rock",
 			},
 			mock: func(r *mock_repository.MockTrackRepository, track *models.Track) {
 				r.EXPECT().UpdateTrack(track).Return(errors.New("error in repo"))
@@ -83,20 +81,18 @@ func TestUsecase_GetTrack(t *testing.T) {
 			id:   1,
 			mock: func(r *mock_repository.MockTrackRepository, id uint64) {
 				expectedTrack := &models.Track{
-					Id:        1,
-					Name:      "Test Track",
-					Source:    "test_source.mp3",
-					Genre:     "Pop",
-					Producers: []string{"Producer1", "Producer2"},
+					Id:     1,
+					Name:   "Test Track",
+					Source: "test_source.mp3",
+					Genre:  "Pop",
 				}
 				r.EXPECT().GetTrack(id).Return(expectedTrack, nil)
 			},
 			expectedTrack: &models.Track{
-				Id:        1,
-				Name:      "Test Track",
-				Source:    "test_source.mp3",
-				Genre:     "Pop",
-				Producers: []string{"Producer1", "Producer2"},
+				Id:     1,
+				Name:   "Test Track",
+				Source: "test_source.mp3",
+				Genre:  "Pop",
 			},
 			expectedErr: nil,
 		},

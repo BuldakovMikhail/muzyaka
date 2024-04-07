@@ -263,13 +263,11 @@ func TestUsecase_AddTrack(t *testing.T) {
 		{
 			name: "Usual test",
 			inputTrack: models.Track{
-				Id:         10,
-				Source:     "test_src",
-				Producers:  nil,
-				Authors:    nil,
-				Performers: nil,
-				Name:       "test_name",
-				Genre:      "test_genre",
+				Id:      10,
+				Source:  "test_src",
+				Authors: nil,
+				Name:    "test_name",
+				Genre:   "test_genre",
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.Track) {
 				r.EXPECT().AddTrackToAlbum(album_id, &track).Return(uint64(10), nil)
@@ -280,13 +278,11 @@ func TestUsecase_AddTrack(t *testing.T) {
 		{
 			name: "Repo fail test",
 			inputTrack: models.Track{
-				Id:         10,
-				Source:     "test_src",
-				Producers:  nil,
-				Authors:    nil,
-				Performers: nil,
-				Name:       "test_name",
-				Genre:      "test_genre",
+				Id:      10,
+				Source:  "test_src",
+				Authors: nil,
+				Name:    "test_name",
+				Genre:   "test_genre",
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.Track) {
 				r.EXPECT().AddTrackToAlbum(album_id, &track).Return(uint64(0), errors.New("error in repo"))
@@ -389,22 +385,18 @@ func TestUsecase_GetAllTracks(t *testing.T) {
 			},
 			expectedTracks: []*models.Track{
 				{
-					Id:         1,
-					Source:     "track_src_1",
-					Producers:  []string{"producer_1"},
-					Authors:    []string{"author_1"},
-					Performers: []string{"performer_1"},
-					Name:       "track_name_1",
-					Genre:      "track_genre_1",
+					Id:      1,
+					Source:  "track_src_1",
+					Authors: []string{"author_1"},
+					Name:    "track_name_1",
+					Genre:   "track_genre_1",
 				},
 				{
-					Id:         2,
-					Source:     "track_src_2",
-					Producers:  []string{"producer_2"},
-					Authors:    []string{"author_2"},
-					Performers: []string{"performer_2"},
-					Name:       "track_name_2",
-					Genre:      "track_genre_2",
+					Id:      2,
+					Source:  "track_src_2",
+					Authors: []string{"author_2"},
+					Name:    "track_name_2",
+					Genre:   "track_genre_2",
 				},
 			},
 			expectedErr: nil,

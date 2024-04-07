@@ -18,15 +18,6 @@ CREATE TABLE IF NOT EXISTS authors(
     name VARCHAR(254) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS producers(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(254) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS performers(
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(254) NOT NULL
-);
 
 CREATE TABLE IF NOT EXISTS tracks(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -40,19 +31,6 @@ CREATE TABLE IF NOT EXISTS tracks_authors(
     track_id INT NOT NULL REFERENCES tracks(id),
     PRIMARY KEY (author_id, track_id)
 );
-
-CREATE TABLE IF NOT EXISTS tracks_producers(
-    producers_id INT NOT NULL REFERENCES producers(id),
-    track_id INT NOT NULL REFERENCES tracks(id),
-    PRIMARY KEY (producers_id, track_id)
-);
-
-CREATE TABLE IF NOT EXISTS tracks_performers(
-    performers_id INT NOT NULL REFERENCES performers(id),
-    track_id INT NOT NULL REFERENCES tracks(id),
-    PRIMARY KEY (performers_id, track_id)
-);
-
 
 CREATE TABLE IF NOT EXISTS merch(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
