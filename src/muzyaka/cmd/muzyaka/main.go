@@ -1,9 +1,13 @@
 package main
 
 import (
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log/slog"
 	"os"
 	"src/internal/config"
+	"src/internal/cron/outbox_producer"
+	"src/internal/kafka"
 	"src/internal/lib/logger/handlers/slogpretty"
 )
 
@@ -19,15 +23,15 @@ func main() {
 	logger := setupLogger(cfg.Env)
 	logger.Info("Logger init")
 
-	//dsn := "host=localhost user=postgres password=postgres dbname=postgres port=32768"
-	//db, err := gorm.Open(postgres2.Open(dsn), &gorm.Config{})
-	//if err != nil {
-	//	logger.Error(err.Error())
-	//}
+	dsn := "host=localhost user=postgres password=postgres dbname=postgres port=32771"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		logger.Error(err.Error())
+	}
 	//
-	//pr, err := kafka.NewProducer("localhost:29092")
-	//op := outbox_producer.New(pr, db, "outbox")
-	//op.ProduceMessages()
+	pr, err := kafka.NewProducer("localhost:29092")
+	op := outbox_producer.New(pr, db, "outbox")
+	op.ProduceMessages()
 	//
 	//rep := postgres.NewAlbumRepository(db)
 	//err = rep.DeleteAlbum(1)
