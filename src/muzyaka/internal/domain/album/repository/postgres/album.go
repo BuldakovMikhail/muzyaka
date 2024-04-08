@@ -35,7 +35,6 @@ func (ar *albumRepository) UpdateAlbum(album *models.Album) error {
 	if tx.Error != nil {
 		return errors.Wrap(tx.Error, "database error (table album)")
 	}
-	album.Id = pgAlbum.ID
 
 	return nil
 }
