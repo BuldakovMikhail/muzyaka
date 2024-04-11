@@ -50,12 +50,11 @@ func (mr *MockPlaylistRepositoryMockRecorder) AddPlaylist(playlist interface{}) 
 }
 
 // AddTrackToPlaylist mocks base method.
-func (m *MockPlaylistRepository) AddTrackToPlaylist(playlistId, trackId uint64) (uint64, error) {
+func (m *MockPlaylistRepository) AddTrackToPlaylist(playlistId, trackId uint64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddTrackToPlaylist", playlistId, trackId)
-	ret0, _ := ret[0].(uint64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // AddTrackToPlaylist indicates an expected call of AddTrackToPlaylist.

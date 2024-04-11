@@ -11,7 +11,7 @@ type PlaylistUseCase interface {
 	AddPlaylist(playlist *models.Playlist) (uint64, error)
 	DeletePlaylist(id uint64) error
 	GetPlaylist(id uint64) (*models.Playlist, error)
-	AddTrack(playlistId uint64, trackId uint64) (uint64, error)
+	AddTrack(playlistId uint64, trackId uint64) error
 	DeleteTrack(playlistId uint64, trackId uint64) error
 }
 
@@ -63,14 +63,14 @@ func (u *usecase) GetPlaylist(id uint64) (*models.Playlist, error) {
 	return res, nil
 }
 
-func (u *usecase) AddTrack(playlistId uint64, trackId uint64) (uint64, error) {
-	id, err := u.playlistRep.AddTrackToPlaylist(playlistId, trackId)
+func (u *usecase) AddTrack(playlistId uint64, trackId uint64) error {
+	err := u.playlistRep.AddTrackToPlaylist(playlistId, trackId)
 
 	if err != nil {
-		return 0, errors.Wrap(err, "playlist.usecase.AddTrack error while add")
+		return errors.Wrap(err, "playlist.usecase.AddTrack error while add")
 	}
 
-	return id, nil
+	return nil
 }
 
 func (u *usecase) DeleteTrack(playlistId uint64, trackId uint64) error {

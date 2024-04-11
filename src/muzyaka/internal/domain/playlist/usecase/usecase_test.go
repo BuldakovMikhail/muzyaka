@@ -247,31 +247,28 @@ func TestUsecase_AddTrack(t *testing.T) {
 	type mock func(r *mock_repository.MockPlaylistRepository, playlistId uint64, trackId uint64)
 
 	testTable := []struct {
-		name          string
-		playlistId    uint64
-		trackId       uint64
-		mock          mock
-		expectedValue uint64
-		expectedErr   error
+		name        string
+		playlistId  uint64
+		trackId     uint64
+		mock        mock
+		expectedErr error
 	}{
 		{
 			name:       "Usual test",
 			playlistId: 1,
 			trackId:    10,
 			mock: func(r *mock_repository.MockPlaylistRepository, playlistId uint64, trackId uint64) {
-				r.EXPECT().AddTrackToPlaylist(playlistId, trackId).Return(uint64(1), nil)
+				r.EXPECT().AddTrackToPlaylist(playlistId, trackId).Return(nil)
 			},
-			expectedValue: uint64(1),
-			expectedErr:   nil,
+			expectedErr: nil,
 		},
 		{
 			name:       "Repo fail test",
 			playlistId: 2,
 			trackId:    20,
 			mock: func(r *mock_repository.MockPlaylistRepository, playlistId uint64, trackId uint64) {
-				r.EXPECT().AddTrackToPlaylist(playlistId, trackId).Return(uint64(0), errors.New("error in repo"))
+				r.EXPECT().AddTrackToPlaylist(playlistId, trackId).Return(errors.New("error in repo"))
 			},
-			expectedValue: uint64(0),
 			expectedErr: errors.Wrap(errors.New("error in repo"),
 				"playlist.usecase.AddTrack error while add"),
 		},
@@ -287,9 +284,7 @@ func TestUsecase_AddTrack(t *testing.T) {
 			tc.mock(repo, tc.playlistId, tc.trackId)
 
 			u := NewPlaylistUseCase(repo)
-			res, err := u.AddTrack(tc.playlistId, tc.trackId)
-
-			assert.Equal(t, tc.expectedValue, res)
+			err := u.AddTrack(tc.playlistId, tc.trackId)
 
 			if tc.expectedErr == nil {
 				assert.Nil(t, err)
