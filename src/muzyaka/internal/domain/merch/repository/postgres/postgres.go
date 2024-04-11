@@ -30,10 +30,23 @@ func (m *merchRepository) GetMerch(id uint64) (*models.Merch, error) {
 
 func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 	pgMerch := dao.ToPostgresMerch(merch)
-	tx := m.db.Omit("id").Updates(pgMerch)
+	pgMerchPhotos := dao.ToPostgresMerchPhotos(merch)
 
-	if tx.Error != nil {
-		return errors.Wrap(tx.Error, "database error (table album)")
+	err := m.db.Transaction(func(tx *gorm.DB) error {
+		if err := m.db.Omit("id").Updates(pgMerch).Error; err != nil {
+			return err
+		}
+		if err := m.db.Delete(&dao.MerchPhotos{}, "merch_id = ?", pgMerch.ID).Error; err != nil {
+			return err
+		}
+		if err := m.db.Create(pgMerchPhotos).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		return errors.Wrap(err, "database error (table merch)")
 	}
 
 	return nil
@@ -47,7 +60,7 @@ func (m *merchRepository) AddMerch(merch *models.Merch) (uint64, error) {
 			return err
 		}
 
-		pgMerchPhotos := dao.ToPostgresMerchPhotos(pgMerch.ID, merch.Photos)
+		pgMerchPhotos := dao.ToPostgresMerchPhotos(merch)
 		if err := tx.Create(&pgMerchPhotos).Error; err != nil {
 			return err
 		}
@@ -56,7 +69,7 @@ func (m *merchRepository) AddMerch(merch *models.Merch) (uint64, error) {
 	})
 
 	if err != nil {
-		return pgMerch.ID, errors.Wrap(err, "database error (table album)")
+		return 0, errors.Wrap(err, "database error (table merch)")
 	}
 	merch.Id = pgMerch.ID
 	return pgMerch.ID, nil
@@ -66,18 +79,7 @@ func (m *merchRepository) DeleteMerch(id uint64) error {
 	tx := m.db.Delete(&dao.Merch{}, id)
 
 	if tx.Error != nil {
-		return errors.Wrap(tx.Error, "database error (table album)")
-	}
-
-	return nil
-}
-
-func (m *merchRepository) UpdateMerchPhotos(merch *models.Merch) error {
-	pgMerchPhotos := dao.ToPostgresMerchPhotos(merch.Id, merch.Photos)
-
-	tx := m.db.Create(&pgMerchPhotos)
-	if tx.Error != nil {
-		return errors.Wrap(tx.Error, "database error (table album)")
+		return errors.Wrap(tx.Error, "database error (table merch)")
 	}
 
 	return nil

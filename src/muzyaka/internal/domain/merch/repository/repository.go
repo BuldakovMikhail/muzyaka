@@ -9,5 +9,4 @@ type MerchRepository interface {
 	UpdateMerch(merch *models.Merch) error
 	AddMerch(merch *models.Merch) (uint64, error)
 	DeleteMerch(id uint64) error
-	UpdateMerchPhotos(merch *models.Merch) error
 }

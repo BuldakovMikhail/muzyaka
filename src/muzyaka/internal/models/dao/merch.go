@@ -31,14 +31,14 @@ func ToPostgresMerch(e *models.Merch) *Merch {
 	}
 }
 
-func ToPostgresMerchPhotos(merch_id uint64, urls []string) []*MerchPhotos {
+func ToPostgresMerchPhotos(e *models.Merch) []*MerchPhotos {
 	var merchPhotos []*MerchPhotos
 
-	for _, v := range urls {
+	for _, v := range e.Photos {
 		merchPhotos = append(
 			merchPhotos,
 			&MerchPhotos{
-				MerchId:   merch_id,
+				MerchId:   e.Id,
 				PhotosSrc: v,
 			},
 		)
