@@ -16,11 +16,28 @@ type Track struct {
 	Source     string `gorm:"column:source"`
 	Name       string `gorm:"column:name"`
 	GenreRefer uint64 `gorm:"column:genre"`
-	//Genre      Genre  `gorm:"foreignKey:GenreRefer"`
 }
 
 func (Track) TableName() string {
 	return "tracks"
+}
+
+type Author struct {
+	ID   uint64 `gorm:"column:id"`
+	Name string `gorm:"column:name"`
+}
+
+func (Author) TableName() string {
+	return "authors"
+}
+
+type TrackAuthor struct {
+	AuthorId uint64 `gorm:"column:author_id"`
+	TrackId  uint64 `gorm:"column:track_id"`
+}
+
+func (TrackAuthor) TableName() string {
+	return "track_authors"
 }
 
 func ToPostgresTrack(e *models.Track, genreRefer uint64) *Track {
@@ -32,15 +49,18 @@ func ToPostgresTrack(e *models.Track, genreRefer uint64) *Track {
 	}
 }
 
-//func ToModelTrack(e *Track, genre *Genre) *models.Track {
-//	return &models.Track{
-//		Id:         0,
-//		Source:     "",
-//		Producers:  nil,
-//		Authors:    nil,
-//		Performers: nil,
-//		Name:       e.,
-//		Genre:      "",
-//		Embedding:  nil,
-//	}
-//}
+func ToModelTrack(track *Track, genre *Genre, authors []*Author) *models.Track {
+	var authorsNames []string
+
+	for _, v := range authors {
+		authorsNames = append(authorsNames, v.Name)
+	}
+
+	return &models.Track{
+		Id:      track.ID,
+		Source:  track.Source,
+		Authors: authorsNames,
+		Name:    track.Name,
+		Genre:   genre.Name,
+	}
+}
