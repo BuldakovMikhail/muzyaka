@@ -32,6 +32,8 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 	pgMerch := dao.ToPostgresMerch(merch)
 	pgMerchPhotos := dao.ToPostgresMerchPhotos(merch)
 
+	// TODO: instead of delete and add. Make smart check for needed updates
+
 	err := m.db.Transaction(func(tx *gorm.DB) error {
 		if err := m.db.Omit("id").Updates(pgMerch).Error; err != nil {
 			return err

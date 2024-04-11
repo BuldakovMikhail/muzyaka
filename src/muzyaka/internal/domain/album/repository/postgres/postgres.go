@@ -82,11 +82,14 @@ func (ar *albumRepository) AddAlbumWithTracks(album *models.Album, tracks []*mod
 			}
 
 			if err := ar.db.Create(&dao.Outbox{
-				ID:      0,
-				EventId: eventID,
-				TrackId: v.ID,
-				Type:    dao.TypeAdd,
-				Sent:    false,
+				ID:         0,
+				EventId:    eventID,
+				TrackId:    v.ID,
+				Source:     v.Source,
+				Name:       v.Name,
+				GenreRefer: v.GenreRefer,
+				Type:       dao.TypeAdd,
+				Sent:       false,
 			}).Error; err != nil {
 				return err
 			}
@@ -174,11 +177,14 @@ func (ar *albumRepository) AddTrackToAlbum(albumId uint64, track *models.Track) 
 		}
 
 		if err := tx.Create(&dao.Outbox{
-			ID:      0,
-			EventId: eventID,
-			TrackId: pgTrack.ID,
-			Type:    dao.TypeAdd,
-			Sent:    false,
+			ID:         0,
+			EventId:    eventID,
+			TrackId:    pgTrack.ID,
+			Source:     pgTrack.Source,
+			Name:       pgTrack.Name,
+			GenreRefer: pgTrack.GenreRefer,
+			Type:       dao.TypeAdd,
+			Sent:       false,
 		}).Error; err != nil {
 			return err
 		}
@@ -262,13 +268,11 @@ func (ar *albumRepository) GetAllTracksForAlbum(albumId uint64) ([]*models.Track
 			return nil, errors.Wrap(tx.Error, "database error (table album)")
 		}
 
-		// TODO: fill all gaps
 		track := &models.Track{
-			Id:      v.ID,
-			Source:  v.Source,
-			Authors: nil,
-			Name:    v.Name,
-			Genre:   pgGenre.Name,
+			Id:     v.ID,
+			Source: v.Source,
+			Name:   v.Name,
+			Genre:  pgGenre.Name,
 		}
 
 		tracks = append(tracks, track)

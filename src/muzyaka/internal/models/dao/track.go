@@ -22,24 +22,6 @@ func (Track) TableName() string {
 	return "tracks"
 }
 
-type Author struct {
-	ID   uint64 `gorm:"column:id"`
-	Name string `gorm:"column:name"`
-}
-
-func (Author) TableName() string {
-	return "authors"
-}
-
-type TrackAuthor struct {
-	AuthorId uint64 `gorm:"column:author_id"`
-	TrackId  uint64 `gorm:"column:track_id"`
-}
-
-func (TrackAuthor) TableName() string {
-	return "track_authors"
-}
-
 func ToPostgresTrack(e *models.Track, genreRefer uint64) *Track {
 	return &Track{
 		ID:         e.Id,
@@ -49,18 +31,11 @@ func ToPostgresTrack(e *models.Track, genreRefer uint64) *Track {
 	}
 }
 
-func ToModelTrack(track *Track, genre *Genre, authors []*Author) *models.Track {
-	var authorsNames []string
-
-	for _, v := range authors {
-		authorsNames = append(authorsNames, v.Name)
-	}
-
+func ToModelTrack(track *Track, genre *Genre) *models.Track {
 	return &models.Track{
-		Id:      track.ID,
-		Source:  track.Source,
-		Authors: authorsNames,
-		Name:    track.Name,
-		Genre:   genre.Name,
+		Id:     track.ID,
+		Source: track.Source,
+		Name:   track.Name,
+		Genre:  genre.Name,
 	}
 }
