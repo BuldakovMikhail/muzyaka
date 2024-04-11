@@ -22,7 +22,6 @@ func TestTokenProvider(t *testing.T) {
 			user: &models.User{
 				Id:       1,
 				Name:     "test_name",
-				Login:    "test_login",
 				Password: "test_pass",
 				Role:     "admin",
 				Email:    "test_email",
@@ -37,7 +36,6 @@ func TestTokenProvider(t *testing.T) {
 			user: &models.User{
 				Id:       1,
 				Name:     "test_name",
-				Login:    "test_login",
 				Password: "test_pass",
 				Role:     "user",
 				Email:    "test_email",
@@ -52,7 +50,6 @@ func TestTokenProvider(t *testing.T) {
 			user: &models.User{
 				Id:       1,
 				Name:     "test_name",
-				Login:    "test_login",
 				Password: "test_pass",
 				Role:     "user",
 				Email:    "test_email",

@@ -30,7 +30,6 @@ func TestUsecase_SignUp(t *testing.T) {
 			input: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
-				Login:    "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
@@ -52,7 +51,6 @@ func TestUsecase_SignUp(t *testing.T) {
 			input: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
-				Login:    "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
@@ -74,7 +72,6 @@ func TestUsecase_SignUp(t *testing.T) {
 			input: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
-				Login:    "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
@@ -150,7 +147,6 @@ func TestUsecase_SignIn(t *testing.T) {
 			input: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
-				Login:    "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
@@ -159,7 +155,6 @@ func TestUsecase_SignIn(t *testing.T) {
 				r.EXPECT().GetUser(id).Return(&models.User{
 					Id:       uint64(10),
 					Name:     "test",
-					Login:    "test",
 					Password: "test",
 					Role:     "test",
 					Email:    "test",
@@ -180,7 +175,6 @@ func TestUsecase_SignIn(t *testing.T) {
 			input: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
-				Login:    "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
@@ -202,7 +196,6 @@ func TestUsecase_SignIn(t *testing.T) {
 			input: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
-				Login:    "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
@@ -211,7 +204,6 @@ func TestUsecase_SignIn(t *testing.T) {
 				r.EXPECT().GetUser(id).Return(&models.User{
 					Id:       uint64(10),
 					Name:     "test",
-					Login:    "test",
 					Password: "test",
 					Role:     "test",
 					Email:    "test",
@@ -232,7 +224,6 @@ func TestUsecase_SignIn(t *testing.T) {
 			input: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
-				Login:    "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
@@ -241,7 +232,6 @@ func TestUsecase_SignIn(t *testing.T) {
 				r.EXPECT().GetUser(id).Return(&models.User{
 					Id:       uint64(10),
 					Name:     "test",
-					Login:    "test",
 					Password: "test",
 					Role:     "test",
 					Email:    "test",

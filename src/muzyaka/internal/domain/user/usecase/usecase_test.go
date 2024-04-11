@@ -23,7 +23,6 @@ func TestUsecase_UpdateUser(t *testing.T) {
 			inputUser: &models.User{
 				Id:       1,
 				Name:     "Updated User Name",
-				Login:    "updatedlogin",
 				Password: "newpassword",
 				Role:     "admin",
 				Email:    "updatedemail@example.com",
@@ -38,7 +37,6 @@ func TestUsecase_UpdateUser(t *testing.T) {
 			inputUser: &models.User{
 				Id:       2,
 				Name:     "Invalid User",
-				Login:    "invalidlogin",
 				Password: "invalidpassword",
 				Role:     "user",
 				Email:    "invalidemail@example.com",
@@ -88,7 +86,6 @@ func TestUsecase_GetUser(t *testing.T) {
 				expectedUser := &models.User{
 					Id:       1,
 					Name:     "Test User",
-					Login:    "testlogin",
 					Password: "testpassword",
 					Role:     "user",
 					Email:    "testemail@example.com",
@@ -98,7 +95,6 @@ func TestUsecase_GetUser(t *testing.T) {
 			expectedUser: &models.User{
 				Id:       1,
 				Name:     "Test User",
-				Login:    "testlogin",
 				Password: "testpassword",
 				Role:     "user",
 				Email:    "testemail@example.com",
@@ -152,7 +148,6 @@ func TestUsecase_AddUser(t *testing.T) {
 			inputUser: &models.User{
 				Id:       1,
 				Name:     "New User",
-				Login:    "newuserlogin",
 				Password: "newuserpassword",
 				Role:     "user",
 				Email:    "newuser@example.com",
@@ -168,7 +163,6 @@ func TestUsecase_AddUser(t *testing.T) {
 			inputUser: &models.User{
 				Id:       0, // Zero ID indicates new user
 				Name:     "Invalid User",
-				Login:    "invalidlogin",
 				Password: "invalidpassword",
 				Role:     "user",
 				Email:    "invalidemail@example.com",
