@@ -44,7 +44,7 @@ func ToPostgresMusicianPhotos(musician *models.Musician) []*MusicianPhotos {
 func ToModelMusician(musician *Musician, photos []*MusicianPhotos) *models.Musician {
 	var res []string
 	for _, v := range photos {
-		res = append(res, v)
+		res = append(res, v.PhotoSrc)
 	}
 
 	return &models.Musician{
