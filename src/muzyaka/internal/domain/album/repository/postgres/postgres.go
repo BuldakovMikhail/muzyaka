@@ -101,7 +101,7 @@ func (ar *albumRepository) AddAlbumWithTracks(album *models.Album, tracks []*mod
 	if err != nil {
 		return 0, errors.Wrap(err, "database error (table album)")
 	}
-
+	album.Id = pgAlbum.ID
 	return pgAlbum.ID, nil
 }
 
