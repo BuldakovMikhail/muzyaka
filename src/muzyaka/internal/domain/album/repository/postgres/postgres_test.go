@@ -103,24 +103,12 @@ func (suite *AlbumRepoTestSuite) TestAddAlbumWithTracks() {
 	assert.Equal(t, len(tracksFromPg), 0)
 	assert.NoError(t, err)
 
-	//var g dao.Genre
-	//tx := suite.db.Find(&g, "name = test")
-
 	var rels []*dao.AlbumTrack
 	tx := suite.db.Find(&rels, "album_id = ?", id)
 	assert.NoError(t, tx.Error)
 	assert.Equal(t, len(rels), 0)
 }
 
-//	func (suite *AlbumRepoTestSuite) TestGetCustomerByEmail() {
-//		t := suite.T()
-//
-//		customer, err := suite.repository.GetCustomerByEmail(suite.ctx, "john@gmail.com")
-//		assert.NoError(t, err)
-//		assert.NotNil(t, customer)
-//		assert.Equal(t, "John", customer.Name)
-//		assert.Equal(t, "john@gmail.com", customer.Email)
-//	}
 func TestAlbumRepoTestSuite(t *testing.T) {
 	suite.Run(t, new(AlbumRepoTestSuite))
 }

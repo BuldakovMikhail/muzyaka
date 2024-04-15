@@ -3,12 +3,17 @@ package postgres
 import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	repository2 "src/internal/domain/user/repository"
 	"src/internal/models"
 	"src/internal/models/dao"
 )
 
 type userRepository struct {
 	db *gorm.DB
+}
+
+func NewUserRepository(db *gorm.DB) repository2.UserRepository {
+	return &userRepository{db: db}
 }
 
 func (u userRepository) GetUser(id uint64) (*models.User, error) {
