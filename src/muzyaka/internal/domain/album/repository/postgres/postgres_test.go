@@ -10,6 +10,7 @@ import (
 	"src/internal/domain/album/repository"
 	"src/internal/lib/testhelpers"
 	"src/internal/models"
+	"src/internal/models/dao"
 	"testing"
 )
 
@@ -18,6 +19,7 @@ type AlbumRepoTestSuite struct {
 	pgContainer *testhelpers.PostgresContainer
 	repository  repository.AlbumRepository
 	ctx         context.Context
+	db          *gorm.DB
 }
 
 func (suite *AlbumRepoTestSuite) SetupSuite() {
@@ -39,6 +41,8 @@ func (suite *AlbumRepoTestSuite) SetupSuite() {
 
 	repository := NewAlbumRepository(db)
 	suite.repository = repository
+
+	suite.db = db
 }
 
 func (suite *AlbumRepoTestSuite) TearDownSuite() {
@@ -58,19 +62,19 @@ func (suite *AlbumRepoTestSuite) TestAddAlbumWithTracks() {
 	}
 
 	tracks := []*models.Track{
-		&models.Track{
+		{
 			Id:     0,
 			Source: "TestSrc1",
 			Name:   "TestName1",
 			Genre:  "test",
 		},
-		&models.Track{
+		{
 			Id:     0,
 			Source: "TestSrc2",
 			Name:   "TestName2",
 			Genre:  "test",
 		},
-		&models.Track{
+		{
 			Id:     0,
 			Source: "TestSrc3",
 			Name:   "TestName3",
@@ -87,6 +91,25 @@ func (suite *AlbumRepoTestSuite) TestAddAlbumWithTracks() {
 	assert.NotNil(t, getAl)
 
 	assert.Equal(t, getAl, album)
+
+	tracksFromPg, err := suite.repository.GetAllTracksForAlbum(id)
+	assert.Equal(t, len(tracksFromPg), len(tracks))
+	assert.NoError(t, err)
+
+	err = suite.repository.DeleteAlbum(id)
+	assert.NoError(t, err)
+
+	tracksFromPg, err = suite.repository.GetAllTracksForAlbum(id)
+	assert.Equal(t, len(tracksFromPg), 0)
+	assert.NoError(t, err)
+
+	//var g dao.Genre
+	//tx := suite.db.Find(&g, "name = test")
+
+	var rels []*dao.AlbumTrack
+	tx := suite.db.Find(&rels, "album_id = ?", id)
+	assert.NoError(t, tx.Error)
+	assert.Equal(t, len(rels), 0)
 }
 
 //	func (suite *AlbumRepoTestSuite) TestGetCustomerByEmail() {

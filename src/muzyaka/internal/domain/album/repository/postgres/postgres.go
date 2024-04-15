@@ -124,11 +124,14 @@ func (ar *albumRepository) DeleteAlbum(id uint64) error {
 			}
 
 			if err := ar.db.Create(&dao.Outbox{
-				ID:      0,
-				EventId: eventID,
-				TrackId: v.TrackId,
-				Type:    dao.TypeDelete,
-				Sent:    false,
+				ID:         0,
+				EventId:    eventID,
+				TrackId:    v.TrackId,
+				Source:     "",
+				Name:       "",
+				GenreRefer: 0,
+				Type:       dao.TypeDelete,
+				Sent:       false,
 			}).Error; err != nil {
 				return err
 			}
