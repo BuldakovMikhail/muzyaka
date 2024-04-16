@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS merch(
 );
 
 CREATE TABLE IF NOT EXISTS merch_photos(
-                                           photo_src VARCHAR(254) NOT NULL,
-                                           merch_id INT NOT NULL REFERENCES merch(id) ON DELETE CASCADE,
-                                           PRIMARY KEY (photo_src, merch_id)
+    photo_src VARCHAR(254) NOT NULL,
+    merch_id INT NOT NULL REFERENCES merch(id) ON DELETE CASCADE,
+    PRIMARY KEY (photo_src, merch_id)
 );
 
 CREATE TABLE IF NOT EXISTS musicians(
