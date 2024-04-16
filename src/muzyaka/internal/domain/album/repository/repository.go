@@ -13,5 +13,3 @@ type AlbumRepository interface {
 	DeleteTrackFromAlbum(albumId uint64, trackId uint64) error
 	GetAllTracksForAlbum(albumId uint64) ([]*models.Track, error)
 }
-
-// TODO: Есть проблема, что альбом может быть без треков, подумать как ее решить.

@@ -3,6 +3,7 @@ package postgres
 import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"slices"
 	"src/internal/models"
 	"src/internal/models/dao"
 )
@@ -32,16 +33,35 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 	pgMerch := dao.ToPostgresMerch(merch)
 	pgMerchPhotos := dao.ToPostgresMerchPhotos(merch)
 
-	// TODO: instead of delete and add. Make smart check for needed updates
+	var existingFiles []*dao.MerchPhotos
+	tx := m.db.Limit(dao.MaxLimit).Find(&existingFiles, "merch_id = ?", pgMerch.ID)
+	if tx.Error != nil {
+		return errors.Wrap(tx.Error, "database error (table merch)")
+	}
+
+	var filesToDelete []*dao.MerchPhotos
+	var filesToAdd []*dao.MerchPhotos
+
+	for _, v := range pgMerchPhotos {
+		if !slices.Contains(existingFiles, v) {
+			filesToAdd = append(filesToAdd, v)
+		}
+	}
+
+	for _, v := range existingFiles {
+		if !slices.Contains(pgMerchPhotos, v) {
+			filesToDelete = append(filesToDelete, v)
+		}
+	}
 
 	err := m.db.Transaction(func(tx *gorm.DB) error {
 		if err := m.db.Omit("id").Updates(pgMerch).Error; err != nil {
 			return err
 		}
-		if err := m.db.Delete(&dao.MerchPhotos{}, "merch_id = ?", pgMerch.ID).Error; err != nil {
+		if err := m.db.Delete(&filesToDelete).Error; err != nil {
 			return err
 		}
-		if err := m.db.Create(pgMerchPhotos).Error; err != nil {
+		if err := m.db.Create(&filesToAdd).Error; err != nil {
 			return err
 		}
 		return nil
