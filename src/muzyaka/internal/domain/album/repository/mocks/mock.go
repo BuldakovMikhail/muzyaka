@@ -35,7 +35,7 @@ func (m *MockAlbumRepository) EXPECT() *MockAlbumRepositoryMockRecorder {
 }
 
 // AddAlbumWithTracks mocks base method.
-func (m *MockAlbumRepository) AddAlbumWithTracks(album *models.Album, tracks []*models.Track) (uint64, error) {
+func (m *MockAlbumRepository) AddAlbumWithTracks(album *models.Album, tracks []*models.TrackMeta) (uint64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddAlbumWithTracks", album, tracks)
 	ret0, _ := ret[0].(uint64)
@@ -50,7 +50,7 @@ func (mr *MockAlbumRepositoryMockRecorder) AddAlbumWithTracks(album, tracks inte
 }
 
 // AddTrackToAlbum mocks base method.
-func (m *MockAlbumRepository) AddTrackToAlbum(albumId uint64, track *models.Track) (uint64, error) {
+func (m *MockAlbumRepository) AddTrackToAlbum(albumId uint64, track *models.TrackMeta) (uint64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddTrackToAlbum", albumId, track)
 	ret0, _ := ret[0].(uint64)
@@ -79,17 +79,17 @@ func (mr *MockAlbumRepositoryMockRecorder) DeleteAlbum(id interface{}) *gomock.C
 }
 
 // DeleteTrackFromAlbum mocks base method.
-func (m *MockAlbumRepository) DeleteTrackFromAlbum(albumId, trackId uint64) error {
+func (m *MockAlbumRepository) DeleteTrackFromAlbum(albumId uint64, track *models.TrackMeta) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteTrackFromAlbum", albumId, trackId)
+	ret := m.ctrl.Call(m, "DeleteTrackFromAlbum", albumId, track)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteTrackFromAlbum indicates an expected call of DeleteTrackFromAlbum.
-func (mr *MockAlbumRepositoryMockRecorder) DeleteTrackFromAlbum(albumId, trackId interface{}) *gomock.Call {
+func (mr *MockAlbumRepositoryMockRecorder) DeleteTrackFromAlbum(albumId, track interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrackFromAlbum", reflect.TypeOf((*MockAlbumRepository)(nil).DeleteTrackFromAlbum), albumId, trackId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrackFromAlbum", reflect.TypeOf((*MockAlbumRepository)(nil).DeleteTrackFromAlbum), albumId, track)
 }
 
 // GetAlbum mocks base method.
@@ -108,10 +108,10 @@ func (mr *MockAlbumRepositoryMockRecorder) GetAlbum(id interface{}) *gomock.Call
 }
 
 // GetAllTracksForAlbum mocks base method.
-func (m *MockAlbumRepository) GetAllTracksForAlbum(albumId uint64) ([]*models.Track, error) {
+func (m *MockAlbumRepository) GetAllTracksForAlbum(albumId uint64) ([]*models.TrackMeta, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllTracksForAlbum", albumId)
-	ret0, _ := ret[0].([]*models.Track)
+	ret0, _ := ret[0].([]*models.TrackMeta)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

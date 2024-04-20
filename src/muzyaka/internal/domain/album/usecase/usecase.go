@@ -9,19 +9,20 @@ import (
 type AlbumUseCase interface {
 	GetAlbum(id uint64) (*models.Album, error)
 	UpdateAlbum(album *models.Album) error
-	AddAlbumWithTracks(album *models.Album, tracks []*models.Track) (uint64, error)
+	AddAlbumWithTracks(album *models.Album, tracks []*models.TrackObject) (uint64, error)
 	DeleteAlbum(id uint64) error
-	AddTrack(album_id uint64, track *models.Track) (uint64, error)
-	DeleteTrack(album_id uint64, track_id uint64) error
-	GetAllTracks(album_id uint64) ([]*models.Track, error)
+	AddTrack(albumId uint64, track *models.TrackObject) (uint64, error)
+	DeleteTrack(albumId uint64, track *models.TrackMeta) error
+	GetAllTracks(albumId uint64) ([]*models.TrackMeta, error)
 }
 
 type usecase struct {
-	albumRep repository.AlbumRepository
+	albumRep   repository.AlbumRepository
+	storageRep repository.TrackStorage
 }
 
-func NewAlbumUseCase(albumRepository repository.AlbumRepository) AlbumUseCase {
-	return &usecase{albumRep: albumRepository}
+func NewAlbumUseCase(albumRepository repository.AlbumRepository, storage repository.TrackStorage) AlbumUseCase {
+	return &usecase{albumRep: albumRepository, storageRep: storage}
 }
 
 func (u *usecase) GetAlbum(id uint64) (*models.Album, error) {
@@ -44,8 +45,18 @@ func (u *usecase) UpdateAlbum(album *models.Album) error {
 	return nil
 }
 
-func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.Track) (uint64, error) {
-	id, err := u.albumRep.AddAlbumWithTracks(album, tracks)
+func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.TrackObject) (uint64, error) {
+	var tracksMeta []*models.TrackMeta
+	for _, v := range tracks {
+		err := u.storageRep.UploadObject(v)
+		if err != nil {
+			return 0, errors.Wrap(err, "album.usecase.AddAlbum error while add")
+		}
+
+		tracksMeta = append(tracksMeta, v.ExtractMeta())
+	}
+
+	id, err := u.albumRep.AddAlbumWithTracks(album, tracksMeta)
 
 	if err != nil {
 		return 0, errors.Wrap(err, "album.usecase.AddAlbum error while add")
@@ -55,17 +66,33 @@ func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.Track
 }
 
 func (u *usecase) DeleteAlbum(id uint64) error {
-	err := u.albumRep.DeleteAlbum(id)
-
+	tracks, err := u.albumRep.GetAllTracksForAlbum(id)
 	if err != nil {
 		return errors.Wrap(err, "album.usecase.DeleteAlbum error while delete")
+	}
+
+	err = u.albumRep.DeleteAlbum(id)
+	if err != nil {
+		return errors.Wrap(err, "album.usecase.DeleteAlbum error while delete")
+	}
+
+	for _, v := range tracks {
+		err = u.storageRep.DeleteObject(v)
+		if err != nil {
+			return errors.Wrap(err, "album.usecase.AddAlbum error while add")
+		}
 	}
 
 	return nil
 }
 
-func (u *usecase) AddTrack(album_id uint64, track *models.Track) (uint64, error) {
-	id, err := u.albumRep.AddTrackToAlbum(album_id, track)
+func (u *usecase) AddTrack(albumId uint64, track *models.TrackObject) (uint64, error) {
+	err := u.storageRep.UploadObject(track)
+	if err != nil {
+		return 0, errors.Wrap(err, "album.usecase.AddAlbum error while add")
+	}
+
+	id, err := u.albumRep.AddTrackToAlbum(albumId, track.ExtractMeta())
 	if err != nil {
 		return 0, errors.Wrap(err, "album.usecase.AddTrack error while add")
 	}
@@ -73,17 +100,29 @@ func (u *usecase) AddTrack(album_id uint64, track *models.Track) (uint64, error)
 	return id, nil
 }
 
-func (u *usecase) DeleteTrack(album_id uint64, track_id uint64) error {
-	err := u.albumRep.DeleteTrackFromAlbum(album_id, track_id)
+func (u *usecase) DeleteTrack(album_id uint64, track *models.TrackMeta) error {
+
+	err := u.albumRep.DeleteTrackFromAlbum(album_id, track)
 	if err != nil {
 		return errors.Wrap(err, "album.usecase.DeleteTrack error while delete")
+	}
+
+	err = u.storageRep.DeleteObject(track)
+	if err != nil {
+		return errors.Wrap(err, "album.usecase.DeleteTrack error while add")
 	}
 
 	return nil
 }
 
-func (u *usecase) GetAllTracks(albumId uint64) ([]*models.Track, error) {
+// TODO: разделить на данные и метаданные, через другой сервис могу извлекать данные.
+// Грузить в принципе можно и тут
+// Есть сервис терков, можно возвращать байтики из него
+// Модель могу засплитить спокойно.
+
+func (u *usecase) GetAllTracks(albumId uint64) ([]*models.TrackMeta, error) {
 	tracks, err := u.albumRep.GetAllTracksForAlbum(albumId)
+
 	if err != nil {
 		return nil, errors.Wrap(err, "album.usecase.GetAllTracks error while get")
 	}

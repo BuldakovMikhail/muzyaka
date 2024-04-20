@@ -11,19 +11,19 @@ func (Genre) TableName() string {
 	return "genres"
 }
 
-type Track struct {
+type TrackMeta struct {
 	ID         uint64 `gorm:"column:id"`
 	Source     string `gorm:"column:source"`
 	Name       string `gorm:"column:name"`
 	GenreRefer uint64 `gorm:"column:genre"`
 }
 
-func (Track) TableName() string {
+func (TrackMeta) TableName() string {
 	return "tracks"
 }
 
-func ToPostgresTrack(e *models.Track, genreRefer uint64) *Track {
-	return &Track{
+func ToPostgresTrack(e *models.TrackMeta, genreRefer uint64) *TrackMeta {
+	return &TrackMeta{
 		ID:         e.Id,
 		Source:     e.Source,
 		Name:       e.Name,
@@ -31,8 +31,8 @@ func ToPostgresTrack(e *models.Track, genreRefer uint64) *Track {
 	}
 }
 
-func ToModelTrack(track *Track, genre *Genre) *models.Track {
-	return &models.Track{
+func ToModelTrack(track *TrackMeta, genre *Genre) *models.TrackMeta {
+	return &models.TrackMeta{
 		Id:     track.ID,
 		Source: track.Source,
 		Name:   track.Name,

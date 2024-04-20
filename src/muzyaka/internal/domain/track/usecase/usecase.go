@@ -7,8 +7,8 @@ import (
 )
 
 type TrackUseCase interface {
-	UpdatedTrack(track *models.Track) error
-	GetTrack(id uint64) (*models.Track, error)
+	UpdatedTrack(track *models.TrackMeta) error
+	GetTrack(id uint64) (*models.TrackMeta, error)
 }
 
 type usecase struct {
@@ -19,7 +19,7 @@ func NewTrackUseCase(rep repository.TrackRepository) TrackUseCase {
 	return &usecase{trackRep: rep}
 }
 
-func (u *usecase) GetTrack(id uint64) (*models.Track, error) {
+func (u *usecase) GetTrack(id uint64) (*models.TrackMeta, error) {
 	res, err := u.trackRep.GetTrack(id)
 
 	if err != nil {
@@ -29,7 +29,7 @@ func (u *usecase) GetTrack(id uint64) (*models.Track, error) {
 	return res, nil
 }
 
-func (u *usecase) UpdatedTrack(track *models.Track) error {
+func (u *usecase) UpdatedTrack(track *models.TrackMeta) error {
 	err := u.trackRep.UpdateTrack(track)
 
 	if err != nil {

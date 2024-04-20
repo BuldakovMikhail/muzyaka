@@ -6,6 +6,7 @@ import (
 	"src/internal/models"
 )
 
+// TODO: add method to get all tracks from playlist
 type PlaylistUseCase interface {
 	UpdatedPlaylist(playlist *models.Playlist) error
 	AddPlaylist(playlist *models.Playlist) (uint64, error)

@@ -8,7 +8,7 @@ import (
 )
 
 type RecSysUseCase interface {
-	GetSameTracks(id uint64) ([]*models.Track, error)
+	GetSameTracks(id uint64) ([]*models.TrackMeta, error)
 }
 
 type usecase struct {
@@ -23,13 +23,13 @@ func NewRecSysUseCase(recs remote.RecSysProvider, repo repository.TrackRepositor
 	}
 }
 
-func (u *usecase) GetSameTracks(id uint64) ([]*models.Track, error) {
+func (u *usecase) GetSameTracks(id uint64) ([]*models.TrackMeta, error) {
 	trackIds, err := u.recsProvider.GetRecs(id)
 	if err != nil {
 		return nil, errors.Wrap(err, "recsys.usecase.GetSameTracks error while GetRecs call")
 	}
 
-	var tracks []*models.Track
+	var tracks []*models.TrackMeta
 
 	for _, v := range trackIds {
 		track, err := u.trackRep.GetTrack(v)

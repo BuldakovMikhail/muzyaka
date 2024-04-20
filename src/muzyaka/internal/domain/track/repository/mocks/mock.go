@@ -35,10 +35,10 @@ func (m *MockTrackRepository) EXPECT() *MockTrackRepositoryMockRecorder {
 }
 
 // GetTrack mocks base method.
-func (m *MockTrackRepository) GetTrack(id uint64) (*models.Track, error) {
+func (m *MockTrackRepository) GetTrack(id uint64) (*models.TrackMeta, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTrack", id)
-	ret0, _ := ret[0].(*models.Track)
+	ret0, _ := ret[0].(*models.TrackMeta)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -50,7 +50,7 @@ func (mr *MockTrackRepositoryMockRecorder) GetTrack(id interface{}) *gomock.Call
 }
 
 // UpdateTrack mocks base method.
-func (m *MockTrackRepository) UpdateTrack(track *models.Track) error {
+func (m *MockTrackRepository) UpdateTrack(track *models.TrackMeta) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateTrack", track)
 	ret0, _ := ret[0].(error)

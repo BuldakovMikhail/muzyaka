@@ -39,8 +39,6 @@ func (op *OutboxProducer) ProduceMessages() error {
 		}
 
 		for _, v := range events {
-			// TODO: Нужны ли разделения по топикам? Может ли привести к ошибкам когда сообщения не в том порядке?
-
 			saramaMsgs = append(saramaMsgs, &sarama.ProducerMessage{
 				Topic: kafka.DefaultTopic,
 				Value: sarama.StringEncoder(

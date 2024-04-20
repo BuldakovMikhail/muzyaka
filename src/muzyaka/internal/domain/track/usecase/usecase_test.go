@@ -10,36 +10,36 @@ import (
 )
 
 func TestUsecase_UpdatedTrack(t *testing.T) {
-	type mock func(r *mock_repository.MockTrackRepository, track *models.Track)
+	type mock func(r *mock_repository.MockTrackRepository, track *models.TrackMeta)
 
 	testTable := []struct {
 		name        string
-		inputTrack  *models.Track
+		inputTrack  *models.TrackMeta
 		mock        mock
 		expectedErr error
 	}{
 		{
 			name: "Usual test",
-			inputTrack: &models.Track{
+			inputTrack: &models.TrackMeta{
 				Id:     1,
-				Name:   "Updated Track Name",
+				Name:   "Updated TrackMeta Name",
 				Source: "updated_source.mp3",
 				Genre:  "Pop",
 			},
-			mock: func(r *mock_repository.MockTrackRepository, track *models.Track) {
+			mock: func(r *mock_repository.MockTrackRepository, track *models.TrackMeta) {
 				r.EXPECT().UpdateTrack(track).Return(nil)
 			},
 			expectedErr: nil,
 		},
 		{
 			name: "Repo fail test",
-			inputTrack: &models.Track{
+			inputTrack: &models.TrackMeta{
 				Id:     2,
-				Name:   "Invalid Track",
+				Name:   "Invalid TrackMeta",
 				Source: "invalid_source.mp3",
 				Genre:  "Rock",
 			},
-			mock: func(r *mock_repository.MockTrackRepository, track *models.Track) {
+			mock: func(r *mock_repository.MockTrackRepository, track *models.TrackMeta) {
 				r.EXPECT().UpdateTrack(track).Return(errors.New("error in repo"))
 			},
 			expectedErr: errors.Wrap(errors.New("error in repo"), "track.usecase.UpdatedTrack error while update"),
@@ -73,31 +73,31 @@ func TestUsecase_GetTrack(t *testing.T) {
 		name          string
 		id            uint64
 		mock          mock
-		expectedTrack *models.Track
+		expectedTrack *models.TrackMeta
 		expectedErr   error
 	}{
 		{
 			name: "Usual test",
 			id:   1,
 			mock: func(r *mock_repository.MockTrackRepository, id uint64) {
-				expectedTrack := &models.Track{
+				expectedTrack := &models.TrackMeta{
 					Id:     1,
-					Name:   "Test Track",
+					Name:   "Test TrackMeta",
 					Source: "test_source.mp3",
 					Genre:  "Pop",
 				}
 				r.EXPECT().GetTrack(id).Return(expectedTrack, nil)
 			},
-			expectedTrack: &models.Track{
+			expectedTrack: &models.TrackMeta{
 				Id:     1,
-				Name:   "Test Track",
+				Name:   "Test TrackMeta",
 				Source: "test_source.mp3",
 				Genre:  "Pop",
 			},
 			expectedErr: nil,
 		},
 		{
-			name: "Track not found test",
+			name: "TrackMeta not found test",
 			id:   2,
 			mock: func(r *mock_repository.MockTrackRepository, id uint64) {
 				r.EXPECT().GetTrack(id).Return(nil, errors.New("track not found"))

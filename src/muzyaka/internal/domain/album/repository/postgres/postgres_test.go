@@ -61,7 +61,7 @@ func (suite *AlbumRepoTestSuite) TestAddAlbumWithTracks() {
 		Type:  "LP",
 	}
 
-	tracks := []*models.Track{
+	tracks := []*models.TrackMeta{
 		{
 			Id:     0,
 			Source: "TestSrc1",

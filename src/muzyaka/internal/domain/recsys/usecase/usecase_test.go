@@ -17,7 +17,7 @@ func TestRecSysUseCase_GetSameTracks(t *testing.T) {
 		name           string
 		id             uint64
 		mock           mock
-		expectedTracks []*models.Track
+		expectedTracks []*models.TrackMeta
 		expectedErr    error
 	}{
 		{
@@ -26,18 +26,18 @@ func TestRecSysUseCase_GetSameTracks(t *testing.T) {
 			mock: func(r *mock_remote.MockRecSysProvider, r2 *mock_repository.MockTrackRepository, id uint64) {
 				r.EXPECT().GetRecs(id).Return([]uint64{1, 2, 3}, nil)
 
-				track1 := &models.Track{Id: 1, Name: "Track 1"}
-				track2 := &models.Track{Id: 2, Name: "Track 2"}
-				track3 := &models.Track{Id: 3, Name: "Track 3"}
+				track1 := &models.TrackMeta{Id: 1, Name: "TrackMeta 1"}
+				track2 := &models.TrackMeta{Id: 2, Name: "TrackMeta 2"}
+				track3 := &models.TrackMeta{Id: 3, Name: "TrackMeta 3"}
 
 				r2.EXPECT().GetTrack(uint64(1)).Return(track1, nil)
 				r2.EXPECT().GetTrack(uint64(2)).Return(track2, nil)
 				r2.EXPECT().GetTrack(uint64(3)).Return(track3, nil)
 			},
-			expectedTracks: []*models.Track{
-				{Id: 1, Name: "Track 1"},
-				{Id: 2, Name: "Track 2"},
-				{Id: 3, Name: "Track 3"},
+			expectedTracks: []*models.TrackMeta{
+				{Id: 1, Name: "TrackMeta 1"},
+				{Id: 2, Name: "TrackMeta 2"},
+				{Id: 3, Name: "TrackMeta 3"},
 			},
 			expectedErr: nil,
 		},
@@ -56,8 +56,8 @@ func TestRecSysUseCase_GetSameTracks(t *testing.T) {
 			mock: func(r *mock_remote.MockRecSysProvider, r2 *mock_repository.MockTrackRepository, id uint64) {
 				r.EXPECT().GetRecs(id).Return([]uint64{1, 2, 3}, nil)
 
-				track1 := &models.Track{Id: 1, Name: "Track 1"}
-				track2 := &models.Track{Id: 2, Name: "Track 2"}
+				track1 := &models.TrackMeta{Id: 1, Name: "TrackMeta 1"}
+				track2 := &models.TrackMeta{Id: 2, Name: "TrackMeta 2"}
 
 				r2.EXPECT().GetTrack(uint64(1)).Return(track1, nil)
 				r2.EXPECT().GetTrack(uint64(2)).Return(track2, nil)

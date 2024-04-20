@@ -12,8 +12,8 @@ type trackRepository struct {
 	db *gorm.DB
 }
 
-func (t trackRepository) GetTrack(id uint64) (*models.Track, error) {
-	var track dao.Track
+func (t trackRepository) GetTrack(id uint64) (*models.TrackMeta, error) {
+	var track dao.TrackMeta
 
 	tx := t.db.Where("id = ?", id).Take(&track)
 	if tx.Error != nil {
@@ -33,7 +33,7 @@ func (t trackRepository) GetTrack(id uint64) (*models.Track, error) {
 	return dao.ToModelTrack(&track, &genre), nil
 }
 
-func (t trackRepository) UpdateTrack(track *models.Track) error {
+func (t trackRepository) UpdateTrack(track *models.TrackMeta) error {
 	var pgGenre dao.Genre
 	tx := t.db.Where("name = ?", track.Genre).Take(&pgGenre)
 
