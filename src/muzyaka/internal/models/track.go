@@ -10,7 +10,7 @@ type TrackMeta struct {
 type TrackObject struct {
 	TrackMeta
 	Payload     []byte
-	PayloadSize uint64
+	PayloadSize int64
 }
 
 func (t *TrackObject) ExtractMeta() *TrackMeta {
