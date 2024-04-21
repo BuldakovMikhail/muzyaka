@@ -5,26 +5,16 @@ import (
 	minio2 "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"log"
-	repository2 "src/internal/domain/track/repository"
 	"src/internal/lib/testhelpers"
 	"src/internal/models"
 	"testing"
 )
 
-type TrackStorageTestSuite struct {
-	suite.Suite
-	minioContainer testhelpers.Container
-	storage        repository2.TrackStorage
-	ctx            context.Context
-	client         *minio2.Client
-}
+func TestRepo_TrackStorageAdd(t *testing.T) {
+	ctx := context.Background()
 
-func (suite *TrackStorageTestSuite) SetupSuite() {
-	suite.ctx = context.Background()
-
-	container, err := testhelpers.Start(suite.ctx, testhelpers.Options{
+	minioContainer, err := testhelpers.Start(ctx, testhelpers.Options{
 		ImageTag:     "RELEASE.2024-01-16T16-07-38Z",
 		RootUser:     "3846587325",
 		RootPassword: "te782tcb7tr3va7brkwev7awst",
@@ -33,34 +23,23 @@ func (suite *TrackStorageTestSuite) SetupSuite() {
 		log.Fatalf("failed to start container: %s", err)
 	}
 
-	suite.minioContainer = container
+	defer minioContainer.Terminate(ctx)
 
-	minioURI := container.ConnectionURI()
-	minioClient, err := minio2.New(minioURI, &minio2.Options{
-		Creds:  credentials.NewStaticV4(container.RootUser, container.RootPassword, ""),
+	minioURI := minioContainer.ConnectionURI()
+	client, err := minio2.New(minioURI, &minio2.Options{
+		Creds:  credentials.NewStaticV4(minioContainer.RootUser, minioContainer.RootPassword, ""),
 		Secure: false,
 	})
 	if err != nil {
 		log.Fatalf("failed to start container: %s", err)
 	}
-	suite.client = minioClient
 
-	storage := NewTrackStorage(minioClient)
+	storage := NewTrackStorage(client)
 
-	suite.storage = storage
-
-	err = suite.client.MakeBucket(suite.ctx, TrackBucket, minio2.MakeBucketOptions{})
+	err = client.MakeBucket(ctx, TrackBucket, minio2.MakeBucketOptions{})
 	if err != nil {
 		log.Fatalf("failed to create bucket: %s", err)
 	}
-}
-
-func (suite *TrackStorageTestSuite) TearDownSuite() {
-	suite.minioContainer.Terminate(suite.ctx)
-}
-
-func (suite *TrackStorageTestSuite) TestTrackStorage() {
-	t := suite.T()
 
 	track := models.TrackObject{
 		TrackMeta: models.TrackMeta{
@@ -73,32 +52,131 @@ func (suite *TrackStorageTestSuite) TestTrackStorage() {
 		PayloadSize: 3,
 	}
 
-	err := suite.storage.UploadObject(&track)
+	err = storage.UploadObject(&track)
 	assert.NoError(t, err)
 
-	trackLoaded, err := suite.storage.LoadObject(track.ExtractMeta())
+	trackLoaded, err := storage.LoadObject(track.ExtractMeta())
+	assert.NoError(t, err)
+
+	assert.Equal(t, trackLoaded.PayloadSize, track.PayloadSize)
+	assert.Equal(t, trackLoaded.Payload, track.Payload)
+}
+
+func TestRepo_TrackStorageUpdate(t *testing.T) {
+	ctx := context.Background()
+
+	minioContainer, err := testhelpers.Start(ctx, testhelpers.Options{
+		ImageTag:     "RELEASE.2024-01-16T16-07-38Z",
+		RootUser:     "3846587325",
+		RootPassword: "te782tcb7tr3va7brkwev7awst",
+	})
+	if err != nil {
+		log.Fatalf("failed to start container: %s", err)
+	}
+
+	defer minioContainer.Terminate(ctx)
+
+	minioURI := minioContainer.ConnectionURI()
+	client, err := minio2.New(minioURI, &minio2.Options{
+		Creds:  credentials.NewStaticV4(minioContainer.RootUser, minioContainer.RootPassword, ""),
+		Secure: false,
+	})
+	if err != nil {
+		log.Fatalf("failed to start container: %s", err)
+	}
+
+	storage := NewTrackStorage(client)
+
+	err = client.MakeBucket(ctx, TrackBucket, minio2.MakeBucketOptions{})
+	if err != nil {
+		log.Fatalf("failed to create bucket: %s", err)
+	}
+
+	track := models.TrackObject{
+		TrackMeta: models.TrackMeta{
+			Id:     0,
+			Source: "aboba",
+			Name:   "aboba",
+			Genre:  "aboba",
+		},
+		Payload:     []byte{1, 2, 3},
+		PayloadSize: 3,
+	}
+
+	err = storage.UploadObject(&track)
+	assert.NoError(t, err)
+
+	trackLoaded, err := storage.LoadObject(track.ExtractMeta())
 	assert.NoError(t, err)
 
 	assert.Equal(t, trackLoaded.PayloadSize, track.PayloadSize)
 	assert.Equal(t, trackLoaded.Payload, track.Payload)
 
 	track.Payload = []byte{4, 5, 6}
-	err = suite.storage.UploadObject(&track)
+	err = storage.UploadObject(&track)
 	assert.NoError(t, err)
 
-	trackLoaded, err = suite.storage.LoadObject(track.ExtractMeta())
+	trackLoaded, err = storage.LoadObject(track.ExtractMeta())
 	assert.NoError(t, err)
 
 	assert.Equal(t, trackLoaded.PayloadSize, track.PayloadSize)
 	assert.Equal(t, trackLoaded.Payload, track.Payload)
 
-	err = suite.storage.DeleteObject(track.ExtractMeta())
-	assert.NoError(t, err)
-
-	trackLoaded, err = suite.storage.LoadObject(track.ExtractMeta())
-	assert.Error(t, err)
 }
 
-func TestTrackStorageTestSuite(t *testing.T) {
-	suite.Run(t, new(TrackStorageTestSuite))
+func TestRepo_TrackStorageDelete(t *testing.T) {
+	ctx := context.Background()
+
+	minioContainer, err := testhelpers.Start(ctx, testhelpers.Options{
+		ImageTag:     "RELEASE.2024-01-16T16-07-38Z",
+		RootUser:     "3846587325",
+		RootPassword: "te782tcb7tr3va7brkwev7awst",
+	})
+	if err != nil {
+		log.Fatalf("failed to start container: %s", err)
+	}
+
+	defer minioContainer.Terminate(ctx)
+
+	minioURI := minioContainer.ConnectionURI()
+	client, err := minio2.New(minioURI, &minio2.Options{
+		Creds:  credentials.NewStaticV4(minioContainer.RootUser, minioContainer.RootPassword, ""),
+		Secure: false,
+	})
+	if err != nil {
+		log.Fatalf("failed to start container: %s", err)
+	}
+
+	storage := NewTrackStorage(client)
+
+	err = client.MakeBucket(ctx, TrackBucket, minio2.MakeBucketOptions{})
+	if err != nil {
+		log.Fatalf("failed to create bucket: %s", err)
+	}
+
+	track := models.TrackObject{
+		TrackMeta: models.TrackMeta{
+			Id:     0,
+			Source: "aboba",
+			Name:   "aboba",
+			Genre:  "aboba",
+		},
+		Payload:     []byte{1, 2, 3},
+		PayloadSize: 3,
+	}
+
+	err = storage.UploadObject(&track)
+	assert.NoError(t, err)
+
+	trackLoaded, err := storage.LoadObject(track.ExtractMeta())
+	assert.NoError(t, err)
+
+	assert.Equal(t, trackLoaded.PayloadSize, track.PayloadSize)
+	assert.Equal(t, trackLoaded.Payload, track.Payload)
+
+	err = storage.DeleteObject(track.ExtractMeta())
+	assert.NoError(t, err)
+
+	trackLoaded, err = storage.LoadObject(track.ExtractMeta())
+	assert.Error(t, err)
 }

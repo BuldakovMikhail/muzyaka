@@ -3,34 +3,29 @@ package postgres
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
-	"src/internal/domain/album/repository"
 	"src/internal/lib/testhelpers"
 	"src/internal/models"
 	"src/internal/models/dao"
 	"testing"
 )
 
-type AlbumRepoTestSuite struct {
-	suite.Suite
-	pgContainer *testhelpers.PostgresContainer
-	repository  repository.AlbumRepository
-	ctx         context.Context
-	db          *gorm.DB
-}
-
-func (suite *AlbumRepoTestSuite) SetupSuite() {
-	suite.ctx = context.Background()
-	pgContainer, err := testhelpers.CreatePostgresContainer(suite.ctx)
+func TestRepo_AddAlbumWithTracks(t *testing.T) {
+	ctx := context.Background()
+	pgContainer, err := testhelpers.CreatePostgresContainer(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
-	suite.pgContainer = pgContainer
 
-	db, err := gorm.Open(postgres.Open(suite.pgContainer.ConnectionString), &gorm.Config{})
+	defer func() {
+		if err := pgContainer.Terminate(ctx); err != nil {
+			log.Fatalf("error terminating postgres container: %s", err)
+		}
+	}()
+
+	db, err := gorm.Open(postgres.Open(pgContainer.ConnectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,19 +35,6 @@ func (suite *AlbumRepoTestSuite) SetupSuite() {
 	}
 
 	repository := NewAlbumRepository(db)
-	suite.repository = repository
-
-	suite.db = db
-}
-
-func (suite *AlbumRepoTestSuite) TearDownSuite() {
-	if err := suite.pgContainer.Terminate(suite.ctx); err != nil {
-		log.Fatalf("error terminating postgres container: %s", err)
-	}
-}
-
-func (suite *AlbumRepoTestSuite) TestAddAlbumWithTracks() {
-	t := suite.T()
 
 	album := &models.Album{
 		Id:    0,
@@ -82,33 +64,29 @@ func (suite *AlbumRepoTestSuite) TestAddAlbumWithTracks() {
 		},
 	}
 
-	id, err := suite.repository.AddAlbumWithTracks(album, tracks)
+	id, err := repository.AddAlbumWithTracks(album, tracks)
 	assert.NoError(t, err)
 	assert.NotNil(t, id)
 
-	getAl, err := suite.repository.GetAlbum(id)
+	getAl, err := repository.GetAlbum(id)
 	assert.NoError(t, err)
 	assert.NotNil(t, getAl)
 
 	assert.Equal(t, getAl, album)
 
-	tracksFromPg, err := suite.repository.GetAllTracksForAlbum(id)
+	tracksFromPg, err := repository.GetAllTracksForAlbum(id)
 	assert.Equal(t, len(tracksFromPg), len(tracks))
 	assert.NoError(t, err)
 
-	err = suite.repository.DeleteAlbum(id)
+	err = repository.DeleteAlbum(id)
 	assert.NoError(t, err)
 
-	tracksFromPg, err = suite.repository.GetAllTracksForAlbum(id)
+	tracksFromPg, err = repository.GetAllTracksForAlbum(id)
 	assert.Equal(t, len(tracksFromPg), 0)
 	assert.NoError(t, err)
 
 	var rels []*dao.AlbumTrack
-	tx := suite.db.Find(&rels, "album_id = ?", id)
+	tx := db.Find(&rels, "album_id = ?", id)
 	assert.NoError(t, tx.Error)
 	assert.Equal(t, len(rels), 0)
-}
-
-func TestAlbumRepoTestSuite(t *testing.T) {
-	suite.Run(t, new(AlbumRepoTestSuite))
 }
