@@ -4,7 +4,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
-	mock_repository2 "src/internal/domain/album/repository/mocks"
 	mock_repository "src/internal/domain/track/repository/mocks"
 	"src/internal/models"
 	"testing"
@@ -12,7 +11,7 @@ import (
 
 func TestUsecase_UpdatedTrack(t *testing.T) {
 	type mock func(r *mock_repository.MockTrackRepository, track models.TrackObject)
-	type storageMock func(r *mock_repository2.MockTrackStorage, track models.TrackObject)
+	type storageMock func(r *mock_repository.MockTrackStorage, track models.TrackObject)
 
 	testTable := []struct {
 		name        string
@@ -36,7 +35,7 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 			mock: func(r *mock_repository.MockTrackRepository, track models.TrackObject) {
 				r.EXPECT().UpdateTrack(track.ExtractMeta()).Return(nil)
 			},
-			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackObject) {
+			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackObject) {
 				r.EXPECT().UploadObject(&track).Return(nil)
 			},
 			expectedErr: nil,
@@ -56,7 +55,7 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 			mock: func(r *mock_repository.MockTrackRepository, track models.TrackObject) {
 				r.EXPECT().UpdateTrack(track.ExtractMeta()).Return(errors.New("error in repo"))
 			},
-			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackObject) {
+			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackObject) {
 				r.EXPECT().UploadObject(&track).Return(nil)
 			},
 			expectedErr: errors.Wrap(errors.New("error in repo"), "track.usecase.UpdatedTrack error while update"),
@@ -71,7 +70,7 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 			repo := mock_repository.NewMockTrackRepository(ctrl)
 			tc.mock(repo, tc.inputTrack)
 
-			storage := mock_repository2.NewMockTrackStorage(ctrl)
+			storage := mock_repository.NewMockTrackStorage(ctrl)
 			tc.storageMock(storage, tc.inputTrack)
 
 			u := NewTrackUseCase(repo, storage)
@@ -88,7 +87,7 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 
 func TestUsecase_GetTrack(t *testing.T) {
 	type mock func(r *mock_repository.MockTrackRepository, id uint64, track models.TrackMeta)
-	type storageMock func(r *mock_repository2.MockTrackStorage, track models.TrackMeta)
+	type storageMock func(r *mock_repository.MockTrackStorage, track models.TrackMeta)
 
 	testTable := []struct {
 		name          string
@@ -105,7 +104,7 @@ func TestUsecase_GetTrack(t *testing.T) {
 			mock: func(r *mock_repository.MockTrackRepository, id uint64, track models.TrackMeta) {
 				r.EXPECT().GetTrack(id).Return(&track, nil)
 			},
-			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackMeta) {
+			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackMeta) {
 				ret := &models.TrackObject{
 					TrackMeta: models.TrackMeta{
 						Id:     1,
@@ -143,7 +142,7 @@ func TestUsecase_GetTrack(t *testing.T) {
 			mock: func(r *mock_repository.MockTrackRepository, id uint64, track models.TrackMeta) {
 				r.EXPECT().GetTrack(id).Return(nil, errors.New("track not found"))
 			},
-			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackMeta) {
+			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackMeta) {
 
 			},
 			expectedTrack: nil,
@@ -159,7 +158,7 @@ func TestUsecase_GetTrack(t *testing.T) {
 			repo := mock_repository.NewMockTrackRepository(ctrl)
 			tc.mock(repo, tc.id, tc.returnTrack)
 
-			storage := mock_repository2.NewMockTrackStorage(ctrl)
+			storage := mock_repository.NewMockTrackStorage(ctrl)
 			tc.storageMock(storage, tc.returnTrack)
 
 			u := NewTrackUseCase(repo, storage)

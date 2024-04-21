@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	mock_repository "src/internal/domain/album/repository/mocks"
+	mock_repository2 "src/internal/domain/track/repository/mocks"
 	"src/internal/models"
 	"testing"
 )
@@ -58,7 +59,7 @@ func TestUsecase_GetAlbum(t *testing.T) {
 			repo := mock_repository.NewMockAlbumRepository(c)
 			tc.mock(repo, tc.input)
 
-			storage := mock_repository.NewMockTrackStorage(c)
+			storage := mock_repository2.NewMockTrackStorage(c)
 
 			s := NewAlbumUseCase(repo, storage)
 			res, err := s.GetAlbum(tc.input)
@@ -119,7 +120,7 @@ func TestUsecase_UpdateAlbum(t *testing.T) {
 			repo := mock_repository.NewMockAlbumRepository(c)
 			tc.mock(repo, tc.input)
 
-			storage := mock_repository.NewMockTrackStorage(c)
+			storage := mock_repository2.NewMockTrackStorage(c)
 
 			s := NewAlbumUseCase(repo, storage)
 			err := s.UpdateAlbum(&tc.input)
@@ -135,7 +136,7 @@ func TestUsecase_UpdateAlbum(t *testing.T) {
 
 func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 	type mock func(r *mock_repository.MockAlbumRepository, album *models.Album, tracks []*models.TrackObject)
-	type storageMock func(r *mock_repository.MockTrackStorage, tracks []*models.TrackObject)
+	type storageMock func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackObject)
 
 	testTable := []struct {
 		name        string
@@ -175,7 +176,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 
 				r.EXPECT().AddAlbumWithTracks(album, metaTracks).Return(uint64(1), nil)
 			},
-			storageMock: func(r *mock_repository.MockTrackStorage, tracks []*models.TrackObject) {
+			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackObject) {
 				for _, v := range tracks {
 					r.EXPECT().UploadObject(v).Return(nil)
 				}
@@ -213,7 +214,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 
 				r.EXPECT().AddAlbumWithTracks(album, metaTracks).Return(uint64(0), errors.New("error in repo"))
 			},
-			storageMock: func(r *mock_repository.MockTrackStorage, tracks []*models.TrackObject) {
+			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackObject) {
 				for _, v := range tracks {
 					r.EXPECT().UploadObject(v).Return(nil)
 				}
@@ -231,7 +232,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 			repo := mock_repository.NewMockAlbumRepository(ctrl)
 			tc.mock(repo, tc.inputAlbum, tc.inputTracks)
 
-			storage := mock_repository.NewMockTrackStorage(ctrl)
+			storage := mock_repository2.NewMockTrackStorage(ctrl)
 			tc.storageMock(storage, tc.inputTracks)
 
 			u := NewAlbumUseCase(repo, storage)
@@ -251,7 +252,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 
 func TestUsecase_DeleteAlbum(t *testing.T) {
 	type mock func(r *mock_repository.MockAlbumRepository, id uint64, tracks []*models.TrackMeta)
-	type storageMock func(r *mock_repository.MockTrackStorage, tracks []*models.TrackMeta)
+	type storageMock func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackMeta)
 
 	testTable := []struct {
 		name        string
@@ -282,7 +283,7 @@ func TestUsecase_DeleteAlbum(t *testing.T) {
 				r.EXPECT().GetAllTracksForAlbum(id).Return(tracks, nil)
 				r.EXPECT().DeleteAlbum(id).Return(nil)
 			},
-			storageMock: func(r *mock_repository.MockTrackStorage, tracks []*models.TrackMeta) {
+			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackMeta) {
 				for _, v := range tracks {
 					r.EXPECT().DeleteObject(v).Return(nil)
 				}
@@ -310,7 +311,7 @@ func TestUsecase_DeleteAlbum(t *testing.T) {
 				r.EXPECT().GetAllTracksForAlbum(id).Return(tracks, nil)
 				r.EXPECT().DeleteAlbum(id).Return(errors.New("error in repo"))
 			},
-			storageMock: func(r *mock_repository.MockTrackStorage, tracks []*models.TrackMeta) {
+			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackMeta) {
 
 			},
 			expectedErr: errors.Wrap(errors.New("error in repo"), "album.usecase.DeleteAlbum error while delete"),
@@ -326,7 +327,7 @@ func TestUsecase_DeleteAlbum(t *testing.T) {
 			repo := mock_repository.NewMockAlbumRepository(c)
 			tc.mock(repo, tc.input, tc.tracks)
 
-			storage := mock_repository.NewMockTrackStorage(c)
+			storage := mock_repository2.NewMockTrackStorage(c)
 			tc.storageMock(storage, tc.tracks)
 
 			s := NewAlbumUseCase(repo, storage)
@@ -343,7 +344,7 @@ func TestUsecase_DeleteAlbum(t *testing.T) {
 
 func TestUsecase_AddTrack(t *testing.T) {
 	type mock func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackObject)
-	type storageMock func(r *mock_repository.MockTrackStorage, tracks models.TrackObject)
+	type storageMock func(r *mock_repository2.MockTrackStorage, tracks models.TrackObject)
 
 	testTable := []struct {
 		name          string
@@ -369,7 +370,7 @@ func TestUsecase_AddTrack(t *testing.T) {
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackObject) {
 				r.EXPECT().AddTrackToAlbum(album_id, track.ExtractMeta()).Return(uint64(10), nil)
 			},
-			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackObject) {
+			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackObject) {
 				r.EXPECT().UploadObject(&track).Return(nil)
 			},
 			expectedValue: uint64(10),
@@ -387,7 +388,7 @@ func TestUsecase_AddTrack(t *testing.T) {
 				Payload:     []byte{1, 2, 3},
 				PayloadSize: 3,
 			},
-			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackObject) {
+			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackObject) {
 				r.EXPECT().UploadObject(&track).Return(nil)
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackObject) {
@@ -406,7 +407,7 @@ func TestUsecase_AddTrack(t *testing.T) {
 
 			repo := mock_repository.NewMockAlbumRepository(c)
 			tc.mock(repo, tc.inputId, tc.inputTrack)
-			storage := mock_repository.NewMockTrackStorage(c)
+			storage := mock_repository2.NewMockTrackStorage(c)
 			tc.storageMock(storage, tc.inputTrack)
 
 			s := NewAlbumUseCase(repo, storage)
@@ -424,7 +425,7 @@ func TestUsecase_AddTrack(t *testing.T) {
 
 func TestUsecase_DeleteTrack(t *testing.T) {
 	type mock func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackMeta)
-	type storageMock func(r *mock_repository.MockTrackStorage, tracks models.TrackMeta)
+	type storageMock func(r *mock_repository2.MockTrackStorage, tracks models.TrackMeta)
 
 	testTable := []struct {
 		name        string
@@ -446,7 +447,7 @@ func TestUsecase_DeleteTrack(t *testing.T) {
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackMeta) {
 				r.EXPECT().DeleteTrackFromAlbum(album_id, &track).Return(nil)
 			},
-			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackMeta) {
+			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackMeta) {
 				r.EXPECT().DeleteObject(&track).Return(nil)
 			},
 			expectedErr: nil,
@@ -463,7 +464,7 @@ func TestUsecase_DeleteTrack(t *testing.T) {
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackMeta) {
 				r.EXPECT().DeleteTrackFromAlbum(album_id, &track).Return(errors.New("error in repo"))
 			},
-			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackMeta) {
+			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackMeta) {
 			},
 			expectedErr: errors.Wrap(
 				errors.New("error in repo"),
@@ -480,7 +481,7 @@ func TestUsecase_DeleteTrack(t *testing.T) {
 			repo := mock_repository.NewMockAlbumRepository(ctrl)
 			tc.mock(repo, tc.albumId, tc.inputTrack)
 
-			storage := mock_repository.NewMockTrackStorage(ctrl)
+			storage := mock_repository2.NewMockTrackStorage(ctrl)
 			tc.storageMock(storage, tc.inputTrack)
 
 			s := NewAlbumUseCase(repo, storage)
@@ -548,7 +549,7 @@ func TestUsecase_GetAllTracks(t *testing.T) {
 			repo := mock_repository.NewMockAlbumRepository(ctrl)
 			tc.mock(repo, tc.albumId, tc.expectedTracks)
 
-			storage := mock_repository.NewMockTrackStorage(ctrl)
+			storage := mock_repository2.NewMockTrackStorage(ctrl)
 
 			u := NewAlbumUseCase(repo, storage)
 			tracks, err := u.GetAllTracks(tc.albumId)

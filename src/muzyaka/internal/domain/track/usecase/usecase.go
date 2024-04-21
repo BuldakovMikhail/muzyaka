@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"github.com/pkg/errors"
-	repository2 "src/internal/domain/album/repository"
 	"src/internal/domain/track/repository"
 	"src/internal/models"
 )
@@ -14,10 +13,10 @@ type TrackUseCase interface {
 
 type usecase struct {
 	trackRep   repository.TrackRepository
-	storageRep repository2.TrackStorage
+	storageRep repository.TrackStorage
 }
 
-func NewTrackUseCase(rep repository.TrackRepository, storage repository2.TrackStorage) TrackUseCase {
+func NewTrackUseCase(rep repository.TrackRepository, storage repository.TrackStorage) TrackUseCase {
 	return &usecase{trackRep: rep, storageRep: storage}
 }
 

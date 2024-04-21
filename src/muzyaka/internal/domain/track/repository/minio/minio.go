@@ -6,11 +6,11 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/pkg/errors"
 	"io"
-	"src/internal/domain/album/repository"
+	"src/internal/domain/track/repository"
 	"src/internal/models"
 )
 
-const TrackBucket = "track_bucket"
+const TrackBucket = "track-bucket"
 
 type trackStorage struct {
 	client *minio.Client

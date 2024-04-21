@@ -3,6 +3,7 @@ package usecase
 import (
 	"github.com/pkg/errors"
 	"src/internal/domain/album/repository"
+	repository2 "src/internal/domain/track/repository"
 	"src/internal/models"
 )
 
@@ -18,10 +19,10 @@ type AlbumUseCase interface {
 
 type usecase struct {
 	albumRep   repository.AlbumRepository
-	storageRep repository.TrackStorage
+	storageRep repository2.TrackStorage
 }
 
-func NewAlbumUseCase(albumRepository repository.AlbumRepository, storage repository.TrackStorage) AlbumUseCase {
+func NewAlbumUseCase(albumRepository repository.AlbumRepository, storage repository2.TrackStorage) AlbumUseCase {
 	return &usecase{albumRep: albumRepository, storageRep: storage}
 }
 
