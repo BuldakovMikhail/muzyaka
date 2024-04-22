@@ -2,6 +2,7 @@ package remote
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/pkg/errors"
 	"net/http"
 )
@@ -24,7 +25,7 @@ func New(addr string) RecSysProvider {
 }
 
 func (r recsysRemote) GetRecs(id uint64) ([]uint64, error) {
-	resp, err := http.Get(r.addr)
+	resp, err := http.Get(fmt.Sprintf("%s/%d", r.addr, id))
 	if err != nil {
 		return nil, errors.Wrap(err, "recsys.remote.GetRecs error")
 	}

@@ -1,0 +1,40 @@
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import NearestNeighbors
+import pandas as pd
+
+
+from database import IDataBase
+
+class Model:
+    def __init__(self, db:IDataBase, n_neighbors:int):
+        self.nn = None
+        self.scaled_data = None
+        self.embedding_indexes = None
+        self.df = None
+        self.scaler = None
+        self.db = db
+        self.n_neighbors = n_neighbors
+        self.update_recs()
+
+    def get_recs(self, id:int, num:int):
+        res = self.nn.kneighbors(
+            self.scaled_data[self.df["id"] == id],
+            num
+        )
+
+        return self.df.iloc[res[1][0]]["id"]
+
+    def update_recs(self):
+        self.scaler = StandardScaler()
+        self.df = self.db.convert_to_dataframe()
+        self.embedding_indexes = [f"X{i}" for i in range(len(self.df['embedding'][0]))]
+
+        self.df[self.embedding_indexes] = pd.DataFrame(
+            self.df['embedding'].tolist(),
+            index=self.df.index
+        )
+
+        self.scaled_data = self.scaler.fit_transform(self.df[self.embedding_indexes])
+        self.nn = NearestNeighbors(n_neighbors=self.n_neighbors)
+        self.nn.fit(self.scaled_data)
+
