@@ -346,3 +346,69 @@ func TestUsecase_DeleteTrack(t *testing.T) {
 		})
 	}
 }
+
+func TestUsecase_GetAllTracks(t *testing.T) {
+	type mock func(r *mock_repository.MockPlaylistRepository, playlistId uint64, tracks []*models.TrackMeta)
+
+	testTable := []struct {
+		name           string
+		playlistId     uint64
+		mock           mock
+		expectedTracks []*models.TrackMeta
+		expectedErr    error
+	}{
+		{
+			name:       "Usual test",
+			playlistId: 1,
+			mock: func(r *mock_repository.MockPlaylistRepository, playlistId uint64, tracks []*models.TrackMeta) {
+				r.EXPECT().GetAllTracks(playlistId).Return(tracks, nil)
+			},
+			expectedTracks: []*models.TrackMeta{
+				{
+					Id:     1,
+					Source: "track_src_1",
+					Name:   "track_name_1",
+					Genre:  "track_genre_1",
+				},
+				{
+					Id:     2,
+					Source: "track_src_2",
+					Name:   "track_name_2",
+					Genre:  "track_genre_2",
+				},
+			},
+			expectedErr: nil,
+		},
+		{
+			name:       "Repo fail test",
+			playlistId: 2,
+			mock: func(r *mock_repository.MockPlaylistRepository, playlistId uint64, tracks []*models.TrackMeta) {
+				r.EXPECT().GetAllTracks(playlistId).Return(nil, errors.New("error in repo"))
+			},
+			expectedTracks: nil,
+			expectedErr: errors.Wrap(errors.New("error in repo"),
+				"playlist.usecase.GetAllTracks error while get"),
+		},
+	}
+
+	for _, tc := range testTable {
+		t.Run(tc.name, func(t *testing.T) {
+			// Init Dependencies
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			repo := mock_repository.NewMockPlaylistRepository(ctrl)
+			tc.mock(repo, tc.playlistId, tc.expectedTracks)
+
+			u := NewPlaylistUseCase(repo)
+			tracks, err := u.GetAllTracks(tc.playlistId)
+
+			assert.Equal(t, tc.expectedTracks, tracks)
+			if tc.expectedErr == nil {
+				assert.Nil(t, err)
+			} else {
+				assert.Equal(t, err.Error(), tc.expectedErr.Error())
+			}
+		})
+	}
+}

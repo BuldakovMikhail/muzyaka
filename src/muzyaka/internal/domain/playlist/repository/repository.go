@@ -11,4 +11,5 @@ type PlaylistRepository interface {
 	DeletePlaylist(id uint64) error
 	AddTrackToPlaylist(playlistId uint64, trackId uint64) error
 	DeleteTrackFromPlaylist(playlistId uint64, trackId uint64) error
+	GetAllTracks(playlistId uint64) ([]*models.TrackMeta, error)
 }

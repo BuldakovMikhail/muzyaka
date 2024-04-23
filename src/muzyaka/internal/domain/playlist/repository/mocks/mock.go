@@ -91,6 +91,21 @@ func (mr *MockPlaylistRepositoryMockRecorder) DeleteTrackFromPlaylist(playlistId
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrackFromPlaylist", reflect.TypeOf((*MockPlaylistRepository)(nil).DeleteTrackFromPlaylist), playlistId, trackId)
 }
 
+// GetAllTracks mocks base method.
+func (m *MockPlaylistRepository) GetAllTracks(playlistId uint64) ([]*models.TrackMeta, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllTracks", playlistId)
+	ret0, _ := ret[0].([]*models.TrackMeta)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllTracks indicates an expected call of GetAllTracks.
+func (mr *MockPlaylistRepositoryMockRecorder) GetAllTracks(playlistId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllTracks", reflect.TypeOf((*MockPlaylistRepository)(nil).GetAllTracks), playlistId)
+}
+
 // GetPlaylist mocks base method.
 func (m *MockPlaylistRepository) GetPlaylist(id uint64) (*models.Playlist, error) {
 	m.ctrl.T.Helper()

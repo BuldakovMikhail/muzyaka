@@ -116,11 +116,6 @@ func (u *usecase) DeleteTrack(album_id uint64, track *models.TrackMeta) error {
 	return nil
 }
 
-// TODO: разделить на данные и метаданные, через другой сервис могу извлекать данные.
-// Грузить в принципе можно и тут
-// Есть сервис терков, можно возвращать байтики из него
-// Модель могу засплитить спокойно.
-
 func (u *usecase) GetAllTracks(albumId uint64) ([]*models.TrackMeta, error) {
 	tracks, err := u.albumRep.GetAllTracksForAlbum(albumId)
 

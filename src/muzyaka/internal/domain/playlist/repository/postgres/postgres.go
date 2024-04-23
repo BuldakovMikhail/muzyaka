@@ -11,6 +11,45 @@ type playlistRepository struct {
 	db *gorm.DB
 }
 
+func (p playlistRepository) GetAllTracks(playlistId uint64) ([]*models.TrackMeta, error) {
+	var relations []*dao.PlaylistTrack
+	tx := p.db.Limit(dao.MaxLimit).Find(&relations, "playlist_id = ?", playlistId)
+	if tx.Error != nil {
+		return nil, errors.Wrap(tx.Error, "database error (table playlist)")
+	}
+
+	var ids []uint64
+	for _, v := range relations {
+		ids = append(ids, v.TrackId)
+	}
+
+	var pgTracks []*dao.TrackMeta
+	tx = p.db.Find(&pgTracks, ids)
+	if tx.Error != nil {
+		return nil, errors.Wrap(tx.Error, "database error (table playlist)")
+	}
+
+	var tracks []*models.TrackMeta
+	for _, v := range pgTracks {
+		var pgGenre dao.Genre
+		tx := p.db.Where("id = ?", v.GenreRefer).Take(&pgGenre)
+		if tx.Error != nil {
+			return nil, errors.Wrap(tx.Error, "database error (table playlist)")
+		}
+
+		track := &models.TrackMeta{
+			Id:     v.ID,
+			Source: v.Source,
+			Name:   v.Name,
+			Genre:  pgGenre.Name,
+		}
+
+		tracks = append(tracks, track)
+	}
+
+	return tracks, nil
+}
+
 func (p playlistRepository) GetPlaylist(id uint64) (*models.Playlist, error) {
 	var playlist dao.Playlist
 

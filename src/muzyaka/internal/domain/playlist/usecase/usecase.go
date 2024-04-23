@@ -6,7 +6,6 @@ import (
 	"src/internal/models"
 )
 
-// TODO: add method to get all tracks from playlist
 type PlaylistUseCase interface {
 	UpdatedPlaylist(playlist *models.Playlist) error
 	AddPlaylist(playlist *models.Playlist) (uint64, error)
@@ -14,6 +13,7 @@ type PlaylistUseCase interface {
 	GetPlaylist(id uint64) (*models.Playlist, error)
 	AddTrack(playlistId uint64, trackId uint64) error
 	DeleteTrack(playlistId uint64, trackId uint64) error
+	GetAllTracks(playlistId uint64) ([]*models.TrackMeta, error)
 }
 
 type usecase struct {
@@ -22,6 +22,16 @@ type usecase struct {
 
 func NewPlaylistUseCase(rep repository.PlaylistRepository) PlaylistUseCase {
 	return &usecase{playlistRep: rep}
+}
+
+func (u *usecase) GetAllTracks(playlistId uint64) ([]*models.TrackMeta, error) {
+	tracks, err := u.playlistRep.GetAllTracks(playlistId)
+
+	if err != nil {
+		return nil, errors.Wrap(err, "playlist.usecase.GetAllTracks error while get")
+	}
+
+	return tracks, err
 }
 
 func (u *usecase) UpdatedPlaylist(playlist *models.Playlist) error {
