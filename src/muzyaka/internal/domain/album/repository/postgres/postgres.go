@@ -151,6 +151,8 @@ func (ar *albumRepository) DeleteAlbum(id uint64) error {
 	return nil
 }
 
+// TODO: добавить в название метода, что он пишет в transactional outbox
+
 func (ar *albumRepository) AddTrackToAlbum(albumId uint64, track *models.TrackMeta) (uint64, error) {
 	var pgGenre dao.Genre
 	tx := ar.db.Where("name = ?", track.Genre).Take(&pgGenre)

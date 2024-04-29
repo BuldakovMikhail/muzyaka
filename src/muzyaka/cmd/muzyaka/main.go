@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"src/internal/config"
-	"src/internal/cron/outbox_producer"
+	"src/internal/cron/outbox_producer/usecase"
 	"src/internal/kafka"
 	"src/internal/lib/logger/handlers/slogpretty"
 )
@@ -30,7 +30,7 @@ func main() {
 	}
 	//
 	pr, err := kafka.NewProducer("localhost:29092")
-	op := outbox_producer.New(pr, db, "outbox")
+	op := usecase.New(pr, db, "outbox")
 	op.ProduceMessages()
 	//
 	//rep := postgres.NewAlbumRepository(db)
