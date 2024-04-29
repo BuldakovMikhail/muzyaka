@@ -7,7 +7,7 @@ import (
 	"os"
 	"src/internal/config"
 	"src/internal/cron/outbox_producer/usecase"
-	"src/internal/kafka"
+	"src/internal/lib/kafka"
 	"src/internal/lib/logger/handlers/slogpretty"
 )
 

@@ -5,7 +5,7 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/pkg/errors"
 	"src/internal/cron/outbox_producer/repository"
-	"src/internal/kafka"
+	"src/internal/lib/kafka"
 	"src/internal/models/dao"
 )
 
