@@ -1,4 +1,4 @@
-package remote
+package recsys_client
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-//go:generate mockgen -source=remote.go -destination=mocks/mock.go
+//go:generate mockgen -source=recsys_client.go -destination=mocks/mock.go
 type RecSysProvider interface {
 	GetRecs(id uint64) ([]uint64, error)
 }
@@ -24,18 +24,18 @@ func New(addr string) RecSysProvider {
 	return &recsysRemote{addr: addr}
 }
 
-// TODO: rename recommendation system client
+// TODO: rename recommendation system recsys_client
 
 func (r recsysRemote) GetRecs(id uint64) ([]uint64, error) {
 	resp, err := http.Get(fmt.Sprintf("%s/%d", r.addr, id))
 	if err != nil {
-		return nil, errors.Wrap(err, "recsys.remote.GetRecs error")
+		return nil, errors.Wrap(err, "recsys.recsys_client.GetRecs error")
 	}
 	defer resp.Body.Close()
 
 	var respParsed Response
 	if err := json.NewDecoder(resp.Body).Decode(&respParsed); err != nil {
-		return nil, errors.Wrap(err, "recsys.remote.GetRecs error")
+		return nil, errors.Wrap(err, "recsys.recsys_client.GetRecs error")
 	}
 
 	return respParsed.Ids, nil

@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"github.com/pkg/errors"
-	"src/internal/domain/recsys/remote"
+	"src/internal/domain/recsys/recsys_client"
 	"src/internal/domain/track/repository"
 	"src/internal/models"
 )
@@ -12,11 +12,11 @@ type RecSysUseCase interface {
 }
 
 type usecase struct {
-	recsProvider remote.RecSysProvider
+	recsProvider recsys_client.RecSysProvider
 	trackRep     repository.TrackRepository
 }
 
-func NewRecSysUseCase(recs remote.RecSysProvider, repo repository.TrackRepository) RecSysUseCase {
+func NewRecSysUseCase(recs recsys_client.RecSysProvider, repo repository.TrackRepository) RecSysUseCase {
 	return &usecase{
 		recsProvider: recs,
 		trackRep:     repo,

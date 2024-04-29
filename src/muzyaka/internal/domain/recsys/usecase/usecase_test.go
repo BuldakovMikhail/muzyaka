@@ -4,7 +4,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
-	mock_remote "src/internal/domain/recsys/remote/mocks"
+	mock_remote "src/internal/domain/recsys/recsys_client/mocks"
 	mock_repository "src/internal/domain/track/repository/mocks"
 	"src/internal/models"
 	"testing"
