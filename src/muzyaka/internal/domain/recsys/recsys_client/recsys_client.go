@@ -24,8 +24,6 @@ func New(addr string) RecSysProvider {
 	return &recsysRemote{addr: addr}
 }
 
-// TODO: rename recommendation system recsys_client
-
 func (r recsysRemote) GetRecs(id uint64) ([]uint64, error) {
 	resp, err := http.Get(fmt.Sprintf("%s/%d", r.addr, id))
 	if err != nil {
