@@ -174,7 +174,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 					metaTracks = append(metaTracks, v.ExtractMeta())
 				}
 
-				r.EXPECT().AddAlbumWithTracks(album, metaTracks).Return(uint64(1), nil)
+				r.EXPECT().AddAlbumWithTracksOutbox(album, metaTracks).Return(uint64(1), nil)
 			},
 			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackObject) {
 				for _, v := range tracks {
@@ -212,7 +212,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 					metaTracks = append(metaTracks, v.ExtractMeta())
 				}
 
-				r.EXPECT().AddAlbumWithTracks(album, metaTracks).Return(uint64(0), errors.New("error in repo"))
+				r.EXPECT().AddAlbumWithTracksOutbox(album, metaTracks).Return(uint64(0), errors.New("error in repo"))
 			},
 			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackObject) {
 				for _, v := range tracks {
@@ -281,7 +281,7 @@ func TestUsecase_DeleteAlbum(t *testing.T) {
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, id uint64, tracks []*models.TrackMeta) {
 				r.EXPECT().GetAllTracksForAlbum(id).Return(tracks, nil)
-				r.EXPECT().DeleteAlbum(id).Return(nil)
+				r.EXPECT().DeleteAlbumOutbox(id).Return(nil)
 			},
 			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackMeta) {
 				for _, v := range tracks {
@@ -309,7 +309,7 @@ func TestUsecase_DeleteAlbum(t *testing.T) {
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, id uint64, tracks []*models.TrackMeta) {
 				r.EXPECT().GetAllTracksForAlbum(id).Return(tracks, nil)
-				r.EXPECT().DeleteAlbum(id).Return(errors.New("error in repo"))
+				r.EXPECT().DeleteAlbumOutbox(id).Return(errors.New("error in repo"))
 			},
 			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackMeta) {
 
@@ -368,7 +368,7 @@ func TestUsecase_AddTrack(t *testing.T) {
 				PayloadSize: 3,
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackObject) {
-				r.EXPECT().AddTrackToAlbum(album_id, track.ExtractMeta()).Return(uint64(10), nil)
+				r.EXPECT().AddTrackToAlbumOutbox(album_id, track.ExtractMeta()).Return(uint64(10), nil)
 			},
 			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackObject) {
 				r.EXPECT().UploadObject(&track).Return(nil)
@@ -392,7 +392,7 @@ func TestUsecase_AddTrack(t *testing.T) {
 				r.EXPECT().UploadObject(&track).Return(nil)
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackObject) {
-				r.EXPECT().AddTrackToAlbum(album_id, track.ExtractMeta()).Return(uint64(0), errors.New("error in repo"))
+				r.EXPECT().AddTrackToAlbumOutbox(album_id, track.ExtractMeta()).Return(uint64(0), errors.New("error in repo"))
 			},
 			expectedValue: uint64(0),
 			expectedErr:   errors.Wrap(errors.New("error in repo"), "album.usecase.AddTrack error while add"),
@@ -445,7 +445,7 @@ func TestUsecase_DeleteTrack(t *testing.T) {
 				Genre:  "test_genre",
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackMeta) {
-				r.EXPECT().DeleteTrackFromAlbum(album_id, &track).Return(nil)
+				r.EXPECT().DeleteTrackFromAlbumOutbox(album_id, &track).Return(nil)
 			},
 			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackMeta) {
 				r.EXPECT().DeleteObject(&track).Return(nil)
@@ -462,7 +462,7 @@ func TestUsecase_DeleteTrack(t *testing.T) {
 				Genre:  "test_genre",
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackMeta) {
-				r.EXPECT().DeleteTrackFromAlbum(album_id, &track).Return(errors.New("error in repo"))
+				r.EXPECT().DeleteTrackFromAlbumOutbox(album_id, &track).Return(errors.New("error in repo"))
 			},
 			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackMeta) {
 			},

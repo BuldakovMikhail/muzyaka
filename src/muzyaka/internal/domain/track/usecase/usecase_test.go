@@ -33,7 +33,7 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 				PayloadSize: 3,
 			},
 			mock: func(r *mock_repository.MockTrackRepository, track models.TrackObject) {
-				r.EXPECT().UpdateTrack(track.ExtractMeta()).Return(nil)
+				r.EXPECT().UpdateTrackOutbox(track.ExtractMeta()).Return(nil)
 			},
 			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackObject) {
 				r.EXPECT().UploadObject(&track).Return(nil)
@@ -53,7 +53,7 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 				PayloadSize: 3,
 			},
 			mock: func(r *mock_repository.MockTrackRepository, track models.TrackObject) {
-				r.EXPECT().UpdateTrack(track.ExtractMeta()).Return(errors.New("error in repo"))
+				r.EXPECT().UpdateTrackOutbox(track.ExtractMeta()).Return(errors.New("error in repo"))
 			},
 			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackObject) {
 				r.EXPECT().UploadObject(&track).Return(nil)
