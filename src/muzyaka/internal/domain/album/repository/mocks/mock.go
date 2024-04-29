@@ -34,62 +34,62 @@ func (m *MockAlbumRepository) EXPECT() *MockAlbumRepositoryMockRecorder {
 	return m.recorder
 }
 
-// AddAlbumWithTracks mocks base method.
-func (m *MockAlbumRepository) AddAlbumWithTracks(album *models.Album, tracks []*models.TrackMeta) (uint64, error) {
+// AddAlbumWithTracksOutbox mocks base method.
+func (m *MockAlbumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks []*models.TrackMeta) (uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddAlbumWithTracks", album, tracks)
+	ret := m.ctrl.Call(m, "AddAlbumWithTracksOutbox", album, tracks)
 	ret0, _ := ret[0].(uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// AddAlbumWithTracks indicates an expected call of AddAlbumWithTracks.
-func (mr *MockAlbumRepositoryMockRecorder) AddAlbumWithTracks(album, tracks interface{}) *gomock.Call {
+// AddAlbumWithTracksOutbox indicates an expected call of AddAlbumWithTracksOutbox.
+func (mr *MockAlbumRepositoryMockRecorder) AddAlbumWithTracksOutbox(album, tracks interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddAlbumWithTracks", reflect.TypeOf((*MockAlbumRepository)(nil).AddAlbumWithTracks), album, tracks)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddAlbumWithTracksOutbox", reflect.TypeOf((*MockAlbumRepository)(nil).AddAlbumWithTracksOutbox), album, tracks)
 }
 
-// AddTrackToAlbum mocks base method.
-func (m *MockAlbumRepository) AddTrackToAlbum(albumId uint64, track *models.TrackMeta) (uint64, error) {
+// AddTrackToAlbumOutbox mocks base method.
+func (m *MockAlbumRepository) AddTrackToAlbumOutbox(albumId uint64, track *models.TrackMeta) (uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddTrackToAlbum", albumId, track)
+	ret := m.ctrl.Call(m, "AddTrackToAlbumOutbox", albumId, track)
 	ret0, _ := ret[0].(uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// AddTrackToAlbum indicates an expected call of AddTrackToAlbum.
-func (mr *MockAlbumRepositoryMockRecorder) AddTrackToAlbum(albumId, track interface{}) *gomock.Call {
+// AddTrackToAlbumOutbox indicates an expected call of AddTrackToAlbumOutbox.
+func (mr *MockAlbumRepositoryMockRecorder) AddTrackToAlbumOutbox(albumId, track interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTrackToAlbum", reflect.TypeOf((*MockAlbumRepository)(nil).AddTrackToAlbum), albumId, track)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTrackToAlbumOutbox", reflect.TypeOf((*MockAlbumRepository)(nil).AddTrackToAlbumOutbox), albumId, track)
 }
 
-// DeleteAlbum mocks base method.
-func (m *MockAlbumRepository) DeleteAlbum(id uint64) error {
+// DeleteAlbumOutbox mocks base method.
+func (m *MockAlbumRepository) DeleteAlbumOutbox(id uint64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteAlbum", id)
+	ret := m.ctrl.Call(m, "DeleteAlbumOutbox", id)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteAlbum indicates an expected call of DeleteAlbum.
-func (mr *MockAlbumRepositoryMockRecorder) DeleteAlbum(id interface{}) *gomock.Call {
+// DeleteAlbumOutbox indicates an expected call of DeleteAlbumOutbox.
+func (mr *MockAlbumRepositoryMockRecorder) DeleteAlbumOutbox(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAlbum", reflect.TypeOf((*MockAlbumRepository)(nil).DeleteAlbum), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAlbumOutbox", reflect.TypeOf((*MockAlbumRepository)(nil).DeleteAlbumOutbox), id)
 }
 
-// DeleteTrackFromAlbum mocks base method.
-func (m *MockAlbumRepository) DeleteTrackFromAlbum(albumId uint64, track *models.TrackMeta) error {
+// DeleteTrackFromAlbumOutbox mocks base method.
+func (m *MockAlbumRepository) DeleteTrackFromAlbumOutbox(albumId uint64, track *models.TrackMeta) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteTrackFromAlbum", albumId, track)
+	ret := m.ctrl.Call(m, "DeleteTrackFromAlbumOutbox", albumId, track)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteTrackFromAlbum indicates an expected call of DeleteTrackFromAlbum.
-func (mr *MockAlbumRepositoryMockRecorder) DeleteTrackFromAlbum(albumId, track interface{}) *gomock.Call {
+// DeleteTrackFromAlbumOutbox indicates an expected call of DeleteTrackFromAlbumOutbox.
+func (mr *MockAlbumRepositoryMockRecorder) DeleteTrackFromAlbumOutbox(albumId, track interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrackFromAlbum", reflect.TypeOf((*MockAlbumRepository)(nil).DeleteTrackFromAlbum), albumId, track)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrackFromAlbumOutbox", reflect.TypeOf((*MockAlbumRepository)(nil).DeleteTrackFromAlbumOutbox), albumId, track)
 }
 
 // GetAlbum mocks base method.

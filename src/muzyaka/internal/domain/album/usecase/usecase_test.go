@@ -314,7 +314,7 @@ func TestUsecase_DeleteAlbum(t *testing.T) {
 			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackMeta) {
 
 			},
-			expectedErr: errors.Wrap(errors.New("error in repo"), "album.usecase.DeleteAlbum error while delete"),
+			expectedErr: errors.Wrap(errors.New("error in repo"), "album.usecase.DeleteAlbumOutbox error while delete"),
 		},
 	}
 

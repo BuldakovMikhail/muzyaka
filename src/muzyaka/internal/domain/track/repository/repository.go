@@ -6,5 +6,5 @@ import "src/internal/models"
 
 type TrackRepository interface {
 	GetTrack(id uint64) (*models.TrackMeta, error)
-	UpdateTrack(track *models.TrackMeta) error
+	UpdateTrackOutbox(track *models.TrackMeta) error
 }

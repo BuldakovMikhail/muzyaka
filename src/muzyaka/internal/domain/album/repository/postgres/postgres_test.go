@@ -64,7 +64,7 @@ func TestRepo_AddAlbumWithTracks(t *testing.T) {
 		},
 	}
 
-	id, err := repository.AddAlbumWithTracks(album, tracks)
+	id, err := repository.AddAlbumWithTracksOutbox(album, tracks)
 	assert.NoError(t, err)
 	assert.NotNil(t, id)
 
@@ -78,7 +78,7 @@ func TestRepo_AddAlbumWithTracks(t *testing.T) {
 	assert.Equal(t, len(tracksFromPg), len(tracks))
 	assert.NoError(t, err)
 
-	err = repository.DeleteAlbum(id)
+	err = repository.DeleteAlbumOutbox(id)
 	assert.NoError(t, err)
 
 	tracksFromPg, err = repository.GetAllTracksForAlbum(id)

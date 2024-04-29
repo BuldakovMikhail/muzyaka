@@ -40,7 +40,7 @@ func (u *usecase) UpdatedTrack(track *models.TrackObject) error {
 		return errors.Wrap(err, "track.usecase.UpdatedTrack error while update")
 	}
 
-	err = u.trackRep.UpdateTrack(track.ExtractMeta())
+	err = u.trackRep.UpdateTrackOutbox(track.ExtractMeta())
 	if err != nil {
 		return errors.Wrap(err, "track.usecase.UpdatedTrack error while update")
 	}

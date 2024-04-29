@@ -34,7 +34,7 @@ func main() {
 	op.ProduceMessages()
 	//
 	//rep := postgres.NewAlbumRepository(db)
-	//err = rep.DeleteAlbum(1)
+	//err = rep.DeleteAlbumOutbox(1)
 	//_, err = rep.AddAlbum(&models.Album{
 	//	Id:    0,
 	//	Name:  "Aboba2",
@@ -46,7 +46,7 @@ func main() {
 	//	logger.Error(err.Error())
 	//}
 
-	//_, err = rep.AddTrackToAlbum(1, &models.Track{
+	//_, err = rep.AddTrackToAlbumOutbox(1, &models.Track{
 	//	Id:         0,
 	//	Source:     "test",
 	//	Producers:  nil,

@@ -57,7 +57,7 @@ func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.Track
 		tracksMeta = append(tracksMeta, v.ExtractMeta())
 	}
 
-	id, err := u.albumRep.AddAlbumWithTracks(album, tracksMeta)
+	id, err := u.albumRep.AddAlbumWithTracksOutbox(album, tracksMeta)
 
 	if err != nil {
 		return 0, errors.Wrap(err, "album.usecase.AddAlbum error while add")
@@ -69,12 +69,12 @@ func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.Track
 func (u *usecase) DeleteAlbum(id uint64) error {
 	tracks, err := u.albumRep.GetAllTracksForAlbum(id)
 	if err != nil {
-		return errors.Wrap(err, "album.usecase.DeleteAlbum error while delete")
+		return errors.Wrap(err, "album.usecase.DeleteAlbumOutbox error while delete")
 	}
 
-	err = u.albumRep.DeleteAlbum(id)
+	err = u.albumRep.DeleteAlbumOutbox(id)
 	if err != nil {
-		return errors.Wrap(err, "album.usecase.DeleteAlbum error while delete")
+		return errors.Wrap(err, "album.usecase.DeleteAlbumOutbox error while delete")
 	}
 
 	for _, v := range tracks {
@@ -93,7 +93,7 @@ func (u *usecase) AddTrack(albumId uint64, track *models.TrackObject) (uint64, e
 		return 0, errors.Wrap(err, "album.usecase.AddAlbum error while add")
 	}
 
-	id, err := u.albumRep.AddTrackToAlbum(albumId, track.ExtractMeta())
+	id, err := u.albumRep.AddTrackToAlbumOutbox(albumId, track.ExtractMeta())
 	if err != nil {
 		return 0, errors.Wrap(err, "album.usecase.AddTrack error while add")
 	}
@@ -103,7 +103,7 @@ func (u *usecase) AddTrack(albumId uint64, track *models.TrackObject) (uint64, e
 
 func (u *usecase) DeleteTrack(album_id uint64, track *models.TrackMeta) error {
 
-	err := u.albumRep.DeleteTrackFromAlbum(album_id, track)
+	err := u.albumRep.DeleteTrackFromAlbumOutbox(album_id, track)
 	if err != nil {
 		return errors.Wrap(err, "album.usecase.DeleteTrack error while delete")
 	}

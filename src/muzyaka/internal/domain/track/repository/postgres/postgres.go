@@ -33,7 +33,7 @@ func (t trackRepository) GetTrack(id uint64) (*models.TrackMeta, error) {
 	return dao.ToModelTrack(&track, &genre), nil
 }
 
-func (t trackRepository) UpdateTrack(track *models.TrackMeta) error {
+func (t trackRepository) UpdateTrackOutbox(track *models.TrackMeta) error {
 	var pgGenre dao.Genre
 	tx := t.db.Where("name = ?", track.Genre).Take(&pgGenre)
 

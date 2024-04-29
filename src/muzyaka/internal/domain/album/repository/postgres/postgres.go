@@ -39,7 +39,7 @@ func (ar *albumRepository) UpdateAlbum(album *models.Album) error {
 	return nil
 }
 
-func (ar *albumRepository) AddAlbumWithTracks(album *models.Album, tracks []*models.TrackMeta) (uint64, error) {
+func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks []*models.TrackMeta) (uint64, error) {
 	pgAlbum := dao.ToPostgresAlbum(album)
 	var pgTracks []*dao.TrackMeta
 
@@ -105,7 +105,7 @@ func (ar *albumRepository) AddAlbumWithTracks(album *models.Album, tracks []*mod
 	return pgAlbum.ID, nil
 }
 
-func (ar *albumRepository) DeleteAlbum(id uint64) error {
+func (ar *albumRepository) DeleteAlbumOutbox(id uint64) error {
 
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
 		var relations []*dao.AlbumTrack
@@ -153,7 +153,7 @@ func (ar *albumRepository) DeleteAlbum(id uint64) error {
 
 // TODO: добавить в название метода, что он пишет в transactional outbox
 
-func (ar *albumRepository) AddTrackToAlbum(albumId uint64, track *models.TrackMeta) (uint64, error) {
+func (ar *albumRepository) AddTrackToAlbumOutbox(albumId uint64, track *models.TrackMeta) (uint64, error) {
 	var pgGenre dao.Genre
 	tx := ar.db.Where("name = ?", track.Genre).Take(&pgGenre)
 
@@ -204,7 +204,7 @@ func (ar *albumRepository) AddTrackToAlbum(albumId uint64, track *models.TrackMe
 	return pgTrack.ID, nil
 }
 
-func (ar *albumRepository) DeleteTrackFromAlbum(albumId uint64, track *models.TrackMeta) error {
+func (ar *albumRepository) DeleteTrackFromAlbumOutbox(albumId uint64, track *models.TrackMeta) error {
 	trackId := track.Id
 
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
