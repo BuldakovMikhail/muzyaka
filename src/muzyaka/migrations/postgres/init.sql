@@ -4,7 +4,7 @@ CREATE TYPE ROLE_TYPE AS ENUM ('user', 'musician', 'admin');
 CREATE TABLE IF NOT EXISTS albums (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    cover BYTEA,
+    cover_file BYTEA,
     type ALBUM_TYPE NOT NULL
 );
 
@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS merch(
 );
 
 CREATE TABLE IF NOT EXISTS merch_photos(
-    photo_src VARCHAR(254) NOT NULL,
-    merch_id INT NOT NULL REFERENCES merch(id) ON DELETE CASCADE,
-    PRIMARY KEY (photo_src, merch_id)
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    photo_file BYTEA,
+    merch_id INT NOT NULL REFERENCES merch(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS musicians(

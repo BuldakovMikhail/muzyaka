@@ -14,8 +14,9 @@ func (Merch) TableName() string {
 }
 
 type MerchPhotos struct {
-	MerchId   uint64 `gorm:"column:merch_id"`
-	PhotosSrc string `gorm:"column:photo_src"`
+	ID           uint64 `gorm:"column:id"`
+	MerchId      uint64 `gorm:"column:merch_id"`
+	PhotoPayload []byte `gorm:"column:photo_file"`
 }
 
 func (MerchPhotos) TableName() string {
@@ -38,8 +39,8 @@ func ToPostgresMerchPhotos(e *models.Merch) []*MerchPhotos {
 		merchPhotos = append(
 			merchPhotos,
 			&MerchPhotos{
-				MerchId:   e.Id,
-				PhotosSrc: v,
+				MerchId:      e.Id,
+				PhotoPayload: v,
 			},
 		)
 	}
@@ -48,10 +49,10 @@ func ToPostgresMerchPhotos(e *models.Merch) []*MerchPhotos {
 }
 
 func ToModelMerch(e *Merch, mp []*MerchPhotos) *models.Merch {
-	var photos []string
+	var photos [][]byte
 
 	for _, v := range mp {
-		photos = append(photos, v.PhotosSrc)
+		photos = append(photos, v.PhotoPayload)
 	}
 
 	return &models.Merch{

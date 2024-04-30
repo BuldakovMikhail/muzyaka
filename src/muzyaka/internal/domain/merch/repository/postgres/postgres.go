@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"bytes"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	repository2 "src/internal/domain/merch/repository"
@@ -49,7 +50,7 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 	for _, v := range pgMerchPhotos {
 		flag := false
 		for _, vi := range existingFiles {
-			if vi.PhotosSrc == v.PhotosSrc {
+			if bytes.Equal(vi.PhotoPayload, v.PhotoPayload) {
 				flag = true
 				break
 			}
@@ -63,7 +64,7 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 	for _, v := range existingFiles {
 		flag := false
 		for _, vi := range pgMerchPhotos {
-			if vi.PhotosSrc == v.PhotosSrc {
+			if bytes.Equal(vi.PhotoPayload, v.PhotoPayload) {
 				flag = true
 				break
 			}
@@ -80,7 +81,7 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 
 		for _, v := range filesToDelete {
 			if err := m.db.
-				Where("photo_src = ? AND merch_id = ?", v.PhotosSrc, v.MerchId).
+				Where("photo_file = ? AND merch_id = ?", v.PhotoPayload, v.MerchId).
 				Delete(&dao.MerchPhotos{}).Error; err != nil {
 				return err
 			}

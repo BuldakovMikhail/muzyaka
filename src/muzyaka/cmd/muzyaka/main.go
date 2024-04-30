@@ -38,7 +38,7 @@ func main() {
 	//_, err = rep.AddAlbum(&models.Album{
 	//	Id:    0,
 	//	Name:  "Aboba2",
-	//	Cover: "aboba2.org",
+	//	CoverFile: "aboba2.org",
 	//	Type:  "LP",
 	//})
 	//

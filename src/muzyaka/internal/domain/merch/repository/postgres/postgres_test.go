@@ -33,7 +33,7 @@ func TestRepo_PhotosChange(t *testing.T) {
 	merch := models.Merch{
 		Id:          0,
 		Name:        "test",
-		Photos:      []string{"test1", "test2", "test3"},
+		Photos:      [][]byte{[]byte("test1"), []byte("test2"), []byte("test3")},
 		Description: "test",
 		OrderUrl:    "test.com",
 	}
@@ -49,7 +49,7 @@ func TestRepo_PhotosChange(t *testing.T) {
 	assert.Subset(t, merch.Photos, getM.Photos)
 	assert.Subset(t, getM.Photos, merch.Photos)
 
-	merch.Photos = []string{"test1", "test2", "test3", "test4"}
+	merch.Photos = [][]byte{[]byte("test1"), []byte("test2"), []byte("test3"), []byte("test4")}
 	err = repository.UpdateMerch(&merch)
 	assert.NoError(t, err)
 
@@ -60,7 +60,7 @@ func TestRepo_PhotosChange(t *testing.T) {
 	assert.Subset(t, merch.Photos, getM.Photos)
 	assert.Subset(t, getM.Photos, merch.Photos)
 
-	merch.Photos = []string{"test1", "test3", "test5"}
+	merch.Photos = [][]byte{[]byte("test1"), []byte("test3"), []byte("test5")}
 	err = repository.UpdateMerch(&merch)
 	assert.NoError(t, err)
 
@@ -71,7 +71,7 @@ func TestRepo_PhotosChange(t *testing.T) {
 	assert.Subset(t, merch.Photos, getM.Photos)
 	assert.Subset(t, getM.Photos, merch.Photos)
 
-	merch.Photos = []string{"test6"}
+	merch.Photos = [][]byte{[]byte("test6")}
 	err = repository.UpdateMerch(&merch)
 	assert.NoError(t, err)
 

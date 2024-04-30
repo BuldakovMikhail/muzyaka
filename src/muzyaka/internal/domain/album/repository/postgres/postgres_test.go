@@ -37,10 +37,10 @@ func TestRepo_AddAlbumWithTracks(t *testing.T) {
 	repository := NewAlbumRepository(db)
 
 	album := &models.Album{
-		Id:    0,
-		Name:  "TestName",
-		Cover: []byte("TestCover"),
-		Type:  "LP",
+		Id:        0,
+		Name:      "TestName",
+		CoverFile: []byte("TestCover"),
+		Type:      "LP",
 	}
 
 	tracks := []*models.TrackMeta{

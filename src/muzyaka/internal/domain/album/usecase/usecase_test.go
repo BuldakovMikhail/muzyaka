@@ -25,17 +25,17 @@ func TestUsecase_GetAlbum(t *testing.T) {
 			input: uint64(1),
 			mock: func(r *mock_repository.MockAlbumRepository, id uint64) {
 				r.EXPECT().GetAlbum(id).Return(&models.Album{
-					Id:    1,
-					Name:  "test_name",
-					Cover: []byte("test_cover"),
-					Type:  "test_type",
+					Id:        1,
+					Name:      "test_name",
+					CoverFile: []byte("test_cover"),
+					Type:      "test_type",
 				}, nil)
 			},
 			expectedValue: &models.Album{
-				Id:    1,
-				Name:  "test_name",
-				Cover: []byte("test_cover"),
-				Type:  "test_type",
+				Id:        1,
+				Name:      "test_name",
+				CoverFile: []byte("test_cover"),
+				Type:      "test_type",
 			},
 			expectedErr: nil,
 		},
@@ -86,10 +86,10 @@ func TestUsecase_UpdateAlbum(t *testing.T) {
 		{
 			name: "Usual test",
 			input: models.Album{
-				Id:    1,
-				Name:  "test_name",
-				Cover: []byte("test_cover"),
-				Type:  "test_type",
+				Id:        1,
+				Name:      "test_name",
+				CoverFile: []byte("test_cover"),
+				Type:      "test_type",
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album models.Album) {
 				r.EXPECT().UpdateAlbum(&album).Return(nil)
@@ -99,10 +99,10 @@ func TestUsecase_UpdateAlbum(t *testing.T) {
 		{
 			name: "Fail in repo",
 			input: models.Album{
-				Id:    1,
-				Name:  "test_name",
-				Cover: []byte("test_cover"),
-				Type:  "test_type",
+				Id:        1,
+				Name:      "test_name",
+				CoverFile: []byte("test_cover"),
+				Type:      "test_type",
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album models.Album) {
 				r.EXPECT().UpdateAlbum(&album).Return(errors.New("error in repo"))
@@ -150,10 +150,10 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 		{
 			name: "Usual test",
 			inputAlbum: &models.Album{
-				Id:    1,
-				Name:  "Test Album",
-				Cover: []byte{1, 2, 3},
-				Type:  "LP",
+				Id:        1,
+				Name:      "Test Album",
+				CoverFile: []byte{1, 2, 3},
+				Type:      "LP",
 			},
 			inputTracks: []*models.TrackObject{
 				{
@@ -188,10 +188,10 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 		{
 			name: "Repo fail test",
 			inputAlbum: &models.Album{
-				Id:    0,
-				Name:  "Invalid Album",
-				Cover: []byte("Test Cover"),
-				Type:  "LP",
+				Id:        0,
+				Name:      "Invalid Album",
+				CoverFile: []byte("Test CoverFile"),
+				Type:      "LP",
 			},
 			inputTracks: []*models.TrackObject{
 				{
