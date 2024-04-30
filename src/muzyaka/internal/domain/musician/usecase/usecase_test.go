@@ -23,7 +23,7 @@ func TestUsecase_UpdateMusician(t *testing.T) {
 			inputMusician: &models.Musician{
 				Id:          1,
 				Name:        "Updated Musician",
-				Photos:      []string{"updated_photo.jpg"},
+				PhotoFiles:  [][]byte{[]byte("updated_photo.jpg")},
 				Description: "Updated Description of Musician",
 			},
 			mock: func(r *mock_repository.MockMusicianRepository, musician *models.Musician) {
@@ -36,7 +36,7 @@ func TestUsecase_UpdateMusician(t *testing.T) {
 			inputMusician: &models.Musician{
 				Id:          2,
 				Name:        "Invalid Musician",
-				Photos:      nil,
+				PhotoFiles:  nil,
 				Description: "Invalid Description",
 			},
 			mock: func(r *mock_repository.MockMusicianRepository, musician *models.Musician) {
@@ -81,7 +81,7 @@ func TestUsecase_AddMusician(t *testing.T) {
 			name: "Usual test",
 			inputMusician: &models.Musician{
 				Name:        "John Doe",
-				Photos:      []string{"photo1.jpg", "photo2.jpg"},
+				PhotoFiles:  [][]byte{[]byte("photo1.jpg"), []byte("photo2.jpg")},
 				Description: "Description of John Doe",
 			},
 			mock: func(r *mock_repository.MockMusicianRepository, musician *models.Musician) {
@@ -94,7 +94,7 @@ func TestUsecase_AddMusician(t *testing.T) {
 			name: "Repo fail test",
 			inputMusician: &models.Musician{
 				Name:        "Invalid Musician",
-				Photos:      nil,
+				PhotoFiles:  nil,
 				Description: "Invalid Description",
 			},
 			mock: func(r *mock_repository.MockMusicianRepository, musician *models.Musician) {
@@ -196,7 +196,7 @@ func TestUsecase_GetMusician(t *testing.T) {
 			expectedMusician: &models.Musician{
 				Id:          uint64(1),
 				Name:        "John Doe",
-				Photos:      []string{"photo1.jpg", "photo2.jpg"},
+				PhotoFiles:  [][]byte{[]byte("photo1.jpg"), []byte("photo2.jpg")},
 				Description: "Description of John Doe",
 			},
 			expectedErr: nil,

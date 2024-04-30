@@ -13,7 +13,8 @@ func (Musician) TableName() string {
 }
 
 type MusicianPhotos struct {
-	PhotoSrc   string `gorm:"column:photo_src"`
+	ID         uint64 `gorm:"column:id"`
+	PhotoFile  []byte `gorm:"column:photo_file"`
 	MusicianId uint64 `gorm:"column:musician_id"`
 }
 
@@ -31,9 +32,9 @@ func ToPostgresMusician(musician *models.Musician) *Musician {
 
 func ToPostgresMusicianPhotos(musician *models.Musician) []*MusicianPhotos {
 	var res []*MusicianPhotos
-	for _, v := range musician.Photos {
+	for _, v := range musician.PhotoFiles {
 		res = append(res, &MusicianPhotos{
-			PhotoSrc:   v,
+			PhotoFile:  v,
 			MusicianId: musician.Id,
 		})
 	}
@@ -42,15 +43,15 @@ func ToPostgresMusicianPhotos(musician *models.Musician) []*MusicianPhotos {
 }
 
 func ToModelMusician(musician *Musician, photos []*MusicianPhotos) *models.Musician {
-	var res []string
+	var res [][]byte
 	for _, v := range photos {
-		res = append(res, v.PhotoSrc)
+		res = append(res, v.PhotoFile)
 	}
 
 	return &models.Musician{
 		Id:          musician.ID,
 		Name:        musician.Name,
-		Photos:      res,
+		PhotoFiles:  res,
 		Description: musician.Description,
 	}
 }
