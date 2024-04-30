@@ -26,7 +26,7 @@ func (m *merchRepository) GetMerch(id uint64) (*models.Merch, error) {
 		return nil, errors.Wrap(tx.Error, "database error (table merch)")
 	}
 
-	tx = m.db.Where("merch_id = ?", id).Find(&merchPhotos)
+	tx = m.db.Where("merch_id = ?", id).Limit(dao.MaxLimit).Find(&merchPhotos)
 	if tx.Error != nil {
 		return nil, errors.Wrap(tx.Error, "database error (table merch)")
 	}
@@ -50,7 +50,7 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 	for _, v := range pgMerchPhotos {
 		flag := false
 		for _, vi := range existingFiles {
-			if bytes.Equal(vi.PhotoPayload, v.PhotoPayload) {
+			if bytes.Equal(vi.PhotoFile, v.PhotoFile) {
 				flag = true
 				break
 			}
@@ -64,7 +64,7 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 	for _, v := range existingFiles {
 		flag := false
 		for _, vi := range pgMerchPhotos {
-			if bytes.Equal(vi.PhotoPayload, v.PhotoPayload) {
+			if bytes.Equal(vi.PhotoFile, v.PhotoFile) {
 				flag = true
 				break
 			}
@@ -81,7 +81,7 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 
 		for _, v := range filesToDelete {
 			if err := m.db.
-				Where("photo_file = ? AND merch_id = ?", v.PhotoPayload, v.MerchId).
+				Where("photo_file = ? AND merch_id = ?", v.PhotoFile, v.MerchId).
 				Delete(&dao.MerchPhotos{}).Error; err != nil {
 				return err
 			}
@@ -108,8 +108,9 @@ func (m *merchRepository) AddMerch(merch *models.Merch) (uint64, error) {
 		if err := tx.Create(&pgMerch).Error; err != nil {
 			return err
 		}
-		merch.Id = pgMerch.ID
-		pgMerchPhotos := dao.ToPostgresMerchPhotos(merch)
+		temp := merch
+		temp.Id = pgMerch.ID
+		pgMerchPhotos := dao.ToPostgresMerchPhotos(temp)
 
 		if err := tx.Create(&pgMerchPhotos).Error; err != nil {
 			return err
@@ -122,6 +123,7 @@ func (m *merchRepository) AddMerch(merch *models.Merch) (uint64, error) {
 		return 0, errors.Wrap(err, "database error (table merch)")
 	}
 
+	merch.Id = pgMerch.ID
 	return pgMerch.ID, nil
 }
 

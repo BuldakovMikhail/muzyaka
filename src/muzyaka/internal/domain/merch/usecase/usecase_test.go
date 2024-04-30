@@ -28,7 +28,7 @@ func TestUsecase_GetMerch(t *testing.T) {
 			expectedMerch: &models.Merch{
 				Id:          1,
 				Name:        "Test Merch",
-				Photos:      [][]byte{[]byte("photo1.jpg"), []byte("photo2.jpg")},
+				PhotoFiles:  [][]byte{[]byte("photo1.jpg"), []byte("photo2.jpg")},
 				Description: "Description of Test Merch",
 				OrderUrl:    "http://example.com/order",
 			},
@@ -81,7 +81,7 @@ func TestUsecase_UpdateMerch(t *testing.T) {
 			inputMerch: &models.Merch{
 				Id:          1,
 				Name:        "Updated Merch",
-				Photos:      [][]byte{[]byte("updated_photo.jpg")},
+				PhotoFiles:  [][]byte{[]byte("updated_photo.jpg")},
 				Description: "Updated Description of Merch",
 				OrderUrl:    "http://example.com/update",
 			},
@@ -95,7 +95,7 @@ func TestUsecase_UpdateMerch(t *testing.T) {
 			inputMerch: &models.Merch{
 				Id:          2,
 				Name:        "Invalid Merch",
-				Photos:      nil,
+				PhotoFiles:  nil,
 				Description: "Invalid Description",
 				OrderUrl:    "http://example.com/update",
 			},
@@ -142,7 +142,7 @@ func TestUsecase_AddMerch(t *testing.T) {
 			name: "Usual test",
 			inputMerch: &models.Merch{
 				Name:        "New Merch",
-				Photos:      [][]byte{[]byte("photo1.jpg"), []byte("photo2.jpg")},
+				PhotoFiles:  [][]byte{[]byte("photo1.jpg"), []byte("photo2.jpg")},
 				Description: "Description of New Merch",
 				OrderUrl:    "http://example.com/order",
 			},
@@ -156,7 +156,7 @@ func TestUsecase_AddMerch(t *testing.T) {
 			name: "Repo fail test",
 			inputMerch: &models.Merch{
 				Name:        "Invalid Merch",
-				Photos:      nil,
+				PhotoFiles:  nil,
 				Description: "Invalid Description",
 				OrderUrl:    "http://example.com/order",
 			},

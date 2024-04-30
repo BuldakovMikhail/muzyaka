@@ -1,14 +1,20 @@
 package postgres
 
 import (
+	"bytes"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"src/internal/domain/musician/repository"
 	"src/internal/models"
 	"src/internal/models/dao"
 )
 
 type musicianRepository struct {
 	db *gorm.DB
+}
+
+func NewMusicianRepository(db *gorm.DB) repository.MusicianRepository {
+	return &musicianRepository{db: db}
 }
 
 func (m musicianRepository) GetMusician(id uint64) (*models.Musician, error) {
@@ -20,7 +26,7 @@ func (m musicianRepository) GetMusician(id uint64) (*models.Musician, error) {
 		return nil, errors.Wrap(tx.Error, "database error (table musician)")
 	}
 
-	tx = m.db.Where("merch_id = ?", id).Take(&musicianPhotots)
+	tx = m.db.Where("musician_id = ?", id).Limit(dao.MaxLimit).Find(&musicianPhotots)
 	if tx.Error != nil {
 		return nil, errors.Wrap(tx.Error, "database error (table musician)")
 	}
@@ -32,15 +38,58 @@ func (m musicianRepository) UpdateMusician(musician *models.Musician) error {
 	pgMusician := dao.ToPostgresMusician(musician)
 	pgMusicianPhotos := dao.ToPostgresMusicianPhotos(musician)
 
+	var existingFiles []*dao.MusicianPhotos
+	tx := m.db.Limit(dao.MaxLimit).Find(&existingFiles, "musician_id = ?", pgMusician.ID)
+	if tx.Error != nil {
+		return errors.Wrap(tx.Error, "database error (table musician)")
+	}
+
+	var filesToDelete []*dao.MusicianPhotos
+	var filesToAdd []*dao.MusicianPhotos
+
+	for _, v := range pgMusicianPhotos {
+		flag := false
+		for _, vi := range existingFiles {
+			if bytes.Equal(vi.PhotoFile, v.PhotoFile) {
+				flag = true
+				break
+			}
+		}
+
+		if !flag {
+			filesToAdd = append(filesToAdd, v)
+		}
+	}
+
+	for _, v := range existingFiles {
+		flag := false
+		for _, vi := range pgMusicianPhotos {
+			if bytes.Equal(vi.PhotoFile, v.PhotoFile) {
+				flag = true
+				break
+			}
+		}
+		if !flag {
+			filesToDelete = append(filesToDelete, v)
+		}
+	}
+
+	// TODO: added IDS maybe del by them
 	err := m.db.Transaction(func(tx *gorm.DB) error {
 		if err := m.db.Omit("id").Updates(pgMusician).Error; err != nil {
 			return err
 		}
-		if err := m.db.Delete(&dao.MusicianPhotos{}, "musician_id = ?", pgMusician.ID).Error; err != nil {
-			return err
+		for _, v := range filesToDelete {
+			if err := m.db.
+				Where("photo_file = ? AND musician_id = ?", v.PhotoFile, v.MusicianId).
+				Delete(&dao.MusicianPhotos{}).Error; err != nil {
+				return err
+			}
 		}
-		if err := m.db.Create(pgMusicianPhotos).Error; err != nil {
-			return err
+		if filesToAdd != nil {
+			if err := m.db.Create(&filesToAdd).Error; err != nil {
+				return err
+			}
 		}
 		return nil
 	})
@@ -54,13 +103,15 @@ func (m musicianRepository) UpdateMusician(musician *models.Musician) error {
 
 func (m musicianRepository) AddMusician(musician *models.Musician) (uint64, error) {
 	pgMusician := dao.ToPostgresMusician(musician)
-	pgMusicianPhotos := dao.ToPostgresMusicianPhotos(musician)
 
 	err := m.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&pgMusician).Error; err != nil {
 			return err
 		}
 
+		temp := musician
+		temp.Id = pgMusician.ID
+		pgMusicianPhotos := dao.ToPostgresMusicianPhotos(temp)
 		if err := tx.Create(&pgMusicianPhotos).Error; err != nil {
 			return err
 		}

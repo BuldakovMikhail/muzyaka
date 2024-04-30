@@ -33,7 +33,7 @@ func TestRepo_PhotosChange(t *testing.T) {
 	merch := models.Merch{
 		Id:          0,
 		Name:        "test",
-		Photos:      [][]byte{[]byte("test1"), []byte("test2"), []byte("test3")},
+		PhotoFiles:  [][]byte{[]byte("test1"), []byte("test2"), []byte("test3")},
 		Description: "test",
 		OrderUrl:    "test.com",
 	}
@@ -46,10 +46,10 @@ func TestRepo_PhotosChange(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, getM)
 	assert.Equal(t, getM, &merch)
-	assert.Subset(t, merch.Photos, getM.Photos)
-	assert.Subset(t, getM.Photos, merch.Photos)
+	assert.Subset(t, merch.PhotoFiles, getM.PhotoFiles)
+	assert.Subset(t, getM.PhotoFiles, merch.PhotoFiles)
 
-	merch.Photos = [][]byte{[]byte("test1"), []byte("test2"), []byte("test3"), []byte("test4")}
+	merch.PhotoFiles = [][]byte{[]byte("test1"), []byte("test2"), []byte("test3"), []byte("test4")}
 	err = repository.UpdateMerch(&merch)
 	assert.NoError(t, err)
 
@@ -57,10 +57,10 @@ func TestRepo_PhotosChange(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, getM)
 	assert.Equal(t, getM, &merch)
-	assert.Subset(t, merch.Photos, getM.Photos)
-	assert.Subset(t, getM.Photos, merch.Photos)
+	assert.Subset(t, merch.PhotoFiles, getM.PhotoFiles)
+	assert.Subset(t, getM.PhotoFiles, merch.PhotoFiles)
 
-	merch.Photos = [][]byte{[]byte("test1"), []byte("test3"), []byte("test5")}
+	merch.PhotoFiles = [][]byte{[]byte("test1"), []byte("test3"), []byte("test5")}
 	err = repository.UpdateMerch(&merch)
 	assert.NoError(t, err)
 
@@ -68,10 +68,10 @@ func TestRepo_PhotosChange(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, getM)
 	assert.Equal(t, getM, &merch)
-	assert.Subset(t, merch.Photos, getM.Photos)
-	assert.Subset(t, getM.Photos, merch.Photos)
+	assert.Subset(t, merch.PhotoFiles, getM.PhotoFiles)
+	assert.Subset(t, getM.PhotoFiles, merch.PhotoFiles)
 
-	merch.Photos = [][]byte{[]byte("test6")}
+	merch.PhotoFiles = [][]byte{[]byte("test6")}
 	err = repository.UpdateMerch(&merch)
 	assert.NoError(t, err)
 
@@ -79,6 +79,6 @@ func TestRepo_PhotosChange(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, getM)
 	assert.Equal(t, getM, &merch)
-	assert.Subset(t, merch.Photos, getM.Photos)
-	assert.Subset(t, getM.Photos, merch.Photos)
+	assert.Subset(t, merch.PhotoFiles, getM.PhotoFiles)
+	assert.Subset(t, getM.PhotoFiles, merch.PhotoFiles)
 }
