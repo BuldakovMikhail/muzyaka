@@ -23,7 +23,7 @@ func TestUsecase_UpdatedPlaylist(t *testing.T) {
 			inputPlaylist: &models.Playlist{
 				Id:          1,
 				Name:        "Updated Playlist",
-				Cover:       "updated_cover.jpg",
+				CoverFile:   []byte("updated_cover.jpg"),
 				Description: "Updated Description of Playlist",
 			},
 			mock: func(r *mock_repository.MockPlaylistRepository, playlist *models.Playlist) {
@@ -36,7 +36,7 @@ func TestUsecase_UpdatedPlaylist(t *testing.T) {
 			inputPlaylist: &models.Playlist{
 				Id:          2,
 				Name:        "Invalid Playlist",
-				Cover:       "invalid_cover.jpg",
+				CoverFile:   []byte("invalid_cover.jpg"),
 				Description: "Invalid Description",
 			},
 			mock: func(r *mock_repository.MockPlaylistRepository, playlist *models.Playlist) {
@@ -82,7 +82,7 @@ func TestUsecase_AddPlaylist(t *testing.T) {
 			name: "Usual test",
 			inputPlaylist: &models.Playlist{
 				Name:        "New Playlist",
-				Cover:       "playlist_cover.jpg",
+				CoverFile:   []byte("playlist_cover.jpg"),
 				Description: "Description of New Playlist",
 			},
 			mock: func(r *mock_repository.MockPlaylistRepository, playlist *models.Playlist) {
@@ -95,7 +95,7 @@ func TestUsecase_AddPlaylist(t *testing.T) {
 			name: "Repo fail test",
 			inputPlaylist: &models.Playlist{
 				Name:        "Invalid Playlist",
-				Cover:       "invalid_cover.jpg",
+				CoverFile:   []byte("invalid_cover.jpg"),
 				Description: "Invalid Description",
 			},
 			mock: func(r *mock_repository.MockPlaylistRepository, playlist *models.Playlist) {
@@ -196,7 +196,7 @@ func TestUsecase_GetPlaylist(t *testing.T) {
 				expectedPlaylist := &models.Playlist{
 					Id:          1,
 					Name:        "Test Playlist",
-					Cover:       "playlist_cover.jpg",
+					CoverFile:   []byte("playlist_cover.jpg"),
 					Description: "Description of Test Playlist",
 				}
 				r.EXPECT().GetPlaylist(id).Return(expectedPlaylist, nil)
@@ -204,7 +204,7 @@ func TestUsecase_GetPlaylist(t *testing.T) {
 			expectedPlaylist: &models.Playlist{
 				Id:          1,
 				Name:        "Test Playlist",
-				Cover:       "playlist_cover.jpg",
+				CoverFile:   []byte("playlist_cover.jpg"),
 				Description: "Description of Test Playlist",
 			},
 			expectedErr: nil,

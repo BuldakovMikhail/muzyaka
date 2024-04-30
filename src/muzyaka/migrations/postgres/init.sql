@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS musicians_photos(
 CREATE TABLE IF NOT EXISTS playlists(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(254) NOT NULL,
-    cover VARCHAR(254) NOT NULL,
+    cover_file BYTEA NOT NULL,
     description TEXT
 );
 

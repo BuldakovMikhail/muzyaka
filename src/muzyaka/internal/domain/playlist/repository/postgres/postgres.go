@@ -3,12 +3,17 @@ package postgres
 import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"src/internal/domain/playlist/repository"
 	"src/internal/models"
 	"src/internal/models/dao"
 )
 
 type playlistRepository struct {
 	db *gorm.DB
+}
+
+func NewPlaylistRepository(db *gorm.DB) repository.PlaylistRepository {
+	return &playlistRepository{db: db}
 }
 
 func (p playlistRepository) GetAllTracks(playlistId uint64) ([]*models.TrackMeta, error) {

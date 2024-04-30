@@ -5,7 +5,7 @@ import "src/internal/models"
 type Playlist struct {
 	ID          uint64 `gorm:"column:id"`
 	Name        string `gorm:"column:name"`
-	Cover       string `gorm:"column:cover"`
+	CoverFile   []byte `gorm:"column:cover_file"`
 	Description string `gorm:"column:description"`
 }
 
@@ -26,7 +26,7 @@ func ToModelPlaylist(playlist *Playlist) *models.Playlist {
 	return &models.Playlist{
 		Id:          playlist.ID,
 		Name:        playlist.Name,
-		Cover:       playlist.Cover,
+		CoverFile:   playlist.CoverFile,
 		Description: playlist.Description,
 	}
 }
@@ -35,7 +35,7 @@ func ToPostgresPlaylist(playlist *models.Playlist) *Playlist {
 	return &Playlist{
 		ID:          playlist.Id,
 		Name:        playlist.Name,
-		Cover:       playlist.Cover,
+		CoverFile:   playlist.CoverFile,
 		Description: playlist.Description,
 	}
 }
