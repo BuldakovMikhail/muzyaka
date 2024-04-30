@@ -39,7 +39,7 @@ func TestRepo_AddAlbumWithTracks(t *testing.T) {
 	album := &models.Album{
 		Id:    0,
 		Name:  "TestName",
-		Cover: "TestCover",
+		Cover: []byte("TestCover"),
 		Type:  "LP",
 	}
 

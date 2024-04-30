@@ -5,7 +5,7 @@ import "src/internal/models"
 type Album struct {
 	ID    uint64 `gorm:"column:id"`
 	Name  string `gorm:"column:name"`
-	Cover string `gorm:"column:cover"`
+	Cover []byte `gorm:"column:cover"`
 	Type  string `gorm:"column:type"`
 }
 

@@ -27,14 +27,14 @@ func TestUsecase_GetAlbum(t *testing.T) {
 				r.EXPECT().GetAlbum(id).Return(&models.Album{
 					Id:    1,
 					Name:  "test_name",
-					Cover: "test_cover",
+					Cover: []byte("test_cover"),
 					Type:  "test_type",
 				}, nil)
 			},
 			expectedValue: &models.Album{
 				Id:    1,
 				Name:  "test_name",
-				Cover: "test_cover",
+				Cover: []byte("test_cover"),
 				Type:  "test_type",
 			},
 			expectedErr: nil,
@@ -88,7 +88,7 @@ func TestUsecase_UpdateAlbum(t *testing.T) {
 			input: models.Album{
 				Id:    1,
 				Name:  "test_name",
-				Cover: "test_cover",
+				Cover: []byte("test_cover"),
 				Type:  "test_type",
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album models.Album) {
@@ -101,7 +101,7 @@ func TestUsecase_UpdateAlbum(t *testing.T) {
 			input: models.Album{
 				Id:    1,
 				Name:  "test_name",
-				Cover: "test_cover",
+				Cover: []byte("test_cover"),
 				Type:  "test_type",
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album models.Album) {
@@ -152,7 +152,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 			inputAlbum: &models.Album{
 				Id:    1,
 				Name:  "Test Album",
-				Cover: "Test Cover",
+				Cover: []byte{1, 2, 3},
 				Type:  "LP",
 			},
 			inputTracks: []*models.TrackObject{
@@ -190,7 +190,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 			inputAlbum: &models.Album{
 				Id:    0,
 				Name:  "Invalid Album",
-				Cover: "Test Cover",
+				Cover: []byte("Test Cover"),
 				Type:  "LP",
 			},
 			inputTracks: []*models.TrackObject{
