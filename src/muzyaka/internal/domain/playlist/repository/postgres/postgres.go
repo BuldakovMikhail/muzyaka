@@ -16,7 +16,29 @@ func NewPlaylistRepository(db *gorm.DB) repository.PlaylistRepository {
 	return &playlistRepository{db: db}
 }
 
-func (p playlistRepository) GetAllTracks(playlistId uint64) ([]*models.TrackMeta, error) {
+func (p playlistRepository) IsPlaylistOwned(playlistId uint64, userId uint64) (bool, error) {
+	var playlist dao.Playlist
+
+	tx := p.db.Where("id = ?", playlistId).Take(&playlist)
+	if tx.Error != nil {
+		return false, errors.Wrap(tx.Error, "database error (table playlist)")
+	}
+
+	return playlist.UserID == userId, nil
+}
+
+func (p playlistRepository) GetUserForPlaylist(playlistId uint64) (uint64, error) {
+	var playlist dao.Playlist
+
+	tx := p.db.Where("id = ?", playlistId).Take(&playlist)
+	if tx.Error != nil {
+		return 0, errors.Wrap(tx.Error, "database error (table playlist)")
+	}
+
+	return playlist.UserID, nil
+}
+
+func (p playlistRepository) GetAllTracks(playlistId uint64) ([]uint64, error) {
 	var relations []*dao.PlaylistTrack
 	tx := p.db.Limit(dao.MaxLimit).Find(&relations, "playlist_id = ?", playlistId)
 	if tx.Error != nil {
@@ -28,31 +50,7 @@ func (p playlistRepository) GetAllTracks(playlistId uint64) ([]*models.TrackMeta
 		ids = append(ids, v.TrackId)
 	}
 
-	var pgTracks []*dao.TrackMeta
-	tx = p.db.Find(&pgTracks, ids)
-	if tx.Error != nil {
-		return nil, errors.Wrap(tx.Error, "database error (table playlist)")
-	}
-
-	var tracks []*models.TrackMeta
-	for _, v := range pgTracks {
-		var pgGenre dao.Genre
-		tx := p.db.Where("id = ?", v.GenreRefer).Take(&pgGenre)
-		if tx.Error != nil {
-			return nil, errors.Wrap(tx.Error, "database error (table playlist)")
-		}
-
-		track := &models.TrackMeta{
-			Id:     v.ID,
-			Source: v.Source,
-			Name:   v.Name,
-			Genre:  pgGenre.Name,
-		}
-
-		tracks = append(tracks, track)
-	}
-
-	return tracks, nil
+	return ids, nil
 }
 
 func (p playlistRepository) GetPlaylist(id uint64) (*models.Playlist, error) {
@@ -67,9 +65,9 @@ func (p playlistRepository) GetPlaylist(id uint64) (*models.Playlist, error) {
 }
 
 func (p playlistRepository) UpdatePlaylist(playlist *models.Playlist) error {
-	pgPlaylist := dao.ToPostgresPlaylist(playlist)
+	pgPlaylist := dao.ToPostgresPlaylist(playlist, 0)
 
-	tx := p.db.Omit("id").Updates(&pgPlaylist)
+	tx := p.db.Omit("id", "user_id").Updates(&pgPlaylist)
 
 	if tx.Error != nil {
 		return errors.Wrap(tx.Error, "database error (table playlist)")
@@ -78,8 +76,8 @@ func (p playlistRepository) UpdatePlaylist(playlist *models.Playlist) error {
 	return nil
 }
 
-func (p playlistRepository) AddPlaylist(playlist *models.Playlist) (uint64, error) {
-	pgPlaylist := dao.ToPostgresPlaylist(playlist)
+func (p playlistRepository) AddPlaylist(playlist *models.Playlist, userId uint64) (uint64, error) {
+	pgPlaylist := dao.ToPostgresPlaylist(playlist, userId)
 
 	tx := p.db.Create(&pgPlaylist)
 
@@ -99,6 +97,10 @@ func (p playlistRepository) DeletePlaylist(id uint64) error {
 		return errors.Wrap(tx.Error, "database error (table playlist)")
 	}
 
+	if tx.RowsAffected == 0 {
+		return models.ErrNothingToDelete
+	}
+
 	return nil
 }
 
@@ -116,13 +118,15 @@ func (p playlistRepository) AddTrackToPlaylist(playlistId uint64, trackId uint64
 }
 
 func (p playlistRepository) DeleteTrackFromPlaylist(playlistId uint64, trackId uint64) error {
-	tx := p.db.Delete(&dao.PlaylistTrack{
-		TrackId:    trackId,
-		PlaylistId: playlistId,
-	})
+	tx := p.db.Delete(&dao.PlaylistTrack{},
+		"track_id = ? AND playlist_id = ?", trackId, playlistId)
 
 	if tx.Error != nil {
 		return errors.Wrap(tx.Error, "database error (table playlist)")
+	}
+
+	if tx.RowsAffected == 0 {
+		return models.ErrNothingToDelete
 	}
 
 	return nil

@@ -34,6 +34,20 @@ func (m *MockTrackRepository) EXPECT() *MockTrackRepositoryMockRecorder {
 	return m.recorder
 }
 
+// DeleteTrack mocks base method.
+func (m *MockTrackRepository) DeleteTrack(trackId uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTrack", trackId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteTrack indicates an expected call of DeleteTrack.
+func (mr *MockTrackRepositoryMockRecorder) DeleteTrack(trackId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrack", reflect.TypeOf((*MockTrackRepository)(nil).DeleteTrack), trackId)
+}
+
 // GetTrack mocks base method.
 func (m *MockTrackRepository) GetTrack(id uint64) (*models.TrackMeta, error) {
 	m.ctrl.T.Helper()
@@ -49,16 +63,16 @@ func (mr *MockTrackRepositoryMockRecorder) GetTrack(id interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTrack", reflect.TypeOf((*MockTrackRepository)(nil).GetTrack), id)
 }
 
-// UpdateTrackOutbox mocks base method.
-func (m *MockTrackRepository) UpdateTrackOutbox(track *models.TrackMeta) error {
+// UpdateTrack mocks base method.
+func (m *MockTrackRepository) UpdateTrack(track *models.TrackMeta) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTrackOutbox", track)
+	ret := m.ctrl.Call(m, "UpdateTrack", track)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdateTrackOutbox indicates an expected call of UpdateTrackOutbox.
-func (mr *MockTrackRepositoryMockRecorder) UpdateTrackOutbox(track interface{}) *gomock.Call {
+// UpdateTrack indicates an expected call of UpdateTrack.
+func (mr *MockTrackRepositoryMockRecorder) UpdateTrack(track interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTrackOutbox", reflect.TypeOf((*MockTrackRepository)(nil).UpdateTrackOutbox), track)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTrack", reflect.TypeOf((*MockTrackRepository)(nil).UpdateTrack), track)
 }

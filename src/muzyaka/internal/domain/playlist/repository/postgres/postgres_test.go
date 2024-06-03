@@ -35,6 +35,16 @@ func TestRepo_CreatePlaylist(t *testing.T) {
 		log.Fatal(err)
 	}
 
+	err = db.Exec("insert into musicians (name, description) values ('test', 'test')").Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.Exec("insert into users (name, email, password)\nvalues ('Sasha', 'test3@gmail.test', 'aaaaaa')").Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	repository := postgres2.NewAlbumRepository(db)
 
 	album := &models.Album{
@@ -65,7 +75,7 @@ func TestRepo_CreatePlaylist(t *testing.T) {
 		},
 	}
 
-	id, err := repository.AddAlbumWithTracksOutbox(album, tracks)
+	id, err := repository.AddAlbumWithTracksOutbox(album, tracks, 1)
 	require.NoError(t, err)
 	require.NotNil(t, id)
 
@@ -78,7 +88,7 @@ func TestRepo_CreatePlaylist(t *testing.T) {
 		Description: "testp",
 	}
 
-	id, err = repositoryPlaylist.AddPlaylist(&playlist)
+	id, err = repositoryPlaylist.AddPlaylist(&playlist, 1)
 	assert.NoError(t, err)
 	assert.NotNil(t, id)
 

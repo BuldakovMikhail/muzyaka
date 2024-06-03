@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	mock_repository "src/internal/domain/playlist/repository/mocks"
+	mock_repository2 "src/internal/domain/track/repository/mocks"
 	"src/internal/models"
 	"testing"
 )
@@ -56,7 +57,9 @@ func TestUsecase_UpdatedPlaylist(t *testing.T) {
 			repo := mock_repository.NewMockPlaylistRepository(ctrl)
 			tc.mock(repo, tc.inputPlaylist)
 
-			u := NewPlaylistUseCase(repo)
+			trackRepo := mock_repository2.NewMockTrackRepository(ctrl)
+
+			u := NewPlaylistUseCase(repo, trackRepo)
 			err := u.UpdatedPlaylist(tc.inputPlaylist)
 
 			if tc.expectedErr == nil {
@@ -86,7 +89,7 @@ func TestUsecase_AddPlaylist(t *testing.T) {
 				Description: "Description of New Playlist",
 			},
 			mock: func(r *mock_repository.MockPlaylistRepository, playlist *models.Playlist) {
-				r.EXPECT().AddPlaylist(playlist).Return(uint64(1), nil)
+				r.EXPECT().AddPlaylist(playlist, uint64(0)).Return(uint64(1), nil)
 			},
 			expectedID:  uint64(1),
 			expectedErr: nil,
@@ -99,7 +102,7 @@ func TestUsecase_AddPlaylist(t *testing.T) {
 				Description: "Invalid Description",
 			},
 			mock: func(r *mock_repository.MockPlaylistRepository, playlist *models.Playlist) {
-				r.EXPECT().AddPlaylist(playlist).Return(uint64(0), errors.New("error in repo"))
+				r.EXPECT().AddPlaylist(playlist, uint64(0)).Return(uint64(0), errors.New("error in repo"))
 			},
 			expectedID: uint64(0),
 			expectedErr: errors.Wrap(errors.New("error in repo"),
@@ -116,8 +119,10 @@ func TestUsecase_AddPlaylist(t *testing.T) {
 			repo := mock_repository.NewMockPlaylistRepository(ctrl)
 			tc.mock(repo, tc.inputPlaylist)
 
-			u := NewPlaylistUseCase(repo)
-			id, err := u.AddPlaylist(tc.inputPlaylist)
+			trackRepo := mock_repository2.NewMockTrackRepository(ctrl)
+
+			u := NewPlaylistUseCase(repo, trackRepo)
+			id, err := u.AddPlaylist(tc.inputPlaylist, 0)
 
 			assert.Equal(t, tc.expectedID, id)
 
@@ -167,7 +172,9 @@ func TestUsecase_DeletePlaylist(t *testing.T) {
 			repo := mock_repository.NewMockPlaylistRepository(ctrl)
 			tc.mock(repo, tc.id)
 
-			u := NewPlaylistUseCase(repo)
+			trackRepo := mock_repository2.NewMockTrackRepository(ctrl)
+
+			u := NewPlaylistUseCase(repo, trackRepo)
 			err := u.DeletePlaylist(tc.id)
 
 			if tc.expectedErr == nil {
@@ -230,7 +237,9 @@ func TestUsecase_GetPlaylist(t *testing.T) {
 			repo := mock_repository.NewMockPlaylistRepository(ctrl)
 			tc.mock(repo, tc.id)
 
-			u := NewPlaylistUseCase(repo)
+			trackRepo := mock_repository2.NewMockTrackRepository(ctrl)
+
+			u := NewPlaylistUseCase(repo, trackRepo)
 			playlist, err := u.GetPlaylist(tc.id)
 
 			assert.Equal(t, tc.expectedPlaylist, playlist)
@@ -283,7 +292,9 @@ func TestUsecase_AddTrack(t *testing.T) {
 			repo := mock_repository.NewMockPlaylistRepository(ctrl)
 			tc.mock(repo, tc.playlistId, tc.trackId)
 
-			u := NewPlaylistUseCase(repo)
+			trackRepo := mock_repository2.NewMockTrackRepository(ctrl)
+
+			u := NewPlaylistUseCase(repo, trackRepo)
 			err := u.AddTrack(tc.playlistId, tc.trackId)
 
 			if tc.expectedErr == nil {
@@ -335,7 +346,9 @@ func TestUsecase_DeleteTrack(t *testing.T) {
 			repo := mock_repository.NewMockPlaylistRepository(ctrl)
 			tc.mock(repo, tc.playlistId, tc.trackId)
 
-			u := NewPlaylistUseCase(repo)
+			trackRepo := mock_repository2.NewMockTrackRepository(ctrl)
+
+			u := NewPlaylistUseCase(repo, trackRepo)
 			err := u.DeleteTrack(tc.playlistId, tc.trackId)
 
 			if tc.expectedErr == nil {
@@ -348,20 +361,29 @@ func TestUsecase_DeleteTrack(t *testing.T) {
 }
 
 func TestUsecase_GetAllTracks(t *testing.T) {
-	type mock func(r *mock_repository.MockPlaylistRepository, playlistId uint64, tracks []*models.TrackMeta)
+	type mock func(r *mock_repository.MockPlaylistRepository, playlistId uint64, tracks []uint64)
+	type tracksMock func(r *mock_repository2.MockTrackRepository, tracks []*models.TrackMeta)
 
 	testTable := []struct {
 		name           string
 		playlistId     uint64
+		returnIds      []uint64
 		mock           mock
+		tracksMock     tracksMock
 		expectedTracks []*models.TrackMeta
 		expectedErr    error
 	}{
 		{
 			name:       "Usual test",
 			playlistId: 1,
-			mock: func(r *mock_repository.MockPlaylistRepository, playlistId uint64, tracks []*models.TrackMeta) {
+			returnIds:  []uint64{1, 2},
+			mock: func(r *mock_repository.MockPlaylistRepository, playlistId uint64, tracks []uint64) {
 				r.EXPECT().GetAllTracks(playlistId).Return(tracks, nil)
+			},
+			tracksMock: func(r *mock_repository2.MockTrackRepository, tracks []*models.TrackMeta) {
+				for _, v := range tracks {
+					r.EXPECT().GetTrack(v.Id).Return(v, nil)
+				}
 			},
 			expectedTracks: []*models.TrackMeta{
 				{
@@ -382,8 +404,10 @@ func TestUsecase_GetAllTracks(t *testing.T) {
 		{
 			name:       "Repo fail test",
 			playlistId: 2,
-			mock: func(r *mock_repository.MockPlaylistRepository, playlistId uint64, tracks []*models.TrackMeta) {
+			mock: func(r *mock_repository.MockPlaylistRepository, playlistId uint64, tracks []uint64) {
 				r.EXPECT().GetAllTracks(playlistId).Return(nil, errors.New("error in repo"))
+			},
+			tracksMock: func(r *mock_repository2.MockTrackRepository, tracks []*models.TrackMeta) {
 			},
 			expectedTracks: nil,
 			expectedErr: errors.Wrap(errors.New("error in repo"),
@@ -398,9 +422,12 @@ func TestUsecase_GetAllTracks(t *testing.T) {
 			defer ctrl.Finish()
 
 			repo := mock_repository.NewMockPlaylistRepository(ctrl)
-			tc.mock(repo, tc.playlistId, tc.expectedTracks)
+			tc.mock(repo, tc.playlistId, tc.returnIds)
 
-			u := NewPlaylistUseCase(repo)
+			trackRepo := mock_repository2.NewMockTrackRepository(ctrl)
+			tc.tracksMock(trackRepo, tc.expectedTracks)
+
+			u := NewPlaylistUseCase(repo, trackRepo)
 			tracks, err := u.GetAllTracks(tc.playlistId)
 
 			assert.Equal(t, tc.expectedTracks, tracks)

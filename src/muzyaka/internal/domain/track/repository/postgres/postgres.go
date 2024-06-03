@@ -1,15 +1,34 @@
 package postgres
 
 import (
-	"github.com/hashicorp/go-uuid"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"src/internal/domain/track/repository"
 	"src/internal/models"
 	"src/internal/models/dao"
 )
 
 type trackRepository struct {
 	db *gorm.DB
+}
+
+func NewTrackRepository(db *gorm.DB) repository.TrackRepository {
+	return &trackRepository{db: db}
+}
+
+func (t trackRepository) DeleteTrack(trackId uint64) error {
+
+	tx := t.db.Delete(dao.TrackMeta{}, trackId)
+
+	if err := tx.Error; err != nil {
+		return errors.Wrap(err, "database error (table album)")
+	}
+
+	if tx.RowsAffected == 0 {
+		return models.ErrNothingToDelete
+	}
+
+	return nil
 }
 
 func (t trackRepository) GetTrack(id uint64) (*models.TrackMeta, error) {
@@ -21,7 +40,7 @@ func (t trackRepository) GetTrack(id uint64) (*models.TrackMeta, error) {
 	}
 
 	var genre dao.Genre
-	tx = t.db.Where("id = ?", track.GenreRefer).Take(&genre)
+	tx = t.db.Where("id = ?", track.GenreRefer).Limit(1).Find(&genre)
 	if tx.Error != nil {
 		return nil, errors.Wrap(tx.Error, "database error (table track)")
 	}
@@ -33,45 +52,17 @@ func (t trackRepository) GetTrack(id uint64) (*models.TrackMeta, error) {
 	return dao.ToModelTrack(&track, &genre), nil
 }
 
-func (t trackRepository) UpdateTrackOutbox(track *models.TrackMeta) error {
+func (t trackRepository) UpdateTrack(track *models.TrackMeta) error {
 	var pgGenre dao.Genre
-	tx := t.db.Where("name = ?", track.Genre).Take(&pgGenre)
+	tx := t.db.Where("name = ?", track.Genre).Limit(1).Find(&pgGenre)
 
-	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-		return models.ErrInvalidGenre
-	} else if tx.Error != nil {
+	if tx.Error != nil {
 		return errors.Wrap(tx.Error, "database error (table track)")
 	}
 
-	pgTrack := dao.ToPostgresTrack(track, pgGenre.ID)
+	pgTrack := dao.ToPostgresTrack(track, pgGenre.ID, 0)
 
-	err := t.db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Omit("id").Updates(&pgTrack).Error; err != nil {
-			return err
-		}
-
-		eventID, err := uuid.GenerateUUID()
-		if err != nil {
-			return err
-		}
-
-		if err := tx.Create(&dao.Outbox{
-			ID:         0,
-			EventId:    eventID,
-			TrackId:    pgTrack.ID,
-			Source:     pgTrack.Source,
-			Name:       pgTrack.Name,
-			GenreRefer: pgTrack.GenreRefer,
-			Type:       dao.TypeUpdate,
-			Sent:       false,
-		}).Error; err != nil {
-			return err
-		}
-
-		return nil
-	})
-
-	if err != nil {
+	if err := t.db.Omit("id", "album_id").Updates(&pgTrack).Error; err != nil {
 		return errors.Wrap(err, "database error (table track)")
 	}
 

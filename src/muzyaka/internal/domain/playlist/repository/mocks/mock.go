@@ -35,18 +35,18 @@ func (m *MockPlaylistRepository) EXPECT() *MockPlaylistRepositoryMockRecorder {
 }
 
 // AddPlaylist mocks base method.
-func (m *MockPlaylistRepository) AddPlaylist(playlist *models.Playlist) (uint64, error) {
+func (m *MockPlaylistRepository) AddPlaylist(playlist *models.Playlist, userId uint64) (uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddPlaylist", playlist)
+	ret := m.ctrl.Call(m, "AddPlaylist", playlist, userId)
 	ret0, _ := ret[0].(uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // AddPlaylist indicates an expected call of AddPlaylist.
-func (mr *MockPlaylistRepositoryMockRecorder) AddPlaylist(playlist interface{}) *gomock.Call {
+func (mr *MockPlaylistRepositoryMockRecorder) AddPlaylist(playlist, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPlaylist", reflect.TypeOf((*MockPlaylistRepository)(nil).AddPlaylist), playlist)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddPlaylist", reflect.TypeOf((*MockPlaylistRepository)(nil).AddPlaylist), playlist, userId)
 }
 
 // AddTrackToPlaylist mocks base method.
@@ -92,10 +92,10 @@ func (mr *MockPlaylistRepositoryMockRecorder) DeleteTrackFromPlaylist(playlistId
 }
 
 // GetAllTracks mocks base method.
-func (m *MockPlaylistRepository) GetAllTracks(playlistId uint64) ([]*models.TrackMeta, error) {
+func (m *MockPlaylistRepository) GetAllTracks(playlistId uint64) ([]uint64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllTracks", playlistId)
-	ret0, _ := ret[0].([]*models.TrackMeta)
+	ret0, _ := ret[0].([]uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -119,6 +119,36 @@ func (m *MockPlaylistRepository) GetPlaylist(id uint64) (*models.Playlist, error
 func (mr *MockPlaylistRepositoryMockRecorder) GetPlaylist(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPlaylist", reflect.TypeOf((*MockPlaylistRepository)(nil).GetPlaylist), id)
+}
+
+// GetUserForPlaylist mocks base method.
+func (m *MockPlaylistRepository) GetUserForPlaylist(playlistId uint64) (uint64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserForPlaylist", playlistId)
+	ret0, _ := ret[0].(uint64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserForPlaylist indicates an expected call of GetUserForPlaylist.
+func (mr *MockPlaylistRepositoryMockRecorder) GetUserForPlaylist(playlistId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserForPlaylist", reflect.TypeOf((*MockPlaylistRepository)(nil).GetUserForPlaylist), playlistId)
+}
+
+// IsPlaylistOwned mocks base method.
+func (m *MockPlaylistRepository) IsPlaylistOwned(playlistId, userId uint64) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsPlaylistOwned", playlistId, userId)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsPlaylistOwned indicates an expected call of IsPlaylistOwned.
+func (mr *MockPlaylistRepositoryMockRecorder) IsPlaylistOwned(playlistId, userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsPlaylistOwned", reflect.TypeOf((*MockPlaylistRepository)(nil).IsPlaylistOwned), playlistId, userId)
 }
 
 // UpdatePlaylist mocks base method.

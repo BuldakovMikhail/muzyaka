@@ -9,6 +9,81 @@ import (
 	"testing"
 )
 
+func TestUsecase_DeleteTrack(t *testing.T) {
+	type mock func(r *mock_repository.MockTrackRepository, trackId uint64, track models.TrackMeta)
+	type storageMock func(r *mock_repository.MockTrackStorage, tracks models.TrackMeta)
+
+	testTable := []struct {
+		name        string
+		trackId     uint64
+		inputTrack  models.TrackMeta
+		mock        mock
+		storageMock storageMock
+		expectedErr error
+	}{
+		{
+			name:    "Usual test",
+			trackId: uint64(1),
+			inputTrack: models.TrackMeta{
+				Id:     10,
+				Source: "test_src",
+				Name:   "test_name",
+				Genre:  "test_genre",
+			},
+			mock: func(r *mock_repository.MockTrackRepository, trackId uint64, track models.TrackMeta) {
+				r.EXPECT().GetTrack(trackId).Return(&track, nil)
+				r.EXPECT().DeleteTrack(trackId).Return(nil)
+			},
+			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackMeta) {
+				r.EXPECT().DeleteObject(&track).Return(nil)
+			},
+			expectedErr: nil,
+		},
+		{
+			name:    "Repo fail test",
+			trackId: uint64(2),
+			inputTrack: models.TrackMeta{
+				Id:     10,
+				Source: "test_src",
+				Name:   "test_name",
+				Genre:  "test_genre",
+			},
+			mock: func(r *mock_repository.MockTrackRepository, trackId uint64, track models.TrackMeta) {
+				r.EXPECT().GetTrack(trackId).Return(&track, nil)
+				r.EXPECT().DeleteTrack(trackId).Return(errors.New("error in repo"))
+			},
+			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackMeta) {
+			},
+			expectedErr: errors.Wrap(
+				errors.New("error in repo"),
+				"track.usecase.DeleteTrack error while delete"),
+		},
+	}
+
+	for _, tc := range testTable {
+		t.Run(tc.name, func(t *testing.T) {
+			// Init Dependencies
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			repo := mock_repository.NewMockTrackRepository(ctrl)
+			tc.mock(repo, tc.trackId, tc.inputTrack)
+
+			storage := mock_repository.NewMockTrackStorage(ctrl)
+			tc.storageMock(storage, tc.inputTrack)
+
+			s := NewTrackUseCase(repo, storage)
+			err := s.DeleteTrack(tc.trackId)
+
+			if tc.expectedErr == nil {
+				assert.Nil(t, err)
+			} else {
+				assert.Equal(t, err.Error(), tc.expectedErr.Error())
+			}
+		})
+	}
+}
+
 func TestUsecase_UpdatedTrack(t *testing.T) {
 	type mock func(r *mock_repository.MockTrackRepository, track models.TrackObject)
 	type storageMock func(r *mock_repository.MockTrackStorage, track models.TrackObject)
@@ -33,7 +108,7 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 				PayloadSize: 3,
 			},
 			mock: func(r *mock_repository.MockTrackRepository, track models.TrackObject) {
-				r.EXPECT().UpdateTrackOutbox(track.ExtractMeta()).Return(nil)
+				r.EXPECT().UpdateTrack(track.ExtractMeta()).Return(nil)
 			},
 			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackObject) {
 				r.EXPECT().UploadObject(&track).Return(nil)
@@ -53,12 +128,12 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 				PayloadSize: 3,
 			},
 			mock: func(r *mock_repository.MockTrackRepository, track models.TrackObject) {
-				r.EXPECT().UpdateTrackOutbox(track.ExtractMeta()).Return(errors.New("error in repo"))
+				r.EXPECT().UpdateTrack(track.ExtractMeta()).Return(errors.New("error in repo"))
 			},
 			storageMock: func(r *mock_repository.MockTrackStorage, track models.TrackObject) {
 				r.EXPECT().UploadObject(&track).Return(nil)
 			},
-			expectedErr: errors.Wrap(errors.New("error in repo"), "track.usecase.UpdatedTrack error while update"),
+			expectedErr: errors.Wrap(errors.New("error in repo"), "track.usecase.UpdateTrack error while update"),
 		},
 	}
 
@@ -74,7 +149,7 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 			tc.storageMock(storage, tc.inputTrack)
 
 			u := NewTrackUseCase(repo, storage)
-			err := u.UpdatedTrack(&tc.inputTrack)
+			err := u.UpdateTrack(&tc.inputTrack)
 
 			if tc.expectedErr == nil {
 				assert.Nil(t, err)
