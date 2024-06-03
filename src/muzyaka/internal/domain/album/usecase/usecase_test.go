@@ -174,7 +174,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 					metaTracks = append(metaTracks, v.ExtractMeta())
 				}
 
-				r.EXPECT().AddAlbumWithTracksOutbox(album, metaTracks).Return(uint64(1), nil)
+				r.EXPECT().AddAlbumWithTracksOutbox(album, metaTracks, uint64(1)).Return(uint64(1), nil)
 			},
 			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackObject) {
 				for _, v := range tracks {
@@ -212,7 +212,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 					metaTracks = append(metaTracks, v.ExtractMeta())
 				}
 
-				r.EXPECT().AddAlbumWithTracksOutbox(album, metaTracks).Return(uint64(0), errors.New("error in repo"))
+				r.EXPECT().AddAlbumWithTracksOutbox(album, metaTracks, uint64(1)).Return(uint64(0), errors.New("error in repo"))
 			},
 			storageMock: func(r *mock_repository2.MockTrackStorage, tracks []*models.TrackObject) {
 				for _, v := range tracks {
@@ -236,7 +236,7 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 			tc.storageMock(storage, tc.inputTracks)
 
 			u := NewAlbumUseCase(repo, storage)
-			id, err := u.AddAlbumWithTracks(tc.inputAlbum, tc.inputTracks)
+			id, err := u.AddAlbumWithTracks(tc.inputAlbum, tc.inputTracks, 1)
 
 			assert.Equal(t, tc.expectedID, id)
 

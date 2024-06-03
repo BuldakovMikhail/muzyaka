@@ -35,18 +35,18 @@ func (m *MockAlbumRepository) EXPECT() *MockAlbumRepositoryMockRecorder {
 }
 
 // AddAlbumWithTracksOutbox mocks base method.
-func (m *MockAlbumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks []*models.TrackMeta) (uint64, error) {
+func (m *MockAlbumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks []*models.TrackMeta, musicianId uint64) (uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddAlbumWithTracksOutbox", album, tracks)
+	ret := m.ctrl.Call(m, "AddAlbumWithTracksOutbox", album, tracks, musicianId)
 	ret0, _ := ret[0].(uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // AddAlbumWithTracksOutbox indicates an expected call of AddAlbumWithTracksOutbox.
-func (mr *MockAlbumRepositoryMockRecorder) AddAlbumWithTracksOutbox(album, tracks interface{}) *gomock.Call {
+func (mr *MockAlbumRepositoryMockRecorder) AddAlbumWithTracksOutbox(album, tracks, musicianId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddAlbumWithTracksOutbox", reflect.TypeOf((*MockAlbumRepository)(nil).AddAlbumWithTracksOutbox), album, tracks)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddAlbumWithTracksOutbox", reflect.TypeOf((*MockAlbumRepository)(nil).AddAlbumWithTracksOutbox), album, tracks, musicianId)
 }
 
 // AddTrackToAlbumOutbox mocks base method.
@@ -107,6 +107,36 @@ func (mr *MockAlbumRepositoryMockRecorder) GetAlbum(id interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlbum", reflect.TypeOf((*MockAlbumRepository)(nil).GetAlbum), id)
 }
 
+// GetAlbumId mocks base method.
+func (m *MockAlbumRepository) GetAlbumId(trackId uint64) (uint64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAlbumId", trackId)
+	ret0, _ := ret[0].(uint64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAlbumId indicates an expected call of GetAlbumId.
+func (mr *MockAlbumRepositoryMockRecorder) GetAlbumId(trackId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlbumId", reflect.TypeOf((*MockAlbumRepository)(nil).GetAlbumId), trackId)
+}
+
+// GetAllAlbumsForMusician mocks base method.
+func (m *MockAlbumRepository) GetAllAlbumsForMusician(musicianId uint64) ([]*models.Album, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllAlbumsForMusician", musicianId)
+	ret0, _ := ret[0].([]*models.Album)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllAlbumsForMusician indicates an expected call of GetAllAlbumsForMusician.
+func (mr *MockAlbumRepositoryMockRecorder) GetAllAlbumsForMusician(musicianId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllAlbumsForMusician", reflect.TypeOf((*MockAlbumRepository)(nil).GetAllAlbumsForMusician), musicianId)
+}
+
 // GetAllTracksForAlbum mocks base method.
 func (m *MockAlbumRepository) GetAllTracksForAlbum(albumId uint64) ([]*models.TrackMeta, error) {
 	m.ctrl.T.Helper()
@@ -120,6 +150,21 @@ func (m *MockAlbumRepository) GetAllTracksForAlbum(albumId uint64) ([]*models.Tr
 func (mr *MockAlbumRepositoryMockRecorder) GetAllTracksForAlbum(albumId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllTracksForAlbum", reflect.TypeOf((*MockAlbumRepository)(nil).GetAllTracksForAlbum), albumId)
+}
+
+// IsAlbumOwned mocks base method.
+func (m *MockAlbumRepository) IsAlbumOwned(albumId, musicianId uint64) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsAlbumOwned", albumId, musicianId)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsAlbumOwned indicates an expected call of IsAlbumOwned.
+func (mr *MockAlbumRepositoryMockRecorder) IsAlbumOwned(albumId, musicianId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAlbumOwned", reflect.TypeOf((*MockAlbumRepository)(nil).IsAlbumOwned), albumId, musicianId)
 }
 
 // UpdateAlbum mocks base method.
