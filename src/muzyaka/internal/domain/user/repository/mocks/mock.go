@@ -78,35 +78,6 @@ func (mr *MockUserRepositoryMockRecorder) DeleteUser(id interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUser", reflect.TypeOf((*MockUserRepository)(nil).DeleteUser), id)
 }
 
-// DislikeTrack mocks base method.
-func (m *MockUserRepository) DislikeTrack(userId, trackId uint64) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DislikeTrack", userId, trackId)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DislikeTrack indicates an expected call of DislikeTrack.
-func (mr *MockUserRepositoryMockRecorder) DislikeTrack(userId, trackId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DislikeTrack", reflect.TypeOf((*MockUserRepository)(nil).DislikeTrack), userId, trackId)
-}
-
-// GetAllLikedTracks mocks base method.
-func (m *MockUserRepository) GetAllLikedTracks(userId uint64) ([]uint64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllLikedTracks", userId)
-	ret0, _ := ret[0].([]uint64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAllLikedTracks indicates an expected call of GetAllLikedTracks.
-func (mr *MockUserRepositoryMockRecorder) GetAllLikedTracks(userId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllLikedTracks", reflect.TypeOf((*MockUserRepository)(nil).GetAllLikedTracks), userId)
-}
-
 // GetUser mocks base method.
 func (m *MockUserRepository) GetUser(id uint64) (*models.User, error) {
 	m.ctrl.T.Helper()
@@ -135,20 +106,6 @@ func (m *MockUserRepository) GetUserByEmail(email string) (*models.User, error) 
 func (mr *MockUserRepositoryMockRecorder) GetUserByEmail(email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByEmail", reflect.TypeOf((*MockUserRepository)(nil).GetUserByEmail), email)
-}
-
-// LikeTrack mocks base method.
-func (m *MockUserRepository) LikeTrack(userId, trackId uint64) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LikeTrack", userId, trackId)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// LikeTrack indicates an expected call of LikeTrack.
-func (mr *MockUserRepositoryMockRecorder) LikeTrack(userId, trackId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LikeTrack", reflect.TypeOf((*MockUserRepository)(nil).LikeTrack), userId, trackId)
 }
 
 // UpdateUser mocks base method.

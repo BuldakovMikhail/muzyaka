@@ -11,6 +11,10 @@ type Encryptor interface {
 
 type encryptor struct{}
 
+func NewEncryptor() Encryptor {
+	return &encryptor{}
+}
+
 func (e *encryptor) EncodePassword(password []byte) ([]byte, error) {
 	return bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 }
