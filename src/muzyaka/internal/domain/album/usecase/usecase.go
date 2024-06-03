@@ -10,7 +10,7 @@ import (
 type AlbumUseCase interface {
 	GetAlbum(id uint64) (*models.Album, error)
 	UpdateAlbum(album *models.Album) error
-	AddAlbumWithTracks(album *models.Album, tracks []*models.TrackObject) (uint64, error)
+	AddAlbumWithTracks(album *models.Album, tracks []*models.TrackObject, musicianId uint64) (uint64, error)
 	DeleteAlbum(id uint64) error
 	AddTrack(albumId uint64, track *models.TrackObject) (uint64, error)
 	DeleteTrack(albumId uint64, track *models.TrackMeta) error
@@ -82,7 +82,7 @@ func (u *usecase) UpdateAlbum(album *models.Album) error {
 // TODO: Add check that track is not empty
 // TODO: Add ownership check
 // TODO: maybe first write into db then into storage
-func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.TrackObject) (uint64, error) {
+func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.TrackObject, musicianId uint64) (uint64, error) {
 	var tracksMeta []*models.TrackMeta
 	for _, v := range tracks {
 		err := u.storageRep.UploadObject(v)
@@ -93,7 +93,7 @@ func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.Track
 		tracksMeta = append(tracksMeta, v.ExtractMeta())
 	}
 
-	id, err := u.albumRep.AddAlbumWithTracksOutbox(album, tracksMeta)
+	id, err := u.albumRep.AddAlbumWithTracksOutbox(album, tracksMeta, musicianId)
 
 	if err != nil {
 		return 0, errors.Wrap(err, "album.usecase.AddAlbum error while add")
