@@ -49,6 +49,21 @@ func (mr *MockUserRepositoryMockRecorder) AddUser(user interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddUser", reflect.TypeOf((*MockUserRepository)(nil).AddUser), user)
 }
 
+// AddUserWithMusician mocks base method.
+func (m *MockUserRepository) AddUserWithMusician(musician *models.Musician, user *models.User) (uint64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddUserWithMusician", musician, user)
+	ret0, _ := ret[0].(uint64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddUserWithMusician indicates an expected call of AddUserWithMusician.
+func (mr *MockUserRepositoryMockRecorder) AddUserWithMusician(musician, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddUserWithMusician", reflect.TypeOf((*MockUserRepository)(nil).AddUserWithMusician), musician, user)
+}
+
 // DeleteUser mocks base method.
 func (m *MockUserRepository) DeleteUser(id uint64) error {
 	m.ctrl.T.Helper()
@@ -61,6 +76,35 @@ func (m *MockUserRepository) DeleteUser(id uint64) error {
 func (mr *MockUserRepositoryMockRecorder) DeleteUser(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUser", reflect.TypeOf((*MockUserRepository)(nil).DeleteUser), id)
+}
+
+// DislikeTrack mocks base method.
+func (m *MockUserRepository) DislikeTrack(userId, trackId uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DislikeTrack", userId, trackId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DislikeTrack indicates an expected call of DislikeTrack.
+func (mr *MockUserRepositoryMockRecorder) DislikeTrack(userId, trackId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DislikeTrack", reflect.TypeOf((*MockUserRepository)(nil).DislikeTrack), userId, trackId)
+}
+
+// GetAllLikedTracks mocks base method.
+func (m *MockUserRepository) GetAllLikedTracks(userId uint64) ([]uint64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllLikedTracks", userId)
+	ret0, _ := ret[0].([]uint64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllLikedTracks indicates an expected call of GetAllLikedTracks.
+func (mr *MockUserRepositoryMockRecorder) GetAllLikedTracks(userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllLikedTracks", reflect.TypeOf((*MockUserRepository)(nil).GetAllLikedTracks), userId)
 }
 
 // GetUser mocks base method.
@@ -76,6 +120,35 @@ func (m *MockUserRepository) GetUser(id uint64) (*models.User, error) {
 func (mr *MockUserRepositoryMockRecorder) GetUser(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserRepository)(nil).GetUser), id)
+}
+
+// GetUserByEmail mocks base method.
+func (m *MockUserRepository) GetUserByEmail(email string) (*models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByEmail", email)
+	ret0, _ := ret[0].(*models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByEmail indicates an expected call of GetUserByEmail.
+func (mr *MockUserRepositoryMockRecorder) GetUserByEmail(email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByEmail", reflect.TypeOf((*MockUserRepository)(nil).GetUserByEmail), email)
+}
+
+// LikeTrack mocks base method.
+func (m *MockUserRepository) LikeTrack(userId, trackId uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LikeTrack", userId, trackId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// LikeTrack indicates an expected call of LikeTrack.
+func (mr *MockUserRepositoryMockRecorder) LikeTrack(userId, trackId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LikeTrack", reflect.TypeOf((*MockUserRepository)(nil).LikeTrack), userId, trackId)
 }
 
 // UpdateUser mocks base method.

@@ -9,4 +9,11 @@ type UserRepository interface {
 	UpdateUser(user *models.User) error
 	AddUser(user *models.User) (uint64, error)
 	DeleteUser(id uint64) error
+	GetUserByEmail(email string) (*models.User, error)
+
+	AddUserWithMusician(musician *models.Musician, user *models.User) (uint64, error)
+
+	LikeTrack(userId uint64, trackId uint64) error
+	DislikeTrack(userId uint64, trackId uint64) error
+	GetAllLikedTracks(userId uint64) ([]uint64, error)
 }

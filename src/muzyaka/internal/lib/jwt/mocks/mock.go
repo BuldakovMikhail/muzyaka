@@ -49,6 +49,21 @@ func (mr *MockTokenProviderMockRecorder) GenerateToken(user interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateToken", reflect.TypeOf((*MockTokenProvider)(nil).GenerateToken), user)
 }
 
+// GetId mocks base method.
+func (m *MockTokenProvider) GetId(token *models.AuthToken) (uint64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetId", token)
+	ret0, _ := ret[0].(uint64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetId indicates an expected call of GetId.
+func (mr *MockTokenProviderMockRecorder) GetId(token interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetId", reflect.TypeOf((*MockTokenProvider)(nil).GetId), token)
+}
+
 // GetRole mocks base method.
 func (m *MockTokenProvider) GetRole(token *models.AuthToken) (string, error) {
 	m.ctrl.T.Helper()

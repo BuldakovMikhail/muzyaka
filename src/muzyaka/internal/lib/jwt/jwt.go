@@ -13,6 +13,7 @@ type TokenProvider interface {
 	GenerateToken(user *models.User) (*models.AuthToken, error)
 	IsTokenValid(token *models.AuthToken) (bool, error)
 	GetRole(token *models.AuthToken) (string, error)
+	GetId(token *models.AuthToken) (uint64, error)
 }
 
 type Payload struct {
@@ -68,4 +69,16 @@ func (t *tokenProvider) GetRole(token *models.AuthToken) (string, error) {
 	}
 
 	return claims["role"].(string), nil
+}
+
+func (t *tokenProvider) GetId(token *models.AuthToken) (uint64, error) {
+	claims := jwt.MapClaims{}
+	_, err := jwt.ParseWithClaims(string(token.Secret), claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(t.asyncKey), nil
+	})
+	if err != nil {
+		return 0, errors.Wrap(err, "auth.tokenhelper.GetId error in parse")
+	}
+
+	return uint64(claims["uid"].(float64)), nil
 }

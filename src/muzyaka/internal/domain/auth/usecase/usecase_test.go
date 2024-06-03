@@ -128,13 +128,15 @@ func TestUsecase_SignUp(t *testing.T) {
 }
 
 func TestUsecase_SignIn(t *testing.T) {
-	type mockUser func(r *mock_repository3.MockUserRepository, id uint64)
+	type mockUser func(r *mock_repository3.MockUserRepository, login string, inputUser *models.User)
 	type mockToken func(r *mock_jwt.MockTokenProvider, user *models.User)
 	type mockEnc func(r *mock_usecase.MockEncryptor, hashedPass []byte, password []byte, retVal error)
 
 	testTable := []struct {
 		name          string
-		input         *models.User
+		login         string
+		password      string
+		inputUser     *models.User
 		mockUser      mockUser
 		mockToken     mockToken
 		mockEnc       mockEnc
@@ -143,22 +145,18 @@ func TestUsecase_SignIn(t *testing.T) {
 		expectedErr   error
 	}{
 		{
-			name: "Usual test",
-			input: &models.User{
+			name:     "Usual test",
+			login:    "test",
+			password: "test",
+			inputUser: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
 			},
-			mockUser: func(r *mock_repository3.MockUserRepository, id uint64) {
-				r.EXPECT().GetUser(id).Return(&models.User{
-					Id:       uint64(10),
-					Name:     "test",
-					Password: "test",
-					Role:     "test",
-					Email:    "test",
-				}, nil)
+			mockUser: func(r *mock_repository3.MockUserRepository, login string, inputUser *models.User) {
+				r.EXPECT().GetUserByEmail(login).Return(inputUser, nil)
 			},
 			mockToken: func(r *mock_jwt.MockTokenProvider, user *models.User) {
 				r.EXPECT().GenerateToken(user).Return(&models.AuthToken{Secret: []byte("aboba")}, nil)
@@ -171,16 +169,18 @@ func TestUsecase_SignIn(t *testing.T) {
 			expectedErr:   nil,
 		},
 		{
-			name: "Get user fault",
-			input: &models.User{
+			name:     "Get user fault",
+			login:    "test",
+			password: "test",
+			inputUser: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
 			},
-			mockUser: func(r *mock_repository3.MockUserRepository, id uint64) {
-				r.EXPECT().GetUser(id).Return(nil, errors.New("repo error"))
+			mockUser: func(r *mock_repository3.MockUserRepository, login string, inputUser *models.User) {
+				r.EXPECT().GetUserByEmail(login).Return(nil, errors.New("repo error"))
 			},
 			mockToken: func(r *mock_jwt.MockTokenProvider, user *models.User) {
 			},
@@ -192,22 +192,18 @@ func TestUsecase_SignIn(t *testing.T) {
 				"auth.usecase.SignIn user get error"),
 		},
 		{
-			name: "Compare fault",
-			input: &models.User{
+			name:     "Compare fault",
+			login:    "test",
+			password: "test",
+			inputUser: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
 			},
-			mockUser: func(r *mock_repository3.MockUserRepository, id uint64) {
-				r.EXPECT().GetUser(id).Return(&models.User{
-					Id:       uint64(10),
-					Name:     "test",
-					Password: "test",
-					Role:     "test",
-					Email:    "test",
-				}, nil)
+			mockUser: func(r *mock_repository3.MockUserRepository, login string, inputUser *models.User) {
+				r.EXPECT().GetUserByEmail(login).Return(inputUser, nil)
 			},
 			mockToken: func(r *mock_jwt.MockTokenProvider, user *models.User) {
 			},
@@ -220,22 +216,18 @@ func TestUsecase_SignIn(t *testing.T) {
 				"auth.usecase.SignIn compare error"),
 		},
 		{
-			name: "Generate token fault",
-			input: &models.User{
+			name:     "Generate token fault",
+			login:    "test",
+			password: "test",
+			inputUser: &models.User{
 				Id:       uint64(10),
 				Name:     "test",
 				Password: "test",
 				Role:     "test",
 				Email:    "test",
 			},
-			mockUser: func(r *mock_repository3.MockUserRepository, id uint64) {
-				r.EXPECT().GetUser(id).Return(&models.User{
-					Id:       uint64(10),
-					Name:     "test",
-					Password: "test",
-					Role:     "test",
-					Email:    "test",
-				}, nil)
+			mockUser: func(r *mock_repository3.MockUserRepository, login string, inputUser *models.User) {
+				r.EXPECT().GetUserByEmail(login).Return(inputUser, nil)
 			},
 			mockToken: func(r *mock_jwt.MockTokenProvider, user *models.User) {
 				r.EXPECT().GenerateToken(user).Return(nil, errors.New("token error"))
@@ -265,18 +257,17 @@ func TestUsecase_SignIn(t *testing.T) {
 			tokenMock := mock_jwt.NewMockTokenProvider(c2)
 			dummyEnc := mock_usecase.NewMockEncryptor(c3)
 
-			tc.mockUser(repoUser, tc.input.Id)
-			tc.mockToken(tokenMock, tc.input)
-			tc.mockEnc(dummyEnc, []byte(tc.input.Password), []byte(tc.input.Password), tc.compRes)
+			tc.mockUser(repoUser, tc.login, tc.inputUser)
+			tc.mockToken(tokenMock, tc.inputUser)
+			tc.mockEnc(dummyEnc, []byte(tc.login), []byte(tc.password), tc.compRes)
 
 			s := NewAuthUseCase(tokenMock, repoUser, dummyEnc)
 
-			res, err := s.SignIn(tc.input)
+			res, err := s.SignIn(tc.login, tc.password)
 
 			assert.Equal(t, tc.expectedValue, res)
 			if tc.expectedErr == nil {
 				assert.Nil(t, err)
-				assert.Equal(t, tc.input.Password, "")
 			} else {
 				assert.Equal(t, err.Error(), tc.expectedErr.Error())
 			}
@@ -285,44 +276,67 @@ func TestUsecase_SignIn(t *testing.T) {
 }
 
 func TestUsecase_Authorization(t *testing.T) {
-	type mockToken func(r *mock_jwt.MockTokenProvider, user *models.AuthToken)
+	type mockToken func(r *mock_jwt.MockTokenProvider, user *models.AuthToken, id uint64)
+	type mockUser func(r *mock_repository3.MockUserRepository)
 
 	testTable := []struct {
 		name          string
 		input         *models.AuthToken
+		inputId       uint64
+		mockUser      mockUser
 		role          string
 		mockToken     mockToken
-		expectedValue bool
+		expectedValue uint64
 		expectedErr   error
 	}{
 		{
-			name:  "Usual test",
-			input: &models.AuthToken{Secret: []byte("aboba")},
-			role:  "aboba",
-			mockToken: func(r *mock_jwt.MockTokenProvider, token *models.AuthToken) {
+			name:    "Usual test",
+			input:   &models.AuthToken{Secret: []byte("aboba")},
+			role:    "aboba",
+			inputId: uint64(1),
+			mockToken: func(r *mock_jwt.MockTokenProvider, token *models.AuthToken, id uint64) {
+				r.EXPECT().IsTokenValid(token).Return(true, nil)
 				r.EXPECT().GetRole(token).Return("aboba", nil)
+				r.EXPECT().GetId(token).Return(id, nil)
 			},
-			expectedValue: true,
+			mockUser: func(r *mock_repository3.MockUserRepository) {
+				r.EXPECT().GetUser(uint64(1)).Return(&models.User{
+					Id:       uint64(1),
+					Name:     "test",
+					Password: "test",
+					Role:     "test",
+					Email:    "test",
+				}, nil)
+			},
+			expectedValue: uint64(1),
 			expectedErr:   nil,
 		},
 		{
-			name:  "Access denied",
-			input: &models.AuthToken{Secret: []byte("aboba")},
-			role:  "ne aboba",
-			mockToken: func(r *mock_jwt.MockTokenProvider, token *models.AuthToken) {
+			name:    "Access denied",
+			input:   &models.AuthToken{Secret: []byte("aboba")},
+			role:    "ne aboba",
+			inputId: uint64(1),
+			mockToken: func(r *mock_jwt.MockTokenProvider, token *models.AuthToken, id uint64) {
+				r.EXPECT().IsTokenValid(token).Return(true, nil)
 				r.EXPECT().GetRole(token).Return("aboba", nil)
 			},
-			expectedValue: false,
-			expectedErr:   nil,
+			mockUser: func(r *mock_repository3.MockUserRepository) {
+			},
+			expectedValue: uint64(0),
+			expectedErr:   models.ErrAccessDenied,
 		},
 		{
-			name:  "Token fault",
-			input: &models.AuthToken{Secret: []byte("aboba")},
-			role:  "aboba",
-			mockToken: func(r *mock_jwt.MockTokenProvider, token *models.AuthToken) {
+			name:    "Token fault",
+			input:   &models.AuthToken{Secret: []byte("aboba")},
+			role:    "aboba",
+			inputId: uint64(1),
+			mockToken: func(r *mock_jwt.MockTokenProvider, token *models.AuthToken, id uint64) {
+				r.EXPECT().IsTokenValid(token).Return(true, nil)
 				r.EXPECT().GetRole(token).Return("", errors.New("token error"))
 			},
-			expectedValue: false,
+			mockUser: func(r *mock_repository3.MockUserRepository) {
+			},
+			expectedValue: uint64(0),
 			expectedErr:   errors.Wrap(errors.New("token error"), "auth.usecase.Authorization token parse error"),
 		},
 	}
@@ -343,7 +357,8 @@ func TestUsecase_Authorization(t *testing.T) {
 			tokenMock := mock_jwt.NewMockTokenProvider(c2)
 			dummyEnc := mock_usecase.NewMockEncryptor(c3)
 
-			tc.mockToken(tokenMock, tc.input)
+			tc.mockToken(tokenMock, tc.input, tc.inputId)
+			tc.mockUser(repoUser)
 
 			s := NewAuthUseCase(tokenMock, repoUser, dummyEnc)
 
