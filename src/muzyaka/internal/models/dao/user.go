@@ -14,6 +14,24 @@ func (User) TableName() string {
 	return "users"
 }
 
+type UserTrack struct {
+	TrackId uint64 `gorm:"column:track_id"`
+	UserId  uint64 `gorm:"column:user_id"`
+}
+
+func (UserTrack) TableName() string {
+	return "user_track"
+}
+
+type UserMusician struct {
+	UserId     uint64 `gorm:"user_id"`
+	MusicianId uint64 `gorm:"musician_id"`
+}
+
+func (UserMusician) TableName() string {
+	return "users_musicians"
+}
+
 func ToModelUser(user *User) *models.User {
 	return &models.User{
 		Id:       user.ID,

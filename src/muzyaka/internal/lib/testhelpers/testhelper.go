@@ -42,8 +42,7 @@ func CreatePostgresContainer(ctx context.Context) (*PostgresContainer, error) {
 		testcontainers.WithImage("postgres:15.3-alpine"),
 
 		//src/muzyaka/internal/domain/album/repository/postgres/postgres_test.go
-		postgres.WithInitScripts(filepath.Join("..", "..", "..", "..", "..", "migrations", "postgres", "init.sql")),
-		postgres.WithInitScripts(filepath.Join("..", "..", "..", "..", "..", "migrations", "postgres", "outbox.sql")),
+		postgres.WithInitScripts(filepath.Join("..", "..", "..", "..", "..", "..", "database", "docker-entrypoint-initdb.d", "01-init.sql")),
 		postgres.WithDatabase("test-db"),
 		postgres.WithUsername("postgres"),
 		postgres.WithPassword("postgres"),

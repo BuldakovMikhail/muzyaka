@@ -3,10 +3,11 @@ package dao
 import "src/internal/models"
 
 type Merch struct {
-	ID   uint64 `gorm:"column:id"`
-	Name string `gorm:"column:name"`
-	Desc string `gorm:"column:description"`
-	Link string `gorm:"column:link"`
+	ID         uint64 `gorm:"column:id"`
+	Name       string `gorm:"column:name"`
+	Desc       string `gorm:"column:description"`
+	Link       string `gorm:"column:link"`
+	MusicianID uint64 `gorm:"column:musician_id"`
 }
 
 func (Merch) TableName() string {
@@ -23,12 +24,13 @@ func (MerchPhotos) TableName() string {
 	return "merch_photos"
 }
 
-func ToPostgresMerch(e *models.Merch) *Merch {
+func ToPostgresMerch(e *models.Merch, musicianId uint64) *Merch {
 	return &Merch{
-		ID:   e.Id,
-		Name: e.Name,
-		Desc: e.Description,
-		Link: e.OrderUrl,
+		ID:         e.Id,
+		Name:       e.Name,
+		Desc:       e.Description,
+		Link:       e.OrderUrl,
+		MusicianID: musicianId,
 	}
 }
 

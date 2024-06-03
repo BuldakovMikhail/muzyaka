@@ -8,7 +8,6 @@ import (
 	"log"
 	"src/internal/lib/testhelpers"
 	"src/internal/models"
-	"src/internal/models/dao"
 	"testing"
 )
 
@@ -30,6 +29,11 @@ func TestRepo_AddAlbumWithTracks(t *testing.T) {
 		log.Fatal(err)
 	}
 	err = db.Exec("insert into genres (name) values ('test')").Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.Exec("insert into musicians (name, description) values ('test', 'test')").Error
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,7 +68,7 @@ func TestRepo_AddAlbumWithTracks(t *testing.T) {
 		},
 	}
 
-	id, err := repository.AddAlbumWithTracksOutbox(album, tracks)
+	id, err := repository.AddAlbumWithTracksOutbox(album, tracks, 1)
 	assert.NoError(t, err)
 	assert.NotNil(t, id)
 
@@ -84,9 +88,4 @@ func TestRepo_AddAlbumWithTracks(t *testing.T) {
 	tracksFromPg, err = repository.GetAllTracksForAlbum(id)
 	assert.Equal(t, len(tracksFromPg), 0)
 	assert.NoError(t, err)
-
-	var rels []*dao.AlbumTrack
-	tx := db.Find(&rels, "album_id = ?", id)
-	assert.NoError(t, tx.Error)
-	assert.Equal(t, len(rels), 0)
 }

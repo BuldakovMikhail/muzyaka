@@ -1,4 +1,4 @@
-package main
+package muzyaka
 
 import (
 	"gorm.io/driver/postgres"

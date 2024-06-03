@@ -7,6 +7,7 @@ type Playlist struct {
 	Name        string `gorm:"column:name"`
 	CoverFile   []byte `gorm:"column:cover_file"`
 	Description string `gorm:"column:description"`
+	UserID      uint64 `gorm:"column:user_id"`
 }
 
 type PlaylistTrack struct {
@@ -19,7 +20,7 @@ func (Playlist) TableName() string {
 }
 
 func (PlaylistTrack) TableName() string {
-	return "playlists_tracks"
+	return "track_playlist"
 }
 
 func ToModelPlaylist(playlist *Playlist) *models.Playlist {
@@ -31,11 +32,12 @@ func ToModelPlaylist(playlist *Playlist) *models.Playlist {
 	}
 }
 
-func ToPostgresPlaylist(playlist *models.Playlist) *Playlist {
+func ToPostgresPlaylist(playlist *models.Playlist, userId uint64) *Playlist {
 	return &Playlist{
 		ID:          playlist.Id,
 		Name:        playlist.Name,
 		CoverFile:   playlist.CoverFile,
 		Description: playlist.Description,
+		UserID:      userId,
 	}
 }

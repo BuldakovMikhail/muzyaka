@@ -17,6 +17,42 @@ func NewAlbumRepository(db *gorm.DB) repository.AlbumRepository {
 	return &albumRepository{db: db}
 }
 
+func (ar *albumRepository) GetAllAlbumsForMusician(musicianId uint64) ([]*models.Album, error) {
+	var pgAlbums []*dao.Album
+	tx := ar.db.Limit(dao.MaxLimit).Find(&pgAlbums, "musician_id = ?", musicianId)
+	if tx.Error != nil {
+		return nil, errors.Wrap(tx.Error, "database error (table albums)")
+	}
+
+	var albums []*models.Album
+	for _, v := range pgAlbums {
+		albums = append(albums, dao.ToModelAlbum(v))
+	}
+
+	return albums, nil
+}
+
+func (ar *albumRepository) GetAlbumId(trackId uint64) (uint64, error) {
+	var track dao.TrackMeta
+
+	tx := ar.db.Where("id = ?", trackId).Take(&track)
+	if tx.Error != nil {
+		return 0, errors.Wrap(tx.Error, "database error (table track)")
+	}
+
+	return track.AlbumID, nil
+}
+
+func (ar *albumRepository) IsAlbumOwned(albumId uint64, musicianId uint64) (bool, error) {
+	var album dao.Album
+	tx := ar.db.Where("id = ?", albumId).Take(&album)
+	if tx.Error != nil {
+		return false, errors.Wrap(tx.Error, "database error (table album)")
+	}
+
+	return musicianId == album.MusicianID, nil
+}
+
 func (ar *albumRepository) GetAlbum(id uint64) (*models.Album, error) {
 	var album dao.Album
 
@@ -29,7 +65,7 @@ func (ar *albumRepository) GetAlbum(id uint64) (*models.Album, error) {
 }
 
 func (ar *albumRepository) UpdateAlbum(album *models.Album) error {
-	pgAlbum := dao.ToPostgresAlbum(album)
+	pgAlbum := dao.ToPostgresAlbum(album, 0)
 	tx := ar.db.Omit("id").Updates(pgAlbum)
 
 	if tx.Error != nil {
@@ -39,29 +75,23 @@ func (ar *albumRepository) UpdateAlbum(album *models.Album) error {
 	return nil
 }
 
-func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks []*models.TrackMeta) (uint64, error) {
-	pgAlbum := dao.ToPostgresAlbum(album)
+func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks []*models.TrackMeta, musicianId uint64) (uint64, error) {
+	pgAlbum := dao.ToPostgresAlbum(album, musicianId)
 	var pgTracks []*dao.TrackMeta
 
-	for _, v := range tracks {
-		var pgGenre dao.Genre
-		tx := ar.db.Where("name = ?", v.Genre).Take(&pgGenre)
-		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-			return 0, models.ErrInvalidGenre
-		} else if tx.Error != nil {
-			return 0, errors.Wrap(tx.Error, "database error (table album)")
-		}
-
-		pgTracks = append(pgTracks, &dao.TrackMeta{
-			ID:         0,
-			Source:     v.Source,
-			Name:       v.Name,
-			GenreRefer: pgGenre.ID,
-		})
-	}
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
 		if err := ar.db.Create(pgAlbum).Error; err != nil {
 			return err
+		}
+
+		for _, v := range tracks {
+			var pgGenre dao.Genre
+			tx := ar.db.Where("name = ?", v.Genre).Limit(1).Find(&pgGenre)
+			if tx.Error != nil {
+				return tx.Error
+			}
+
+			pgTracks = append(pgTracks, dao.ToPostgresTrack(v, pgGenre.ID, pgAlbum.ID))
 		}
 
 		if err := ar.db.Create(&pgTracks).Error; err != nil {
@@ -69,13 +99,6 @@ func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks 
 		}
 
 		for _, v := range pgTracks {
-			if err := ar.db.Create(&dao.AlbumTrack{
-				AlbumId: pgAlbum.ID,
-				TrackId: v.ID,
-			}).Error; err != nil {
-				return err
-			}
-
 			eventID, err := uuid.GenerateUUID()
 			if err != nil {
 				return err
@@ -87,7 +110,7 @@ func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks 
 				TrackId:    v.ID,
 				Source:     v.Source,
 				Name:       v.Name,
-				GenreRefer: v.GenreRefer,
+				GenreRefer: *v.GenreRefer,
 				Type:       dao.TypeAdd,
 				Sent:       false,
 			}).Error; err != nil {
@@ -106,15 +129,14 @@ func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks 
 }
 
 func (ar *albumRepository) DeleteAlbumOutbox(id uint64) error {
-
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
-		var relations []*dao.AlbumTrack
+		var relations []*dao.TrackMeta
 		if err := ar.db.Limit(dao.MaxLimit).Find(&relations, "album_id = ?", id).Error; err != nil {
 			return err
 		}
 
 		for _, v := range relations {
-			if err := ar.db.Delete(&dao.TrackMeta{}, v.TrackId).Error; err != nil {
+			if err := ar.db.Delete(&dao.TrackMeta{}, v.ID).Error; err != nil {
 				return err
 			}
 
@@ -126,7 +148,7 @@ func (ar *albumRepository) DeleteAlbumOutbox(id uint64) error {
 			if err := ar.db.Create(&dao.Outbox{
 				ID:         0,
 				EventId:    eventID,
-				TrackId:    v.TrackId,
+				TrackId:    v.ID,
 				Source:     "",
 				Name:       "",
 				GenreRefer: 0,
@@ -153,26 +175,20 @@ func (ar *albumRepository) DeleteAlbumOutbox(id uint64) error {
 
 func (ar *albumRepository) AddTrackToAlbumOutbox(albumId uint64, track *models.TrackMeta) (uint64, error) {
 	var pgGenre dao.Genre
-	tx := ar.db.Where("name = ?", track.Genre).Take(&pgGenre)
-
-	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-		return 0, models.ErrInvalidGenre
-	} else if tx.Error != nil {
-		return 0, errors.Wrap(tx.Error, "database error (table album)")
+	if track.Genre != "" {
+		tx := ar.db.Where("name = ?", track.Genre).First(&pgGenre)
+		if tx.Error != nil {
+			return 0, errors.Wrap(tx.Error, "database error (table album)")
+		}
 	}
 
-	pgTrack := dao.ToPostgresTrack(track, pgGenre.ID)
+	pgTrack := dao.ToPostgresTrack(track, pgGenre.ID, albumId)
 
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
 		// Add track to tracks table
 		if err := tx.Create(&pgTrack).Error; err != nil {
 			return err
 		}
-		// Set album-track relation
-		if err := tx.Create(&dao.AlbumTrack{AlbumId: albumId, TrackId: pgTrack.ID}).Error; err != nil {
-			return err
-		}
-
 		// Add event to outbox
 		eventID, err := uuid.GenerateUUID()
 		if err != nil {
@@ -185,7 +201,7 @@ func (ar *albumRepository) AddTrackToAlbumOutbox(albumId uint64, track *models.T
 			TrackId:    pgTrack.ID,
 			Source:     pgTrack.Source,
 			Name:       pgTrack.Name,
-			GenreRefer: pgTrack.GenreRefer,
+			GenreRefer: *pgTrack.GenreRefer,
 			Type:       dao.TypeAdd,
 			Sent:       false,
 		}).Error; err != nil {
@@ -225,7 +241,7 @@ func (ar *albumRepository) DeleteTrackFromAlbumOutbox(albumId uint64, track *mod
 			return err
 		}
 
-		res := ar.db.Limit(1).Find(&dao.AlbumTrack{}, "album_id = ?", albumId)
+		res := ar.db.Limit(1).Find(&dao.TrackMeta{}, "album_id = ?", albumId)
 		if res.Error != nil {
 			return res.Error
 		}
@@ -248,40 +264,23 @@ func (ar *albumRepository) DeleteTrackFromAlbumOutbox(albumId uint64, track *mod
 }
 
 func (ar *albumRepository) GetAllTracksForAlbum(albumId uint64) ([]*models.TrackMeta, error) {
-	var relations []*dao.AlbumTrack
-	tx := ar.db.Limit(dao.MaxLimit).Find(&relations, "album_id = ?", albumId)
-	if tx.Error != nil {
-		return nil, errors.Wrap(tx.Error, "database error (table album)")
-	}
+	var tempTracks []*dao.TrackMeta
 
-	var ids []uint64
-	for _, v := range relations {
-		ids = append(ids, v.TrackId)
-	}
+	tx := ar.db.Limit(dao.MaxLimit).Find(&tempTracks, "album_id = ?", albumId)
 
-	var pgTracks []*dao.TrackMeta
-	tx = ar.db.Find(&pgTracks, ids)
 	if tx.Error != nil {
 		return nil, errors.Wrap(tx.Error, "database error (table album)")
 	}
 
 	var tracks []*models.TrackMeta
-	for _, v := range pgTracks {
+	for _, v := range tempTracks {
 		var pgGenre dao.Genre
-		tx := ar.db.Where("id = ?", v.GenreRefer).Take(&pgGenre)
+		tx := ar.db.Where("id = ?", v.GenreRefer).Limit(1).Find(&pgGenre)
 		if tx.Error != nil {
 			return nil, errors.Wrap(tx.Error, "database error (table album)")
 		}
 
-		track := &models.TrackMeta{
-			Id:     v.ID,
-			Source: v.Source,
-			Name:   v.Name,
-			Genre:  pgGenre.Name,
-		}
-
-		tracks = append(tracks, track)
+		tracks = append(tracks, dao.ToModelTrack(v, &pgGenre))
 	}
-
 	return tracks, nil
 }
