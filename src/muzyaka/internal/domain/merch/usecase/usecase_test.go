@@ -147,7 +147,7 @@ func TestUsecase_AddMerch(t *testing.T) {
 				OrderUrl:    "http://example.com/order",
 			},
 			mock: func(r *mock_repository.MockMerchRepository, merch *models.Merch) {
-				r.EXPECT().AddMerch(merch).Return(uint64(1), nil)
+				r.EXPECT().AddMerch(merch, uint64(0)).Return(uint64(1), nil)
 			},
 			expectedValue: uint64(1),
 			expectedErr:   nil,
@@ -161,7 +161,7 @@ func TestUsecase_AddMerch(t *testing.T) {
 				OrderUrl:    "http://example.com/order",
 			},
 			mock: func(r *mock_repository.MockMerchRepository, merch *models.Merch) {
-				r.EXPECT().AddMerch(merch).Return(uint64(0), errors.New("error in repo"))
+				r.EXPECT().AddMerch(merch, uint64(0)).Return(uint64(0), errors.New("error in repo"))
 			},
 			expectedValue: uint64(0),
 			expectedErr: errors.Wrap(errors.New("error in repo"),
@@ -179,7 +179,7 @@ func TestUsecase_AddMerch(t *testing.T) {
 			tc.mock(repo, tc.inputMerch)
 
 			u := NewMerchUseCase(repo)
-			res, err := u.AddMerch(tc.inputMerch)
+			res, err := u.AddMerch(tc.inputMerch, 0)
 
 			assert.Equal(t, tc.expectedValue, res)
 			if tc.expectedErr == nil {

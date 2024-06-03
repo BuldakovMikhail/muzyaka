@@ -11,6 +11,8 @@ type MusicianUseCase interface {
 	AddMusician(musician *models.Musician) (uint64, error)
 	DeleteMusician(id uint64) error
 	GetMusician(id uint64) (*models.Musician, error)
+
+	GetMusicianIdForUser(userId uint64) (uint64, error)
 }
 
 type usecase struct {
@@ -19,6 +21,15 @@ type usecase struct {
 
 func NewMusicianUseCase(rep repository.MusicianRepository) MusicianUseCase {
 	return &usecase{musicianRep: rep}
+}
+
+func (u *usecase) GetMusicianIdForUser(userId uint64) (uint64, error) {
+	id, err := u.musicianRep.GetMusicianIdForUser(userId)
+	if err != nil {
+		return 0, errors.Wrap(err, "musician.usecase.GetMusicianIdForUser error while get")
+	}
+
+	return id, nil
 }
 
 func (u *usecase) UpdatedMusician(musician *models.Musician) error {

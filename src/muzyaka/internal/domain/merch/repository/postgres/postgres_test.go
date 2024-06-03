@@ -30,6 +30,11 @@ func TestRepo_PhotosChange(t *testing.T) {
 	}
 	repository := NewMerchRepository(db)
 
+	err = db.Exec("insert into musicians (name, description) values ('test', 'test')").Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	merch := models.Merch{
 		Id:          0,
 		Name:        "test",
@@ -38,7 +43,7 @@ func TestRepo_PhotosChange(t *testing.T) {
 		OrderUrl:    "test.com",
 	}
 
-	id, err := repository.AddMerch(&merch)
+	id, err := repository.AddMerch(&merch, 1)
 	assert.NoError(t, err)
 	assert.NotNil(t, id)
 

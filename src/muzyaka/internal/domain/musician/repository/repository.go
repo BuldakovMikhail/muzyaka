@@ -9,4 +9,5 @@ type MusicianRepository interface {
 	UpdateMusician(musician *models.Musician) error
 	AddMusician(musician *models.Musician) (uint64, error)
 	DeleteMusician(id uint64) error
+	GetMusicianIdForUser(userId uint64) (uint64, error)
 }

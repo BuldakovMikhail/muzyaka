@@ -8,9 +8,13 @@ import (
 
 type MerchUseCase interface {
 	GetMerch(id uint64) (*models.Merch, error)
+	GetAllMerchForMusician(musicianId uint64) ([]*models.Merch, error)
 	UpdateMerch(merch *models.Merch) error
-	AddMerch(merch *models.Merch) (uint64, error)
+	AddMerch(merch *models.Merch, musicianId uint64) (uint64, error)
 	DeleteMerch(id uint64) error
+	GetMusicianForMerch(merchId uint64) (uint64, error)
+
+	IsMerchOwned(merchId uint64, musicianId uint64) (bool, error)
 }
 
 type usecase struct {
@@ -21,11 +25,41 @@ func NewMerchUseCase(merchRepository repository.MerchRepository) MerchUseCase {
 	return &usecase{merchRep: merchRepository}
 }
 
+func (u *usecase) IsMerchOwned(merchId uint64, musicianId uint64) (bool, error) {
+	res, err := u.merchRep.IsMerchOwned(merchId, musicianId)
+
+	if err != nil {
+		return false, errors.Wrap(err, "album.usecase.IsAlbumOwned error while get")
+	}
+
+	return res, nil
+}
+
+func (u *usecase) GetMusicianForMerch(merchId uint64) (uint64, error) {
+	res, err := u.merchRep.GetMusicianForMerch(merchId)
+
+	if err != nil {
+		return 0, errors.Wrap(err, "merch.usecase.GetMusicianForMerch error while get")
+	}
+
+	return res, nil
+}
+
 func (u *usecase) GetMerch(id uint64) (*models.Merch, error) {
 	res, err := u.merchRep.GetMerch(id)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "merch.usecase.GetMerch error while get")
+	}
+
+	return res, nil
+}
+
+func (u *usecase) GetAllMerchForMusician(musicianId uint64) ([]*models.Merch, error) {
+	res, err := u.merchRep.GetAllMerchForMusician(musicianId)
+
+	if err != nil {
+		return nil, errors.Wrap(err, "merch.usecase.GetAllMerchForMusician error while get")
 	}
 
 	return res, nil
@@ -41,8 +75,8 @@ func (u *usecase) UpdateMerch(merch *models.Merch) error {
 	return nil
 }
 
-func (u *usecase) AddMerch(merch *models.Merch) (uint64, error) {
-	id, err := u.merchRep.AddMerch(merch)
+func (u *usecase) AddMerch(merch *models.Merch, musicianId uint64) (uint64, error) {
+	id, err := u.merchRep.AddMerch(merch, musicianId)
 
 	if err != nil {
 		return 0, errors.Wrap(err, "merch.usecase.AddMerch error while add")

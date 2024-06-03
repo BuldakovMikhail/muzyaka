@@ -34,6 +34,16 @@ func (m musicianRepository) GetMusician(id uint64) (*models.Musician, error) {
 	return dao.ToModelMusician(&musician, musicianPhotots), nil
 }
 
+func (m musicianRepository) GetMusicianIdForUser(userId uint64) (uint64, error) {
+	var relation dao.UserMusician
+	tx := m.db.Where("user_id = ?", userId).Take(&relation)
+	if tx.Error != nil {
+		return 0, errors.Wrap(tx.Error, "database error (table users_musicians)")
+	}
+
+	return relation.MusicianId, nil
+}
+
 func (m musicianRepository) UpdateMusician(musician *models.Musician) error {
 	pgMusician := dao.ToPostgresMusician(musician)
 	pgMusicianPhotos := dao.ToPostgresMusicianPhotos(musician)
@@ -131,6 +141,10 @@ func (m musicianRepository) DeleteMusician(id uint64) error {
 
 	if tx.Error != nil {
 		return errors.Wrap(tx.Error, "database error (table musician)")
+	}
+
+	if tx.RowsAffected == 0 {
+		return models.ErrNothingToDelete
 	}
 
 	return nil

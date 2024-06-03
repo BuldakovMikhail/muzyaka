@@ -17,6 +17,16 @@ func NewMerchRepository(db *gorm.DB) repository2.MerchRepository {
 	return &merchRepository{db: db}
 }
 
+func (m *merchRepository) IsMerchOwned(merchId uint64, musicianId uint64) (bool, error) {
+	var merch dao.Merch
+	tx := m.db.Where("id = ?", merchId).Take(&merch)
+	if tx.Error != nil {
+		return false, errors.Wrap(tx.Error, "database error (table album)")
+	}
+
+	return musicianId == merch.MusicianID, nil
+}
+
 func (m *merchRepository) GetMerch(id uint64) (*models.Merch, error) {
 	var merch dao.Merch
 	var merchPhotos []*dao.MerchPhotos
@@ -34,8 +44,41 @@ func (m *merchRepository) GetMerch(id uint64) (*models.Merch, error) {
 	return dao.ToModelMerch(&merch, merchPhotos), nil
 }
 
+func (m *merchRepository) GetMusicianForMerch(merchId uint64) (uint64, error) {
+	var merch dao.Merch
+
+	tx := m.db.Where("id = ?", merchId).Take(&merch)
+	if tx.Error != nil {
+		return 0, errors.Wrap(tx.Error, "database error (table merch)")
+	}
+
+	return merch.MusicianID, nil
+}
+
+func (m *merchRepository) GetAllMerchForMusician(musicianId uint64) ([]*models.Merch, error) {
+	var merch []*dao.Merch
+
+	tx := m.db.Where("musician_id = ?", musicianId).Limit(dao.MaxLimit).Find(&merch)
+	if tx.Error != nil {
+		return nil, errors.Wrap(tx.Error, "database error (table merch)")
+	}
+
+	var res []*models.Merch
+	for _, v := range merch {
+		var merchPhotos []*dao.MerchPhotos
+		tx = m.db.Where("merch_id = ?", v.ID).Limit(dao.MaxLimit).Find(&merchPhotos)
+		if tx.Error != nil {
+			return nil, errors.Wrap(tx.Error, "database error (table merch)")
+		}
+
+		res = append(res, dao.ToModelMerch(v, merchPhotos))
+	}
+
+	return res, nil
+}
+
 func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
-	pgMerch := dao.ToPostgresMerch(merch)
+	pgMerch := dao.ToPostgresMerch(merch, 0)
 	pgMerchPhotos := dao.ToPostgresMerchPhotos(merch)
 
 	var existingFiles []*dao.MerchPhotos
@@ -75,7 +118,7 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 	}
 
 	err := m.db.Transaction(func(tx *gorm.DB) error {
-		if err := m.db.Omit("id").Updates(pgMerch).Error; err != nil {
+		if err := m.db.Omit("id", "musician_id").Updates(pgMerch).Error; err != nil {
 			return err
 		}
 
@@ -101,8 +144,8 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 	return nil
 }
 
-func (m *merchRepository) AddMerch(merch *models.Merch) (uint64, error) {
-	pgMerch := dao.ToPostgresMerch(merch)
+func (m *merchRepository) AddMerch(merch *models.Merch, musicianId uint64) (uint64, error) {
+	pgMerch := dao.ToPostgresMerch(merch, musicianId)
 
 	err := m.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&pgMerch).Error; err != nil {
@@ -132,6 +175,10 @@ func (m *merchRepository) DeleteMerch(id uint64) error {
 
 	if tx.Error != nil {
 		return errors.Wrap(tx.Error, "database error (table merch)")
+	}
+
+	if tx.RowsAffected == 0 {
+		return models.ErrNothingToDelete
 	}
 
 	return nil
