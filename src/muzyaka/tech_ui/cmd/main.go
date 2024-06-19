@@ -7,5 +7,5 @@ import (
 
 func main() {
 	menu := menus.NewMenu()
-	menu.RunMenu(http.DefaultClient)
+	menu.RunAuthMenu(http.DefaultClient)
 }

@@ -1,7 +1,6 @@
 package menus
 
 import (
-	"fmt"
 	"github.com/dixonwille/wmenu/v5"
 	"github.com/pkg/errors"
 	"net/http"
@@ -16,11 +15,13 @@ var (
 )
 
 type Menu struct {
-	mainMenu   *wmenu.Menu
-	jwt        string
-	id         uint64
-	role       string
-	musicianId uint64
+	mainMenu     *wmenu.Menu
+	musicianMenu *wmenu.Menu
+	userMenu     *wmenu.Menu
+	jwt          string
+	id           uint64
+	role         string
+	musicianId   uint64
 }
 
 func NewMenu() *Menu {
@@ -36,23 +37,14 @@ func (m *Menu) AddOptionsMain(client *http.Client) {
 	})
 }
 
-func (m *Menu) RunMenu(client *http.Client) error {
-	m.mainMenu = wmenu.NewMenu("Please select options")
-	m.AddOptionsMain(client)
+func (m *Menu) AddOptionsMusician(client *http.Client) {
+	m.musicianMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
+		return errExit
+	})
+}
 
-	for {
-		err := m.mainMenu.Run()
-		fmt.Println()
-		if err != nil {
-			if errors.Is(err, errExit) {
-				break
-			}
-			fmt.Printf("ERROR: %v\n\n", err)
-		}
-
-	}
-
-	fmt.Printf("Exited menu.\n")
-
-	return nil
+func (m *Menu) AddOptionsUser(client *http.Client) {
+	m.musicianMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
+		return errExit
+	})
 }

@@ -2,16 +2,40 @@ package menus
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"github.com/dixonwille/wmenu/v5"
 	"log"
+	"net/http"
 	"os"
+	"src/internal/domain/auth/usecase"
 	"src/internal/lib/api/response"
 	"src/internal/models/dto"
 	"src/tech_ui/lib"
 	"src/tech_ui/utils"
 	"strings"
 )
+
+func (m *Menu) RunAuthMenu(client *http.Client) error {
+	m.mainMenu = wmenu.NewMenu("Please select options")
+	m.AddOptionsMain(client)
+
+	for {
+		err := m.mainMenu.Run()
+		fmt.Println()
+		if err != nil {
+			if errors.Is(err, errExit) {
+				break
+			}
+			fmt.Printf("ERROR: %v\n\n", err)
+		}
+
+	}
+
+	fmt.Printf("Exited menu.\n")
+
+	return nil
+}
 
 func (m *Menu) SignIn(opt wmenu.Opt) error {
 	var login string
@@ -47,12 +71,12 @@ func (m *Menu) SignIn(opt wmenu.Opt) error {
 	m.role = getMe.Role
 	m.musicianId = getMe.MusicianId
 
-	//switch m.role {
-	//case usecase.UserRole:
-	//	m.RunUserMenu(client.Client)
-	//case usecase.MusicianRole:
-	//	m.RunMusicianMenu(client.Client)
-	//}
+	switch m.role {
+	case usecase.UserRole:
+		m.RunUserMenu(client.Client)
+	case usecase.MusicianRole:
+		m.RunMusicianMenu(client.Client)
+	}
 
 	fmt.Println(response.StatusOK)
 
@@ -101,14 +125,8 @@ func (m *Menu) SignUpAsUser(opt wmenu.Opt) error {
 	m.role = getMe.Role
 	m.musicianId = getMe.MusicianId
 
-	//switch m.role {
-	//case usecase.UserRole:
-	//	m.RunUserMenu(client.Client)
-	//case usecase.MusicianRole:
-	//	m.RunMusicianMenu(client.Client)
-	//}
-
 	fmt.Println(response.StatusOK)
+	m.RunUserMenu(client.Client)
 
 	return nil
 }
@@ -179,14 +197,8 @@ func (m *Menu) SignUpAsMusician(opt wmenu.Opt) error {
 	m.role = getMe.Role
 	m.musicianId = getMe.MusicianId
 
-	//switch m.role {
-	//case usecase.UserRole:
-	//	m.RunUserMenu(client.Client)
-	//case usecase.MusicianRole:
-	//	m.RunMusicianMenu(client.Client)
-	//}
-
 	fmt.Println(response.StatusOK)
+	m.RunMusicianMenu(client.Client)
 
 	return nil
 }
