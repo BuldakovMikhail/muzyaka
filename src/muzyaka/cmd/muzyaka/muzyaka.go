@@ -64,17 +64,6 @@ const (
 // TODO: добавить жанр мб?
 // TODO: перепроверить все эндпоинты
 
-// @title Muzyaka API
-// @version 1.0
-// @description API Server for musical service
-
-// @host localhost:8080
-// @BasePath /
-
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name Authorization
-
 func App() {
 	cfg := config.MustLoad()
 

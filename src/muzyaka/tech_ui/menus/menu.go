@@ -37,14 +37,17 @@ func (m *Menu) AddOptionsMain(client *http.Client) {
 	})
 }
 
+// TODO: мб нет фото?
+
 func (m *Menu) AddOptionsMusician(client *http.Client) {
+	m.musicianMenu.Option("Add Merch", ClientEntity{client}, false, m.CreateMerch)
 	m.musicianMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
 		return errExit
 	})
 }
 
 func (m *Menu) AddOptionsUser(client *http.Client) {
-	m.musicianMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
+	m.userMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
 		return errExit
 	})
 }

@@ -133,6 +133,7 @@ func DeleteUser(useCase usecase.UserUseCase) http.HandlerFunc {
 }
 
 // @Summary GetMe
+// @Security ApiKeyAuth
 // @Tags user
 // @Description get me
 // @ID get-me
@@ -155,7 +156,7 @@ func GetMe(musicianUseCase usecase2.MusicianUseCase) http.HandlerFunc {
 		resp.UserId = userInfo.Id
 		resp.Role = userInfo.Role
 
-		if userInfo.Role == usecase3.AdminRole {
+		if userInfo.Role == usecase3.MusicianRole {
 			musicianId, err := musicianUseCase.GetMusicianIdForUser(userInfo.Id)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)

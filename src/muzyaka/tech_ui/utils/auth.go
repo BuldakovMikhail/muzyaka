@@ -21,10 +21,10 @@ func SignIn(client *http.Client, query dto.SignIn) (string, error) {
 
 	reqBodyJson, _ := json.Marshal(reqBody)
 	respGot, err := client.Post(url, "application/json", bytes.NewBuffer(reqBodyJson))
+	defer respGot.Body.Close()
 	if err != nil {
 		return "", err
 	}
-	defer respGot.Body.Close()
 
 	var resp dto.SignInResponse
 	err = render.DecodeJSON(respGot.Body, &resp)
@@ -48,10 +48,10 @@ func SignUpAsUser(client *http.Client, query dto.SignUp) (string, error) {
 
 	reqBodyJson, _ := json.Marshal(reqBody)
 	respGot, err := client.Post(url, "application/json", bytes.NewBuffer(reqBodyJson))
+	defer respGot.Body.Close()
 	if err != nil {
 		return "", err
 	}
-	defer respGot.Body.Close()
 
 	var resp dto.SignUpResponse
 	err = render.DecodeJSON(respGot.Body, &resp)
@@ -75,10 +75,10 @@ func SignUpAsMusician(client *http.Client, query dto.SignUpMusician) (string, er
 
 	reqBodyJson, _ := json.Marshal(reqBody)
 	respGot, err := client.Post(url, "application/json", bytes.NewBuffer(reqBodyJson))
+	defer respGot.Body.Close()
 	if err != nil {
 		return "", err
 	}
-	defer respGot.Body.Close()
 
 	var resp dto.SignUpResponse
 	err = render.DecodeJSON(respGot.Body, &resp)

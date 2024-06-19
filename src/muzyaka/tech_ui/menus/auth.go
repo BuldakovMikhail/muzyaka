@@ -47,11 +47,15 @@ func (m *Menu) SignIn(opt wmenu.Opt) error {
 		log.Fatal("Could not cast option's value to ClientEntity")
 	}
 
+	inputReader := bufio.NewReader(os.Stdin)
+
 	fmt.Println("Enter login:")
-	fmt.Scan(&login)
+	login, _ = inputReader.ReadString('\n')
+	login = strings.TrimRight(login, "\r\n")
 
 	fmt.Println("Enter password:")
-	fmt.Scan(&password)
+	password, _ = inputReader.ReadString('\n')
+	password = strings.TrimRight(password, "\r\n")
 
 	jwt, err := utils.SignIn(client.Client, dto.SignIn{
 		Email:    login,
@@ -94,14 +98,19 @@ func (m *Menu) SignUpAsUser(opt wmenu.Opt) error {
 		log.Fatal("Could not cast option's value to ClientEntity")
 	}
 
+	inputReader := bufio.NewReader(os.Stdin)
+
 	fmt.Println("Enter login:")
-	fmt.Scan(&login)
+	login, _ = inputReader.ReadString('\n')
+	login = strings.TrimRight(login, "\r\n")
 
 	fmt.Println("Enter password:")
-	fmt.Scan(&password)
+	password, _ = inputReader.ReadString('\n')
+	password = strings.TrimRight(password, "\r\n")
 
 	fmt.Println("Enter name:")
-	fmt.Scan(&name)
+	name, _ = inputReader.ReadString('\n')
+	name = strings.TrimRight(name, "\r\n")
 
 	jwt, err := utils.SignUpAsUser(client.Client,
 		dto.SignUp{
