@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
 	"net/http"
+	"src/internal/lib/api/response"
 	"src/internal/models/dto"
 )
 
@@ -32,7 +33,9 @@ func SignIn(client *http.Client, query dto.SignIn) (string, error) {
 		return "", err
 	}
 	if respGot.StatusCode != http.StatusOK {
-		return "", errors.New(respGot.Status)
+		var resp response.Response
+		err = render.DecodeJSON(respGot.Body, &resp)
+		return "", errors.New(resp.Error)
 	}
 
 	return resp.Token, nil
@@ -57,7 +60,9 @@ func SignUpAsUser(client *http.Client, query dto.SignUp) (string, error) {
 		return "", err
 	}
 	if respGot.StatusCode != http.StatusOK {
-		return "", errors.New(respGot.Status)
+		var resp response.Response
+		err = render.DecodeJSON(respGot.Body, &resp)
+		return "", errors.New(resp.Error)
 	}
 
 	return resp.Token, nil
@@ -82,7 +87,9 @@ func SignUpAsMusician(client *http.Client, query dto.SignUpMusician) (string, er
 		return "", err
 	}
 	if respGot.StatusCode != http.StatusOK {
-		return "", errors.New(respGot.Status)
+		var resp response.Response
+		err = render.DecodeJSON(respGot.Body, &resp)
+		return "", errors.New(resp.Error)
 	}
 
 	return resp.Token, nil

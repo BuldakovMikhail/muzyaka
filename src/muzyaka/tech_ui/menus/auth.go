@@ -36,7 +36,7 @@ func (m *Menu) SignIn(opt wmenu.Opt) error {
 	}
 
 	m.jwt = jwt
-	getMe, err := utils.GetMe(client.Client)
+	getMe, err := utils.GetMe(client.Client, m.jwt)
 	if err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func (m *Menu) SignUpAsUser(opt wmenu.Opt) error {
 	}
 
 	m.jwt = jwt
-	getMe, err := utils.GetMe(client.Client)
+	getMe, err := utils.GetMe(client.Client, m.jwt)
 	if err != nil {
 		return err
 	}
@@ -163,7 +163,7 @@ func (m *Menu) SignUpAsMusician(opt wmenu.Opt) error {
 	}
 
 	m.jwt = jwt
-	getMe, err := utils.GetMe(client.Client)
+	getMe, err := utils.GetMe(client.Client, m.jwt)
 	if err != nil {
 		return err
 	}

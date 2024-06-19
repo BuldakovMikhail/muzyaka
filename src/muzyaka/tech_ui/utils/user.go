@@ -7,8 +7,8 @@ import (
 	"src/internal/models/dto"
 )
 
-func GetMe(client *http.Client) (*dto.GetMeResponse, error) {
-	url := "http://localhost:8080/api/get-me/"
+func GetMe(client *http.Client, jwt string) (*dto.GetMeResponse, error) {
+	url := "http://localhost:8080/api/get-me"
 
 	respGot, err := client.Get(url)
 	if err != nil {
