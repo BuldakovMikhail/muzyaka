@@ -1,9 +1,11 @@
 package menus
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/dixonwille/wmenu/v5"
 	"log"
+	"os"
 	"src/internal/lib/api/response"
 	"src/internal/models/dto"
 	"src/tech_ui/lib"
@@ -124,27 +126,32 @@ func (m *Menu) SignUpAsMusician(opt wmenu.Opt) error {
 		log.Fatal("Could not cast option's value to ClientEntity")
 	}
 
+	inputReader := bufio.NewReader(os.Stdin)
+
 	fmt.Println("Enter login:")
-	fmt.Scan(&login)
+	login, _ = inputReader.ReadString('\n')
+	login = strings.TrimRight(login, "\r\n")
 
 	fmt.Println("Enter password:")
-	fmt.Scan(&password)
+	password, _ = inputReader.ReadString('\n')
+	password = strings.TrimRight(password, "\r\n")
 
 	fmt.Println("Enter name:")
-	fmt.Scan(&name)
+	name, _ = inputReader.ReadString('\n')
+	name = strings.TrimRight(name, "\r\n")
 
 	fmt.Println("Enter paths to photos, separated by space:")
-	fmt.Scan(&paths)
-
-	fmt.Println("Enter description:")
-	fmt.Scan(&description)
+	paths, _ = inputReader.ReadString('\n')
 
 	arrOfPaths := strings.Split(paths, " ")
 	arrOfBytes, err := lib.ReadAllFilesFromArray(arrOfPaths)
-
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("Enter description:")
+	description, _ = inputReader.ReadString('\n')
+	description = strings.TrimRight(description, "\r\n")
 
 	jwt, err := utils.SignUpAsMusician(client.Client, dto.SignUpMusician{
 		UserInfo: dto.UserInfo{

@@ -1,12 +1,16 @@
 package lib
 
-import "os"
+import (
+	"os"
+	"strings"
+)
 
 func ReadAllFilesFromArray(paths []string) ([][]byte, error) {
 	var resultArr [][]byte
 
 	for _, v := range paths {
-		data, err := os.ReadFile(v)
+		trimmedVal := strings.TrimRight(v, "\r\n")
+		data, err := os.ReadFile(trimmedVal)
 		if err != nil {
 			return nil, err
 		}
