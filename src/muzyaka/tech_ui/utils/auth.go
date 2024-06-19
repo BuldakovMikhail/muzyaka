@@ -13,13 +13,10 @@ var (
 	authPath = "http://localhost:8080/api/auth/"
 )
 
-func SignIn(client *http.Client, login string, password string) (string, error) {
+func SignIn(client *http.Client, query dto.SignIn) (string, error) {
 	url := authPath + "sign-in"
 
-	reqBody := dto.SignIn{
-		Email:    login,
-		Password: password,
-	}
+	reqBody := query
 
 	reqBodyJson, _ := json.Marshal(reqBody)
 	respGot, err := client.Post(url, "application/json", bytes.NewBuffer(reqBodyJson))
@@ -29,6 +26,56 @@ func SignIn(client *http.Client, login string, password string) (string, error) 
 	defer respGot.Body.Close()
 
 	var resp dto.SignInResponse
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return "", err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		return "", errors.New(respGot.Status)
+	}
+
+	return resp.Token, nil
+}
+
+func SignUpAsUser(client *http.Client, query dto.SignUp) (string, error) {
+	url := authPath + "sign-up/user"
+
+	reqBody := query
+
+	reqBodyJson, _ := json.Marshal(reqBody)
+	respGot, err := client.Post(url, "application/json", bytes.NewBuffer(reqBodyJson))
+	if err != nil {
+		return "", err
+	}
+	defer respGot.Body.Close()
+
+	var resp dto.SignUpResponse
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return "", err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		return "", errors.New(respGot.Status)
+	}
+
+	return resp.Token, nil
+}
+
+func SignUpAsMusician(client *http.Client, query dto.SignUpMusician) (string, error) {
+	url := authPath + "sign-up/musician"
+
+	reqBody := query
+
+	reqBodyJson, _ := json.Marshal(reqBody)
+	respGot, err := client.Post(url, "application/json", bytes.NewBuffer(reqBodyJson))
+	if err != nil {
+		return "", err
+	}
+	defer respGot.Body.Close()
+
+	var resp dto.SignUpResponse
 	err = render.DecodeJSON(respGot.Body, &resp)
 
 	if err != nil {

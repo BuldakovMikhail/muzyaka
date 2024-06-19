@@ -133,7 +133,6 @@ func DeleteUser(useCase usecase.UserUseCase) http.HandlerFunc {
 }
 
 // @Summary GetMe
-// @Security ApiKeyAuth
 // @Tags user
 // @Description get me
 // @ID get-me

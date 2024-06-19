@@ -170,6 +170,7 @@ func App() {
 	router.Post("/api/auth/sign-up/admin", delivery.SignUpAdmin(authUseCase))
 	router.Post("/api/auth/sign-in", delivery.SignIn(authUseCase))
 	router.Post("/api/auth/sign-up/musician", delivery.SignUpMusician(authUseCase))
+	router.Get("/api/get-me", delivery8.GetMe(musicianUseCase))
 
 	// album
 	router.Group(func(r chi.Router) {
@@ -261,7 +262,6 @@ func App() {
 		r.Get("/api/musician/{musician_id}/merch", delivery3.GetAllMerchForMusician(merchUseCase))
 		r.Get("/api/album/{id}", delivery2.GetAlbum(albumUseCase))
 		r.Get("/api/merch/{id}", delivery3.GetMerch(merchUseCase))
-		r.Get("/api/get-me", delivery8.GetMe(musicianUseCase))
 		r.Get("/api/musician/{musician_id}/album", delivery2.GetAllAlbumForMusician(albumUseCase))
 	})
 

@@ -1,4 +1,3 @@
-basePath: /
 definitions:
   dto.AddTrackPlaylistRequest:
     properties:
@@ -334,12 +333,8 @@ definitions:
       status:
         type: string
     type: object
-host: localhost:8080
 info:
   contact: {}
-  description: API Server for musical service
-  title: Muzyaka API
-  version: "1.0"
 paths:
   /api/album/{id}:
     delete:
@@ -745,8 +740,6 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/response.Response'
-      security:
-      - ApiKeyAuth: []
       summary: GetMe
       tags:
       - user
@@ -1894,9 +1887,4 @@ paths:
       summary: PlaylistCreate
       tags:
       - playlist
-securityDefinitions:
-  ApiKeyAuth:
-    in: header
-    name: Authorization
-    type: apiKey
 swagger: "2.0"
