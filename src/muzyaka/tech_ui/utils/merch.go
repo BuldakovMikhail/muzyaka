@@ -7,16 +7,18 @@ import (
 	"github.com/go-chi/render"
 	"net/http"
 	"src/internal/lib/api/response"
+	"src/internal/models"
 	"src/internal/models/dto"
 	"strconv"
 )
 
 var (
-	merchPath = "http://localhost:8080/api/musician/"
+	musicianPath = "http://localhost:8080/api/musician/"
+	merchPath    = "http://localhost:8080/api/merch/"
 )
 
 func CreateMerch(client *http.Client, query dto.MerchWithoutId, musicianId uint64, jwt string) error {
-	url := merchPath + strconv.FormatUint(musicianId, 10) + "/merch"
+	url := musicianPath + strconv.FormatUint(musicianId, 10) + "/merch"
 
 	bodyAsByteArr, err := json.Marshal(query)
 	if err != nil {
@@ -51,7 +53,7 @@ func CreateMerch(client *http.Client, query dto.MerchWithoutId, musicianId uint6
 }
 
 func GetAllMerch(client *http.Client, musicianId uint64, jwt string) ([]*dto.Merch, error) {
-	url := merchPath + strconv.FormatUint(musicianId, 10) + "/merch"
+	url := musicianPath + strconv.FormatUint(musicianId, 10) + "/merch"
 
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -81,7 +83,7 @@ func GetAllMerch(client *http.Client, musicianId uint64, jwt string) ([]*dto.Mer
 }
 
 func UpdateMerch(client *http.Client, query dto.MerchWithoutId, merchId uint64, jwt string) error {
-	url := merchPath + "merch/" + strconv.FormatUint(merchId, 10)
+	url := merchPath + strconv.FormatUint(merchId, 10)
 
 	bodyAsByteArr, err := json.Marshal(query)
 	if err != nil {
@@ -114,7 +116,7 @@ func UpdateMerch(client *http.Client, query dto.MerchWithoutId, merchId uint64, 
 }
 
 func DeleteMerch(client *http.Client, merchId uint64, jwt string) error {
-	url := merchPath + "merch/" + strconv.FormatUint(merchId, 10)
+	url := musicianPath + "merch/" + strconv.FormatUint(merchId, 10)
 
 	request, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
@@ -134,6 +136,10 @@ func DeleteMerch(client *http.Client, merchId uint64, jwt string) error {
 	if err != nil {
 		return err
 	}
+	if respGot.StatusCode == http.StatusNotFound {
+		return errors.New(models.ErrNotFound.Error())
+	}
+
 	if respGot.StatusCode != http.StatusOK {
 		return errors.New(resp.Error)
 	}
@@ -142,7 +148,7 @@ func DeleteMerch(client *http.Client, merchId uint64, jwt string) error {
 }
 
 func GetMerch(client *http.Client, merchId uint64, jwt string) (*dto.MerchWithMusician, error) {
-	url := merchPath + "merch/" + strconv.FormatUint(merchId, 10)
+	url := musicianPath + "merch/" + strconv.FormatUint(merchId, 10)
 
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {

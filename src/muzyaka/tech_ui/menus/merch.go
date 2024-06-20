@@ -37,18 +37,23 @@ func (m *Menu) CreateMerch(opt wmenu.Opt) error {
 
 	fmt.Println("Enter paths to photos, separated by space:")
 	paths, _ = inputReader.ReadString('\n')
+	paths = strings.TrimRight(paths, "\r\n")
 
-	arrOfPaths := strings.Split(paths, " ")
-	arrOfBytes, err := lib.ReadAllFilesFromArray(arrOfPaths)
-	if err != nil {
-		return err
+	var arrOfBytes [][]byte
+	if paths != "" {
+		var err error
+		arrOfPaths := strings.Split(paths, " ")
+		arrOfBytes, err = lib.ReadAllFilesFromArray(arrOfPaths)
+		if err != nil {
+			return err
+		}
 	}
 
 	fmt.Println("Enter description:")
 	description, _ = inputReader.ReadString('\n')
 	description = strings.TrimRight(description, "\r\n")
 
-	err = utils.CreateMerch(
+	err := utils.CreateMerch(
 		client.Client,
 		dto.MerchWithoutId{
 			Name:        name,
@@ -125,6 +130,79 @@ func (m *Menu) GetMyMerch(opt wmenu.Opt) error {
 
 			fmt.Printf("ERROR: %v\n\n", err)
 		}
+	}
+
+	return nil
+}
+
+func (m *Menu) UpdateMerch(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	items, err := utils.GetAllMerch(client.Client, m.musicianId, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Update item: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, URL: %s", v.Name, v.OrderUrl),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				var name string
+				var paths string
+				var description string
+				var orderUrl string
+
+				item, ok := opt.Value.(dto.Merch)
+				if !ok {
+					log.Fatal("Could not cast option's value to Merch")
+				}
+
+				inputReader := bufio.NewReader(os.Stdin)
+
+				fmt.Println("Enter name:")
+				name, _ = inputReader.ReadString('\n')
+				name = strings.TrimRight(name, "\r\n")
+
+				fmt.Println("Enter order URL:")
+				orderUrl, _ = inputReader.ReadString('\n')
+				orderUrl = strings.TrimRight(orderUrl, "\r\n")
+
+				fmt.Println("Enter paths to photos, separated by space:")
+				paths, _ = inputReader.ReadString('\n')
+
+				arrOfPaths := strings.Split(paths, " ")
+				arrOfBytes, err := lib.ReadAllFilesFromArray(arrOfPaths)
+				if err != nil {
+					return err
+				}
+
+				fmt.Println("Enter description:")
+				description, _ = inputReader.ReadString('\n')
+				description = strings.TrimRight(description, "\r\n")
+
+				err = utils.UpdateMerch(client.Client, dto.MerchWithoutId{
+					Name:        name,
+					PhotoFiles:  arrOfBytes,
+					Description: description,
+					OrderUrl:    orderUrl,
+				}, item.Id, m.jwt)
+
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return errExit
+	})
+
+	err = submenu.Run()
+	if err != nil {
+		return err
 	}
 
 	return nil
