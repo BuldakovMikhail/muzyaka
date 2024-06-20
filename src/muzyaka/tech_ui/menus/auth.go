@@ -16,6 +16,15 @@ import (
 	"strings"
 )
 
+func (m *Menu) AddOptionsMain(client *http.Client) {
+	m.mainMenu.Option("Sign up as user", ClientEntity{client}, false, m.SignUpAsUser)
+	m.mainMenu.Option("Sign up as musician", ClientEntity{client}, false, m.SignUpAsMusician)
+	m.mainMenu.Option("Sign in", ClientEntity{client}, false, m.SignIn)
+	m.mainMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
+		return errExit
+	})
+}
+
 func (m *Menu) RunAuthMenu(client *http.Client) error {
 	m.mainMenu = wmenu.NewMenu("Please select options")
 	m.AddOptionsMain(client)

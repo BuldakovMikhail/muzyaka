@@ -7,6 +7,12 @@ import (
 	"net/http"
 )
 
+func (m *Menu) AddOptionsUser(client *http.Client) {
+	m.userMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
+		return errExit
+	})
+}
+
 func (m *Menu) RunUserMenu(client *http.Client) error {
 	m.userMenu = wmenu.NewMenu("Enter your option:")
 	m.AddOptionsUser(client)

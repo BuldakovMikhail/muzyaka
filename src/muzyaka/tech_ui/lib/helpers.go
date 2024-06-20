@@ -19,3 +19,12 @@ func ReadAllFilesFromArray(paths []string) ([][]byte, error) {
 
 	return resultArr, nil
 }
+
+func SaveFile(fileName string, content []byte) error {
+	err := os.WriteFile(fileName, content, 0666)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -30,10 +30,10 @@ func CreateMerch(client *http.Client, query dto.MerchWithoutId, musicianId uint6
 	request.Header.Set("Authorization", "Bearer "+jwt)
 
 	respGot, err := client.Do(request)
-	defer respGot.Body.Close()
 	if err != nil {
 		return err
 	}
+	defer respGot.Body.Close()
 
 	var resp dto.CreateMerchResponse
 	err = render.DecodeJSON(respGot.Body, &resp)
@@ -48,4 +48,125 @@ func CreateMerch(client *http.Client, query dto.MerchWithoutId, musicianId uint6
 	}
 
 	return nil
+}
+
+func GetAllMerch(client *http.Client, musicianId uint64, jwt string) ([]*dto.Merch, error) {
+	url := merchPath + strconv.FormatUint(musicianId, 10) + "/merch"
+
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Authorization", "Bearer "+jwt)
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer respGot.Body.Close()
+
+	var resp dto.MerchCollection
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return nil, err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		var resp response.Response
+		err = render.DecodeJSON(respGot.Body, &resp)
+		return nil, errors.New(resp.Error)
+	}
+
+	return resp.Items, nil
+}
+
+func UpdateMerch(client *http.Client, query dto.MerchWithoutId, merchId uint64, jwt string) error {
+	url := merchPath + "merch/" + strconv.FormatUint(merchId, 10)
+
+	bodyAsByteArr, err := json.Marshal(query)
+	if err != nil {
+		return err
+	}
+	request, err := http.NewRequest("PUT", url, bytes.NewBuffer(bodyAsByteArr))
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer "+jwt)
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer respGot.Body.Close()
+
+	var resp response.Response
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		return errors.New(resp.Error)
+	}
+
+	return nil
+}
+
+func DeleteMerch(client *http.Client, merchId uint64, jwt string) error {
+	url := merchPath + "merch/" + strconv.FormatUint(merchId, 10)
+
+	request, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Authorization", "Bearer "+jwt)
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer respGot.Body.Close()
+
+	var resp response.Response
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		return errors.New(resp.Error)
+	}
+
+	return nil
+}
+
+func GetMerch(client *http.Client, merchId uint64, jwt string) (*dto.MerchWithMusician, error) {
+	url := merchPath + "merch/" + strconv.FormatUint(merchId, 10)
+
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Authorization", "Bearer "+jwt)
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer respGot.Body.Close()
+
+	var resp dto.MerchWithMusician
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return nil, err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		var resp response.Response
+		err = render.DecodeJSON(respGot.Body, &resp)
+		return nil, errors.New(resp.Error)
+	}
+
+	return &resp, nil
 }

@@ -1,0 +1,131 @@
+package menus
+
+import (
+	"bufio"
+	"errors"
+	"fmt"
+	"github.com/dixonwille/wmenu/v5"
+	"log"
+	"os"
+	"src/internal/models/dto"
+	"src/tech_ui/lib"
+	"src/tech_ui/utils"
+	"strings"
+)
+
+func (m *Menu) CreateMerch(opt wmenu.Opt) error {
+	var name string
+	var paths string
+	var description string
+	var orderUrl string
+
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	inputReader := bufio.NewReader(os.Stdin)
+
+	fmt.Println("Enter name:")
+	name, _ = inputReader.ReadString('\n')
+	name = strings.TrimRight(name, "\r\n")
+
+	fmt.Println("Enter order URL:")
+	orderUrl, _ = inputReader.ReadString('\n')
+	orderUrl = strings.TrimRight(orderUrl, "\r\n")
+
+	fmt.Println("Enter paths to photos, separated by space:")
+	paths, _ = inputReader.ReadString('\n')
+
+	arrOfPaths := strings.Split(paths, " ")
+	arrOfBytes, err := lib.ReadAllFilesFromArray(arrOfPaths)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Enter description:")
+	description, _ = inputReader.ReadString('\n')
+	description = strings.TrimRight(description, "\r\n")
+
+	err = utils.CreateMerch(
+		client.Client,
+		dto.MerchWithoutId{
+			Name:        name,
+			PhotoFiles:  arrOfBytes,
+			Description: description,
+			OrderUrl:    orderUrl,
+		},
+		m.musicianId,
+		m.jwt)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Menu) GetMyMerch(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	items, err := utils.GetAllMerch(client.Client, m.musicianId, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Open item: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, URL: %s", v.Name, v.OrderUrl),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				item, ok := opt.Value.(dto.Merch)
+				if !ok {
+					log.Fatal("Could not cast option's value to Merch")
+				}
+
+				inputReader := bufio.NewReader(os.Stdin)
+
+				fmt.Printf("ID: %d\n", item.Id)
+				fmt.Printf("Name: %s\n", item.Name)
+				fmt.Printf("URL: %s\n", item.OrderUrl)
+				fmt.Printf("Description: %s\n", item.Description)
+
+				for i, v := range item.PhotoFiles {
+					fmt.Printf("Enter path to photo №%d: \n", i+1)
+					path, _ := inputReader.ReadString('\n')
+					path = strings.TrimRight(path, "\r\n")
+					if path != "" {
+						err := lib.SaveFile(path, v)
+						if err != nil {
+							return err
+						}
+					}
+				}
+
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return errExit
+	})
+
+	for {
+		err := submenu.Run()
+		fmt.Println()
+		if err != nil {
+			if errors.Is(err, errExit) {
+				break
+			}
+
+			fmt.Printf("ERROR: %v\n\n", err)
+		}
+	}
+
+	return nil
+}
