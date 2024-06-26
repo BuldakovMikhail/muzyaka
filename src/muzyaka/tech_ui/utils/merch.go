@@ -116,7 +116,7 @@ func UpdateMerch(client *http.Client, query dto.MerchWithoutId, merchId uint64, 
 }
 
 func DeleteMerch(client *http.Client, merchId uint64, jwt string) error {
-	url := musicianPath + "merch/" + strconv.FormatUint(merchId, 10)
+	url := merchPath + strconv.FormatUint(merchId, 10)
 
 	request, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {

@@ -13,6 +13,10 @@ import (
 	"strings"
 )
 
+// TODO: не выводятся ошибки
+// TODO: не получается добавить, прочитать мерч без фото
+// TODO: Проблемы с уникальностью мерча
+
 func (m *Menu) CreateMerch(opt wmenu.Opt) error {
 	var name string
 	var paths string
@@ -198,6 +202,44 @@ func (m *Menu) UpdateMerch(opt wmenu.Opt) error {
 	}
 	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
 		return errExit
+	})
+
+	err = submenu.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Menu) DeleteMerch(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	items, err := utils.GetAllMerch(client.Client, m.musicianId, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Update item: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, URL: %s", v.Name, v.OrderUrl),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				item, ok := opt.Value.(dto.Merch)
+				if !ok {
+					log.Fatal("Could not cast option's value to Merch")
+				}
+				err = utils.DeleteMerch(client.Client, item.Id, m.jwt)
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return nil
 	})
 
 	err = submenu.Run()

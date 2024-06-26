@@ -54,7 +54,8 @@ CREATE TABLE IF NOT EXISTS merch
         REFERENCES musicians (id)
             ON DELETE CASCADE,
     CHECK ( name <> '' ),
-    CHECK ( link <> '' )
+    CHECK ( link <> '' ),
+    UNIQUE (name, link, musician_id)
 );
 
 
