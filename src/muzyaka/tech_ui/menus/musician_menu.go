@@ -13,6 +13,8 @@ func (m *Menu) AddOptionsMusician(client *http.Client) {
 	m.musicianMenu.Option("Get all my merch", ClientEntity{client}, false, m.GetMyMerch)
 	m.musicianMenu.Option("Update my merch", ClientEntity{client}, false, m.UpdateMerch)
 	m.musicianMenu.Option("Delete my merch", ClientEntity{client}, false, m.DeleteMerch)
+	m.musicianMenu.Option("Get my profile", ClientEntity{client}, false, m.GetMyMusicianProfile)
+	m.musicianMenu.Option("Update my profile", ClientEntity{client}, false, m.UpdateMyMusicianProfile)
 	m.musicianMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
 		return errExit
 	})
