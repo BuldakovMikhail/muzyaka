@@ -101,7 +101,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 				},
 				Payload:     payload[0],
 				PayloadSize: int64(len(payload[0])), // TODO: убрать приведение типов
-			})
+			}) // TODO: не добавляется в outbox
 
 			return nil
 		})
