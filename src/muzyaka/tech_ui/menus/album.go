@@ -140,3 +140,64 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 
 	return nil
 }
+
+func (m *Menu) GetAllMyAlbums(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	items, err := utils.GetAllAlbums(client.Client, m.musicianId, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Open item: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, Type: %s", v.Name, v.Type),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				item, ok := opt.Value.(dto.Album)
+				if !ok {
+					log.Fatal("Could not cast option's value to Merch")
+				}
+
+				inputReader := bufio.NewReader(os.Stdin)
+
+				fmt.Printf("ID: %d\n", item.Id)
+				fmt.Printf("Name: %s\n", item.Name)
+				fmt.Printf("Type: %s\n", item.Type)
+
+				fmt.Printf("Enter path to photo: \n")
+				path, _ := inputReader.ReadString('\n')
+				path = strings.TrimRight(path, "\r\n")
+				if path != "" {
+					err := lib.SaveFile(path, item.CoverFile)
+					if err != nil {
+						return err
+					}
+				}
+
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return errExit
+	})
+
+	for {
+		err := submenu.Run()
+		fmt.Println()
+		if err != nil {
+			if errors.Is(err, errExit) {
+				break
+			}
+
+			fmt.Printf("ERROR: %v\n\n", err)
+		}
+	}
+
+	return nil
+}
