@@ -14,7 +14,7 @@ type OutboxProducer struct {
 	repository repository.OutboxRepository
 }
 
-func New(producer sarama.SyncProducer, outboxRepository repository.OutboxRepository) *OutboxProducer {
+func NewOutboxUseCase(producer sarama.SyncProducer, outboxRepository repository.OutboxRepository) *OutboxProducer {
 	return &OutboxProducer{
 		producer:   producer,
 		repository: outboxRepository,

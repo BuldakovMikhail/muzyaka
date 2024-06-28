@@ -28,10 +28,11 @@ func (o outboxRepo) GetWaitingEvents() ([]*dao.Outbox, error) {
 }
 
 func (o outboxRepo) MarkEventsSent(events []*dao.Outbox) error {
-	tx := o.db.Model(&events).Update("sent", "true")
-	if tx.Error != nil {
-		return errors.Wrap(tx.Error, "MarkEventsSent database error (table outbox)")
+	if len(events) > 0 {
+		tx := o.db.Model(&events).Update("sent", "true")
+		if tx.Error != nil {
+			return errors.Wrap(tx.Error, "MarkEventsSent database error (table outbox)")
+		}
 	}
-
 	return nil
 }

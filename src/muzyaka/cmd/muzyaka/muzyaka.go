@@ -12,6 +12,8 @@ import (
 	"net/http"
 	"os"
 	"src/internal/config"
+	postgres6 "src/internal/cron/outbox_producer/repository/postgres"
+	usecase5 "src/internal/cron/outbox_producer/usecase"
 	delivery2 "src/internal/domain/album/delivery"
 	middleware2 "src/internal/domain/album/middleware"
 	postgres3 "src/internal/domain/album/repository/postgres"
@@ -40,6 +42,7 @@ import (
 	"src/internal/domain/user/repository/postgres"
 	usecase7 "src/internal/domain/user/usecase"
 	jwt2 "src/internal/lib/jwt"
+	"src/internal/lib/kafka"
 	"src/internal/lib/logger/handlers/slogpretty"
 	"time"
 
@@ -94,6 +97,11 @@ func App() {
 
 	tokenProvider := jwt2.NewTokenProvider("secret", time.Hour)
 
+	producer, err := kafka.NewProducer("localhost:29092")
+	if err != nil {
+		logger.Error(err.Error())
+	}
+
 	userRep := postgres.NewUserRepository(db)
 	albumRep := postgres3.NewAlbumRepository(db)
 	trackStorage := minio.NewTrackStorage(client)
@@ -101,6 +109,8 @@ func App() {
 	merchRep := postgres5.NewMerchRepository(db)
 	playlistRep := postgres7.NewPlaylistRepository(db)
 	trackRep := postgres8.NewTrackRepository(db)
+
+	outboxRep := postgres6.NewOutboxRepo(db)
 
 	encryptor := usecase.NewEncryptor()
 	authUseCase := usecase.NewAuthUseCase(tokenProvider, userRep, encryptor)
@@ -110,6 +120,14 @@ func App() {
 	playlistUseCase := usecase6.NewPlaylistUseCase(playlistRep, trackRep)
 	userUseCase := usecase7.NewUserUseCase(userRep, trackRep, encryptor)
 	trackUseCase := usecase8.NewTrackUseCase(trackRep, trackStorage)
+	outbox := usecase5.NewOutboxUseCase(producer, outboxRep)
+
+	go func() {
+		for {
+			outbox.ProduceMessages()
+			time.Sleep(10 * time.Second)
+		}
+	}()
 
 	musicianMiddleware := (func(h http.Handler) http.Handler {
 		return middleware.CheckMusicianLevelPermissions(h, authUseCase)

@@ -104,13 +104,19 @@ func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks 
 				return err
 			}
 
+			var genre uint64
+			genre = 0
+			if v.GenreRefer != nil {
+				genre = *v.GenreRefer
+			}
+
 			if err := ar.db.Create(&dao.Outbox{
 				ID:         0,
 				EventId:    eventID,
 				TrackId:    v.ID,
 				Source:     v.Source,
 				Name:       v.Name,
-				GenreRefer: *v.GenreRefer,
+				GenreRefer: genre,
 				Type:       dao.TypeAdd,
 				Sent:       false,
 			}).Error; err != nil {

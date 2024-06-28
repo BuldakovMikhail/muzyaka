@@ -49,7 +49,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 		return nil
 	})
 	submenu.Option("Single", nil, false, func(opt wmenu.Opt) error {
-		albumType = "Single"
+		albumType = "single"
 		return nil
 	})
 	submenu.Option("EP", nil, false, func(opt wmenu.Opt) error {
