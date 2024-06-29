@@ -228,20 +228,20 @@ func (m *Menu) GetAllMyAlbums(opt wmenu.Opt) error {
 							}
 							return nil
 						})
-					submenuTracks.Option("Exit", nil, true, func(_ wmenu.Opt) error {
-						return errExit
-					})
+				}
+				submenuTracks.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+					return errExit
+				})
 
-					for {
-						err := submenuTracks.Run()
-						fmt.Println()
-						if err != nil {
-							if errors.Is(err, errExit) {
-								break
-							}
-
-							fmt.Printf("ERROR: %v\n\n", err)
+				for {
+					err := submenuTracks.Run()
+					fmt.Println()
+					if err != nil {
+						if errors.Is(err, errExit) {
+							break
 						}
+
+						fmt.Printf("ERROR: %v\n\n", err)
 					}
 				}
 				return nil
