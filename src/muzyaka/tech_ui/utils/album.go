@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/render"
 	"net/http"
 	"src/internal/lib/api/response"
+	"src/internal/models"
 	"src/internal/models/dto"
 	"strconv"
 )
@@ -148,6 +149,38 @@ func UpdateAlbum(client *http.Client, query dto.AlbumWithoutId, albumId uint64, 
 	if err != nil {
 		return err
 	}
+	if respGot.StatusCode != http.StatusOK {
+		return errors.New(resp.Error)
+	}
+
+	return nil
+}
+
+func DeleteAlbum(client *http.Client, albumId uint64, jwt string) error {
+	url := albumPath + strconv.FormatUint(albumId, 10)
+
+	request, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Authorization", "Bearer "+jwt)
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer respGot.Body.Close()
+
+	var resp response.Response
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return err
+	}
+	if respGot.StatusCode == http.StatusNotFound {
+		return errors.New(models.ErrNotFound.Error())
+	}
+
 	if respGot.StatusCode != http.StatusOK {
 		return errors.New(resp.Error)
 	}

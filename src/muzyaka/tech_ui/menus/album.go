@@ -347,3 +347,41 @@ func (m *Menu) UpdateAlbum(opt wmenu.Opt) error {
 
 	return nil
 }
+
+func (m *Menu) DeleteAlbum(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	items, err := utils.GetAllAlbums(client.Client, m.musicianId, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Delete album: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, Type: %s", v.Name, v.Type),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				item, ok := opt.Value.(dto.Album)
+				if !ok {
+					log.Fatal("Could not cast option's value to Album")
+				}
+				err = utils.DeleteAlbum(client.Client, item.Id, m.jwt)
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return nil
+	})
+
+	err = submenu.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
