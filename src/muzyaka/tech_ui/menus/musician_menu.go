@@ -19,6 +19,7 @@ func (m *Menu) AddOptionsMusician(client *http.Client) {
 	m.musicianMenu.Option("Get all my albums", ClientEntity{client}, false, m.GetAllMyAlbums)
 	m.musicianMenu.Option("Update my album", ClientEntity{client}, false, m.UpdateAlbum)
 	m.musicianMenu.Option("Delete my album", ClientEntity{client}, false, m.DeleteAlbum)
+	m.musicianMenu.Option("Add track to album", ClientEntity{client}, false, m.AddTrackToAlbum)
 	m.musicianMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
 		return errExit
 	})

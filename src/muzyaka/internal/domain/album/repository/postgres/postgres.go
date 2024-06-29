@@ -201,13 +201,19 @@ func (ar *albumRepository) AddTrackToAlbumOutbox(albumId uint64, track *models.T
 			return err
 		}
 
+		var genre uint64
+		genre = 0
+		if pgTrack.GenreRefer != nil {
+			genre = *pgTrack.GenreRefer
+		}
+
 		if err := tx.Create(&dao.Outbox{
 			ID:         0,
 			EventId:    eventID,
 			TrackId:    pgTrack.ID,
 			Source:     pgTrack.Source,
 			Name:       pgTrack.Name,
-			GenreRefer: *pgTrack.GenreRefer,
+			GenreRefer: genre,
 			Type:       dao.TypeAdd,
 			Sent:       false,
 		}).Error; err != nil {

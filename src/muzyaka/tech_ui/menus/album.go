@@ -80,7 +80,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 			source = strings.TrimRight(source, "\r\n")
 
 			var payload [][]byte
-			if path != "" {
+			if source != "" {
 				var err error
 				payload, err = lib.ReadAllFilesFromArray([]string{source})
 				if err != nil {
@@ -381,6 +381,93 @@ func (m *Menu) DeleteAlbum(opt wmenu.Opt) error {
 	err = submenu.Run()
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *Menu) AddTrackToAlbum(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	items, err := utils.GetAllAlbums(client.Client, m.musicianId, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Select album: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, Type: %s", v.Name, v.Type),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				item, ok := opt.Value.(dto.Album)
+				if !ok {
+					log.Fatal("Could not cast option's value to Album")
+				}
+				inputReader := bufio.NewReader(os.Stdin)
+
+				fmt.Println("Enter name:")
+				trackName, _ := inputReader.ReadString('\n')
+				trackName = strings.TrimRight(trackName, "\r\n")
+
+				fmt.Println("Enter genre:")
+				genre, _ := inputReader.ReadString('\n')
+				genre = strings.TrimRight(genre, "\r\n")
+
+				fmt.Println("Enter path to payload:")
+				source, _ := inputReader.ReadString('\n')
+				source = strings.TrimRight(source, "\r\n")
+
+				var payload [][]byte
+				if source != "" {
+					var err error
+					payload, err = lib.ReadAllFilesFromArray([]string{source})
+					if err != nil {
+						return err
+					}
+				}
+
+				genreRef := &genre
+				if genre == "" {
+					genreRef = nil
+				}
+
+				track := dto.TrackObjectWithoutId{
+					TrackMetaWithoutId: dto.TrackMetaWithoutId{
+						Source: source, // TODO: заменить на генерацию
+						Name:   trackName,
+						Genre:  genreRef,
+					},
+					Payload:     payload[0],
+					PayloadSize: int64(len(payload[0])), // TODO: убрать приведение типов
+				}
+
+				err = utils.AddTrack(client.Client, track, item.Id, m.jwt)
+				if err != nil {
+					return err
+				}
+
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return errExit
+	})
+
+	for {
+		err := submenu.Run()
+		fmt.Println()
+		if err != nil {
+			if errors.Is(err, errExit) {
+				break
+			}
+
+			fmt.Printf("ERROR: %v\n\n", err)
+		}
 	}
 
 	return nil
