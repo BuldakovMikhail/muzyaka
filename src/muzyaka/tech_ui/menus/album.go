@@ -180,6 +180,68 @@ func (m *Menu) GetAllMyAlbums(opt wmenu.Opt) error {
 					}
 				}
 
+				tracks, err := utils.GetAllTrack(client.Client, item.Id, m.jwt)
+				if err != nil {
+					return err
+				}
+
+				submenuTracks := wmenu.NewMenu("Open track: ")
+
+				for _, t := range tracks {
+					genre := "None"
+					if t.Genre != nil {
+						genre = *t.Genre
+					}
+
+					submenuTracks.Option(
+						fmt.Sprintf("Name: %s, Genre: %s, Source: %s", t.Name, genre, t.Source),
+						*t,
+						false,
+						func(opt wmenu.Opt) error {
+							item, ok := opt.Value.(dto.TrackMeta)
+							if !ok {
+								log.Fatal("Could not cast option's value to Merch")
+							}
+
+							inputReader := bufio.NewReader(os.Stdin)
+
+							fmt.Printf("ID: %d\n", item.Id)
+							fmt.Printf("Name: %s\n", item.Name)
+							fmt.Printf("Genre: %s\n", item.Genre)
+							fmt.Printf("Source: %s\n", item.Source)
+
+							fmt.Printf("Enter path to media: \n")
+							path, _ := inputReader.ReadString('\n')
+							path = strings.TrimRight(path, "\r\n")
+							if path != "" {
+								trackObject, err := utils.GetTrack(client.Client, item.Id, m.jwt)
+								if err != nil {
+									return err
+								}
+
+								err = lib.SaveFile(path, trackObject.Payload)
+								if err != nil {
+									return err
+								}
+							}
+							return nil
+						})
+					submenuTracks.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+						return errExit
+					})
+
+					for {
+						err := submenuTracks.Run()
+						fmt.Println()
+						if err != nil {
+							if errors.Is(err, errExit) {
+								break
+							}
+
+							fmt.Printf("ERROR: %v\n\n", err)
+						}
+					}
+				}
 				return nil
 			})
 	}
