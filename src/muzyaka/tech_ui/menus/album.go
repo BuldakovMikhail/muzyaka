@@ -147,6 +147,8 @@ func (m *Menu) GetAllMyAlbums(opt wmenu.Opt) error {
 	if !ok {
 		log.Fatal("Could not cast option's value to ClientEntity")
 	}
+	// TODO: убрать вложенность
+	// TODO: мета информация о треке передается 2 раза, мб в треке отдавать только пейлоад
 
 	items, err := utils.GetAllAlbums(client.Client, m.musicianId, m.jwt)
 	if err != nil {
@@ -259,6 +261,88 @@ func (m *Menu) GetAllMyAlbums(opt wmenu.Opt) error {
 
 			fmt.Printf("ERROR: %v\n\n", err)
 		}
+	}
+
+	return nil
+}
+
+func (m *Menu) UpdateAlbum(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	items, err := utils.GetAllAlbums(client.Client, m.musicianId, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Update album: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, Type: %s", v.Name, v.Type),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				var name string
+				var path string
+				var albumType string
+
+				item, ok := opt.Value.(dto.Album)
+				if !ok {
+					log.Fatal("Could not cast option's value to Merch")
+				}
+
+				inputReader := bufio.NewReader(os.Stdin)
+
+				fmt.Println("Enter name:")
+				name, _ = inputReader.ReadString('\n')
+				name = strings.TrimRight(name, "\r\n")
+
+				fmt.Println("Enter path to cover:")
+				path, _ = inputReader.ReadString('\n')
+				path = strings.TrimRight(path, "\r\n")
+
+				var arrOfBytes [][]byte
+				if path != "" {
+					var err error
+					arrOfBytes, err = lib.ReadAllFilesFromArray([]string{path})
+					if err != nil {
+						return err
+					}
+				}
+
+				submenu := wmenu.NewMenu("Select album type: ")
+				submenu.Option("LP", nil, true, func(opt wmenu.Opt) error {
+					albumType = "LP"
+					return nil
+				})
+				submenu.Option("Single", nil, false, func(opt wmenu.Opt) error {
+					albumType = "single"
+					return nil
+				})
+				submenu.Option("EP", nil, false, func(opt wmenu.Opt) error {
+					albumType = "EP"
+					return nil
+				})
+				submenu.Run()
+
+				err = utils.UpdateAlbum(client.Client, dto.AlbumWithoutId{
+					Name:      name,
+					CoverFile: arrOfBytes[0],
+					Type:      albumType,
+				}, item.Id, m.jwt)
+
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return errExit
+	})
+
+	err = submenu.Run()
+	if err != nil {
+		return err
 	}
 
 	return nil

@@ -119,3 +119,38 @@ func GetAllTrack(client *http.Client,
 
 	return resp.Tracks, nil
 }
+
+func UpdateAlbum(client *http.Client, query dto.AlbumWithoutId, albumId uint64, jwt string) error {
+	url := albumPath + strconv.FormatUint(albumId, 10)
+
+	bodyAsByteArr, err := json.Marshal(query)
+	if err != nil {
+		return err
+	}
+
+	request, err := http.NewRequest("PUT", url, bytes.NewBuffer(bodyAsByteArr))
+	if err != nil {
+		return err
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer "+jwt)
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer respGot.Body.Close()
+
+	var resp response.Response
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		return errors.New(resp.Error)
+	}
+
+	return nil
+}
