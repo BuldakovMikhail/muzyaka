@@ -16,6 +16,33 @@ func NewTrackRepository(db *gorm.DB) repository.TrackRepository {
 	return &trackRepository{db: db}
 }
 
+func (t trackRepository) GetTracksByPartName(name string, offset int, limit int) ([]*models.TrackMeta, error) {
+	var tracks []*dao.TrackMeta
+
+	tx := t.db.
+		Offset(offset).
+		Limit(limit).
+		Where("name LIKE ?", "%"+name+"%").
+		Order("name").
+		Find(&tracks)
+	if err := tx.Error; err != nil {
+		return nil, errors.Wrap(err, "database error (table track)")
+	}
+
+	var modelTracks []*models.TrackMeta
+
+	for _, v := range tracks {
+		var genre dao.Genre
+		tx = t.db.Where("id = ?", v.GenreRefer).Limit(1).Find(&genre)
+		if tx.Error != nil {
+			return nil, errors.Wrap(tx.Error, "database error (table track)")
+		}
+		modelTracks = append(modelTracks, dao.ToModelTrack(v, &genre))
+	}
+
+	return modelTracks, nil
+}
+
 func (t trackRepository) DeleteTrack(trackId uint64) error {
 
 	tx := t.db.Delete(dao.TrackMeta{}, trackId)
@@ -41,10 +68,6 @@ func (t trackRepository) GetTrack(id uint64) (*models.TrackMeta, error) {
 
 	var genre dao.Genre
 	tx = t.db.Where("id = ?", track.GenreRefer).Limit(1).Find(&genre)
-	if tx.Error != nil {
-		return nil, errors.Wrap(tx.Error, "database error (table track)")
-	}
-
 	if tx.Error != nil {
 		return nil, errors.Wrap(tx.Error, "database error (table track)")
 	}

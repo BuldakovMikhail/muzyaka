@@ -6,10 +6,15 @@ import (
 	"src/internal/models"
 )
 
+const MinPageSize = 10
+const MaxPageSize = 100
+
 type TrackUseCase interface {
 	UpdateTrack(track *models.TrackObject) error
 	GetTrack(id uint64) (*models.TrackObject, error)
 	DeleteTrack(trackId uint64) error
+
+	GetTracksByPartName(name string, page int, pageSize int) ([]*models.TrackMeta, error)
 }
 
 type usecase struct {
@@ -19,6 +24,27 @@ type usecase struct {
 
 func NewTrackUseCase(rep repository.TrackRepository, storage repository.TrackStorage) TrackUseCase {
 	return &usecase{trackRep: rep, storageRep: storage}
+}
+
+func (u *usecase) GetTracksByPartName(name string, page int, pageSize int) ([]*models.TrackMeta, error) {
+	if page <= 0 {
+		page = 1
+	}
+
+	switch {
+	case pageSize > MaxPageSize:
+		pageSize = MaxPageSize
+	case pageSize < MinPageSize:
+		pageSize = MinPageSize
+	}
+
+	offset := (page - 1) * pageSize
+	tracks, err := u.trackRep.GetTracksByPartName(name, offset, pageSize)
+	if err != nil {
+		return nil, errors.Wrap(err, "track.usecase.GetTracksByPartName error while get")
+	}
+
+	return tracks, nil
 }
 
 func (u *usecase) DeleteTrack(trackId uint64) error {
