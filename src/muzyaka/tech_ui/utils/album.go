@@ -88,7 +88,7 @@ func GetAllAlbums(client *http.Client,
 	return resp.Albums, nil
 }
 
-func GetAllTrack(client *http.Client,
+func GetAllTracks(client *http.Client,
 	albumId uint64,
 	jwt string) ([]*dto.TrackMeta, error) {
 

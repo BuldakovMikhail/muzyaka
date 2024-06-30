@@ -182,7 +182,7 @@ func (m *Menu) GetAllMyAlbums(opt wmenu.Opt) error {
 					}
 				}
 
-				tracks, err := utils.GetAllTrack(client.Client, item.Id, m.jwt)
+				tracks, err := utils.GetAllTracks(client.Client, item.Id, m.jwt)
 				if err != nil {
 					return err
 				}
@@ -451,6 +451,76 @@ func (m *Menu) AddTrackToAlbum(opt wmenu.Opt) error {
 					return err
 				}
 
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return errExit
+	})
+
+	for {
+		err := submenu.Run()
+		fmt.Println()
+		if err != nil {
+			if errors.Is(err, errExit) {
+				break
+			}
+
+			fmt.Printf("ERROR: %v\n\n", err)
+		}
+	}
+
+	return nil
+}
+
+func (m *Menu) DeleteTrackFromAlbum(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	items, err := utils.GetAllAlbums(client.Client, m.musicianId, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Select album: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, Type: %s", v.Name, v.Type),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				item, ok := opt.Value.(dto.Album)
+				if !ok {
+					log.Fatal("Could not cast option's value to Album")
+				}
+
+				tracks, err := utils.GetAllTracks(client.Client, item.Id, m.jwt)
+				if err != nil {
+					return err
+				}
+
+				tracksSubmenu := wmenu.NewMenu("Select track for delete: ")
+				for _, t := range tracks {
+					tracksSubmenu.Option(
+						fmt.Sprintf("Name: %s, Source: %s, Genre: %s", t.Name, t.Source, t.Genre),
+						*t,
+						false,
+						func(opt wmenu.Opt) error {
+							item, ok := opt.Value.(dto.TrackMeta)
+							if !ok {
+								log.Fatal("Could not cast option's value to Album")
+							}
+
+							err := utils.DeleteTrack(client.Client, item.Id, m.jwt)
+							return err
+						})
+				}
+				tracksSubmenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
+					return nil
+				})
+				tracksSubmenu.Run()
 				return nil
 			})
 	}

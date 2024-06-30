@@ -235,7 +235,7 @@ func (m *Menu) DeleteMerch(opt wmenu.Opt) error {
 					log.Fatal("Could not cast option's value to Merch")
 				}
 				err = utils.DeleteMerch(client.Client, item.Id, m.jwt)
-				return nil
+				return err
 			})
 	}
 	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {

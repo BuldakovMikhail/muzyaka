@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"net/http"
 	"src/internal/lib/api/response"
+	"src/internal/models"
 	"src/internal/models/dto"
 	"strconv"
 )
@@ -81,6 +82,38 @@ func AddTrack(client *http.Client,
 	if respGot.StatusCode != http.StatusOK {
 		var resp response.Response
 		err = render.DecodeJSON(respGot.Body, &resp)
+		return errors.New(resp.Error)
+	}
+
+	return nil
+}
+
+func DeleteTrack(client *http.Client, trackId uint64, jwt string) error {
+	url := trackPath + strconv.FormatUint(trackId, 10)
+
+	request, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Authorization", "Bearer "+jwt)
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer respGot.Body.Close()
+
+	var resp response.Response
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return err
+	}
+	if respGot.StatusCode == http.StatusNotFound {
+		return errors.New(models.ErrNotFound.Error())
+	}
+
+	if respGot.StatusCode != http.StatusOK {
 		return errors.New(resp.Error)
 	}
 
