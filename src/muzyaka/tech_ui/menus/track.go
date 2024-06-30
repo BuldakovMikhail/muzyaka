@@ -45,6 +45,15 @@ func (m *Menu) DownloadTrack(opt wmenu.Opt) error {
 	return nil
 }
 
+func (m *Menu) LikeTrack(opt wmenu.Opt) error {
+	item, ok := opt.Value.(trackWithClient)
+	if !ok {
+		log.Fatal("Could not cast option's value to Merch")
+	}
+	err := utils.LikeTrack(item.Client, dto.Like{TrackId: item.Id}, m.id, m.jwt)
+	return err
+}
+
 func (m *Menu) TrackActions(opt wmenu.Opt) error {
 	item, ok := opt.Value.(trackWithClient)
 	if !ok {
@@ -53,6 +62,7 @@ func (m *Menu) TrackActions(opt wmenu.Opt) error {
 
 	submenu := wmenu.NewMenu("Select option")
 	submenu.Option("Download media", item, false, m.DownloadTrack)
+	submenu.Option("Like track", item, false, m.LikeTrack)
 	submenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
 		return errExit
 	})
