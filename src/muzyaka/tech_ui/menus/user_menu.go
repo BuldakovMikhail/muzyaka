@@ -8,6 +8,7 @@ import (
 )
 
 func (m *Menu) AddOptionsUser(client *http.Client) {
+	m.userMenu.Option("Find Track", ClientEntity{client}, false, m.FindTracks)
 	m.userMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
 		return errExit
 	})

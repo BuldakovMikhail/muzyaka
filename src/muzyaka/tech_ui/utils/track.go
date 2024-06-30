@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
 	"net/http"
+	url2 "net/url"
 	"src/internal/lib/api/response"
 	"src/internal/models"
 	"src/internal/models/dto"
@@ -13,7 +14,8 @@ import (
 )
 
 var (
-	trackPath = "http://localhost:8080/api/track/"
+	trackPath  = "http://localhost:8080/api/track/"
+	searchPath = "http://localhost:8080/api/track"
 )
 
 func GetTrack(client *http.Client,
@@ -118,4 +120,44 @@ func DeleteTrack(client *http.Client, trackId uint64, jwt string) error {
 	}
 
 	return nil
+}
+
+func FindTracks(client *http.Client,
+	query string,
+	page int,
+	pageSize int,
+	jwt string) ([]*dto.TrackMeta, error) {
+
+	url := searchPath
+
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Authorization", "Bearer "+jwt)
+	request.URL.RawQuery = url2.Values{
+		"q":         {query},
+		"page":      {strconv.Itoa(page)},
+		"page_size": {strconv.Itoa(pageSize)},
+	}.Encode()
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer respGot.Body.Close()
+
+	var resp dto.TracksMetaCollection
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return nil, err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		var resp response.Response
+		err = render.DecodeJSON(respGot.Body, &resp)
+		return nil, errors.New(resp.Error)
+	}
+
+	return resp.Tracks, nil
 }
