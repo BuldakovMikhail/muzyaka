@@ -495,9 +495,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/dto.TracksMetaCollection'
-            type: array
+            $ref: '#/definitions/dto.TracksMetaCollection'
         "400":
           description: Bad Request
           schema:
@@ -1470,6 +1468,56 @@ paths:
       summary: GetAllTracksPlaylist
       tags:
       - playlist
+  /api/track:
+    get:
+      consumes:
+      - application/json
+      description: find tracks
+      operationId: find-tracks
+      parameters:
+      - description: name search by q
+        in: query
+        name: q
+        required: true
+        type: string
+      - description: number of page from 1
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: size of page
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TracksMetaCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: FindTracks
+      tags:
+      - track
   /api/track/{id}:
     delete:
       consumes:

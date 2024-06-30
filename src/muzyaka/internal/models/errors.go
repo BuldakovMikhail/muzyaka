@@ -12,5 +12,6 @@ var (
 	ErrAccessDenied   = errors.New("access denied")
 	ErrInvalidContext = errors.New("error in context parsing")
 
-	ErrNothingToDelete = errors.New("nothing to delete")
+	ErrNothingToDelete  = errors.New("nothing to delete")
+	ErrInvalidParameter = errors.New("error in query parameters")
 )

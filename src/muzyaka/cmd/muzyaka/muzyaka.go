@@ -260,6 +260,7 @@ func App() {
 	// Other opened requests
 	router.Group(func(r chi.Router) {
 		r.Use(basicAuthMiddleware)
+		r.Get("/api/track", delivery7.FindTracks(trackUseCase))
 		r.Get("/api/track/{id}", delivery7.GetTrack(trackUseCase))
 		r.Get("/api/playlist/{playlist_id}/track", delivery6.GetAllTracks(playlistUseCase))
 		r.Get("/api/playlist/{id}", delivery6.GetPlaylist(playlistUseCase))

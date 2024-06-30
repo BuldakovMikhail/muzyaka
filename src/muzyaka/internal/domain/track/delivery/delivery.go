@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"src/internal/domain/track/usecase"
 	"src/internal/lib/api/response"
+	"src/internal/models"
 	"src/internal/models/dto"
 	"strconv"
 )
@@ -118,5 +119,61 @@ func DeleteTrack(useCase usecase.TrackUseCase) http.HandlerFunc {
 		}
 
 		render.JSON(w, r, response.OK())
+	}
+}
+
+// @Summary FindTracks
+// @Security ApiKeyAuth
+// @Tags track
+// @Description find tracks
+// @ID find-tracks
+// @Accept  json
+// @Produce  json
+// @Param        q    query     string  true  "name search by q"
+// @Param        page    query     int  true  "number of page from 1"
+// @Param        page_size    query     int  true  "size of page"
+// @Success 200 {object} dto.TracksMetaCollection
+// @Failure 400,404 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Failure default {object} response.Response
+// @Router /api/track [get]
+func FindTracks(useCase usecase.TrackUseCase) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		name := r.URL.Query().Get("q")
+		if name == "" {
+			render.JSON(w, r, response.Error(models.ErrInvalidParameter.Error()))
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		pageStr := r.URL.Query().Get("page")
+		page, err := strconv.Atoi(pageStr)
+		if err != nil {
+			render.JSON(w, r, response.Error(err.Error()))
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		pageSizeStr := r.URL.Query().Get("page_size")
+		pageSize, err := strconv.Atoi(pageSizeStr)
+		if err != nil {
+			render.JSON(w, r, response.Error(err.Error()))
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		tracks, err := useCase.GetTracksByPartName(name, page, pageSize)
+		if err != nil {
+			render.JSON(w, r, err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		var res []*dto.TrackMeta
+		for _, v := range tracks {
+			res = append(res, dto.ToDtoTrackMeta(v))
+		}
+
+		render.JSON(w, r, dto.TracksMetaCollection{Tracks: res})
 	}
 }

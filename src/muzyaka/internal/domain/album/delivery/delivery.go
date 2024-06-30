@@ -220,7 +220,7 @@ func CreateTrack(useCase usecase.AlbumUseCase) http.HandlerFunc {
 // @Accept  json
 // @Produce  json
 // @Param id path int true "album ID"
-// @Success 200 {array} dto.TracksMetaCollection
+// @Success 200 {object} dto.TracksMetaCollection
 // @Failure 400,404,405 {object} response.Response
 // @Failure 500 {object} response.Response
 // @Failure default {object} response.Response
