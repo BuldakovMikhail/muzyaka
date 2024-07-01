@@ -139,3 +139,40 @@ func (m *Menu) FindTracks(opt wmenu.Opt) error {
 
 	return nil
 }
+
+func (m *Menu) DislikeTrack(opt wmenu.Opt) error {
+	item, ok := opt.Value.(trackWithClient)
+	if !ok {
+		log.Fatal("Could not cast option's value to Merch")
+	}
+	err := utils.DislikeTrack(item.Client, dto.Dislike{TrackId: item.Id}, m.id, m.jwt)
+	return err
+}
+
+func (m *Menu) LikedTracksActions(opt wmenu.Opt) error {
+	item, ok := opt.Value.(trackWithClient)
+	if !ok {
+		log.Fatal("Could not cast option's value to Merch")
+	}
+
+	submenu := wmenu.NewMenu("Select option")
+	submenu.Option("Download media", item, false, m.DownloadTrack)
+	submenu.Option("Dislike track", item, false, m.DislikeTrack)
+	submenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
+		return errExit
+	})
+
+	for {
+		err := submenu.Run()
+		fmt.Println()
+		if err != nil {
+			if errors.Is(err, errExit) {
+				break
+			}
+
+			fmt.Printf("ERROR: %v\n\n", err)
+		}
+	}
+
+	return nil
+}

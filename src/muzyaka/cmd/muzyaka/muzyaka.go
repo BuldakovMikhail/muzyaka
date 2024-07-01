@@ -122,6 +122,7 @@ func App() {
 	trackUseCase := usecase8.NewTrackUseCase(trackRep, trackStorage)
 	outbox := usecase5.NewOutboxUseCase(producer, outboxRep)
 
+	// TODO: нормально завершать эту горутину, чтобы не потерять данные
 	go func() {
 		for {
 			outbox.ProduceMessages()

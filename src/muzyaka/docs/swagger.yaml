@@ -1829,7 +1829,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/dto.TracksMetaCollection'
         "400":
           description: Bad Request
           schema:

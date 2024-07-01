@@ -265,7 +265,7 @@ func Dislike(useCase usecase.UserUseCase) http.HandlerFunc {
 // @Accept  json
 // @Produce  json
 // @Param user_id path int true "user ID"
-// @Success 200 {object} response.Response
+// @Success 200 {object} dto.TracksMetaCollection
 // @Failure 400,404 {object} response.Response
 // @Failure 500 {object} response.Response
 // @Failure default {object} response.Response

@@ -2238,7 +2238,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/dto.TracksMetaCollection"
                         }
                     },
                     "400": {
