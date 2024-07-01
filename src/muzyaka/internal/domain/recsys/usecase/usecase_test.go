@@ -24,7 +24,7 @@ func TestRecSysUseCase_GetSameTracks(t *testing.T) {
 			name: "Usual test",
 			id:   1,
 			mock: func(r *mock_remote.MockRecSysProvider, r2 *mock_repository.MockTrackRepository, id uint64) {
-				r.EXPECT().GetRecs(id).Return([]uint64{1, 2, 3}, nil)
+				r.EXPECT().GetRecs(id, 1, 10).Return([]uint64{1, 2, 3}, nil)
 
 				track1 := &models.TrackMeta{Id: 1, Name: "TrackMeta 1"}
 				track2 := &models.TrackMeta{Id: 2, Name: "TrackMeta 2"}
@@ -45,7 +45,7 @@ func TestRecSysUseCase_GetSameTracks(t *testing.T) {
 			name: "GetRecs fails",
 			id:   2,
 			mock: func(r *mock_remote.MockRecSysProvider, r2 *mock_repository.MockTrackRepository, id uint64) {
-				r.EXPECT().GetRecs(id).Return(nil, errors.New("error in GetRecs call"))
+				r.EXPECT().GetRecs(id, 1, 10).Return(nil, errors.New("error in GetRecs call"))
 			},
 			expectedTracks: nil,
 			expectedErr:    errors.Wrap(errors.New("error in GetRecs call"), "recsys.usecase.GetSameTracks error while GetRecs call"),
@@ -54,7 +54,7 @@ func TestRecSysUseCase_GetSameTracks(t *testing.T) {
 			name: "GetTrack fails",
 			id:   3,
 			mock: func(r *mock_remote.MockRecSysProvider, r2 *mock_repository.MockTrackRepository, id uint64) {
-				r.EXPECT().GetRecs(id).Return([]uint64{1, 2, 3}, nil)
+				r.EXPECT().GetRecs(id, 1, 10).Return([]uint64{1, 2, 3}, nil)
 
 				track1 := &models.TrackMeta{Id: 1, Name: "TrackMeta 1"}
 				track2 := &models.TrackMeta{Id: 2, Name: "TrackMeta 2"}
@@ -78,7 +78,7 @@ func TestRecSysUseCase_GetSameTracks(t *testing.T) {
 			tc.mock(recsProvider, trackRep, tc.id)
 
 			u := NewRecSysUseCase(recsProvider, trackRep)
-			tracks, err := u.GetSameTracks(tc.id)
+			tracks, err := u.GetSameTracks(tc.id, 1, 10)
 
 			assert.Equal(t, tc.expectedTracks, tracks)
 

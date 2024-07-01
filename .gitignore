@@ -23,3 +23,4 @@ go.work
 venv
 img1.png
 img2.png
+*.db

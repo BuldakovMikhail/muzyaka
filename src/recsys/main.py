@@ -4,20 +4,22 @@ from confluent_kafka import Consumer, KafkaException
 from embeddings_creator import EmbeddingCreator
 from database import DataBase
 from model import Model
+import minio.credentials
 from minio import Minio
 from flask import Flask, jsonify, request
 from threading import Thread
 
 #TODO
-client = Minio()
-emb_creator = EmbeddingCreator(client, 15)
+
+creds = minio.credentials.StaticProvider("minioadmin", "minioadmin", "")
+client = Minio("localhost:9000", credentials=creds, secure=False)
 bucket = "track-bucket"
 
+emb_creator = EmbeddingCreator(client, 15)
 db = DataBase("track.db")
 model = Model(db, 10)
 
 app = Flask(__name__)
-
 
 def create_consumer(config):
     consumer = Consumer(config)
@@ -62,8 +64,12 @@ def create_consumer(config):
     return basic_consume_loop
 
 
-@app.route("/rec/<id>", methods=["GET"])
+@app.route("/rec", methods=["GET"])
 def get_recs(id):
+    id = request.args.get('id', type=int)
+    page = request.args.get('page', type=int)
+    page_size = request.args.get('page_size', type=int)
+    
     recs = model.get_recs(id, 10)
     return jsonify({"ids": recs})
 

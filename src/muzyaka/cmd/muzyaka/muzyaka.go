@@ -32,6 +32,9 @@ import (
 	middleware5 "src/internal/domain/playlist/middleware"
 	postgres7 "src/internal/domain/playlist/repository/postgres"
 	usecase6 "src/internal/domain/playlist/usecase"
+	delivery4 "src/internal/domain/recsys/delivery"
+	"src/internal/domain/recsys/recsys_client"
+	usecase9 "src/internal/domain/recsys/usecase"
 	delivery7 "src/internal/domain/track/delivery"
 	middleware7 "src/internal/domain/track/middleware"
 	"src/internal/domain/track/repository/minio"
@@ -109,6 +112,7 @@ func App() {
 	merchRep := postgres5.NewMerchRepository(db)
 	playlistRep := postgres7.NewPlaylistRepository(db)
 	trackRep := postgres8.NewTrackRepository(db)
+	recSysClient := recsys_client.NewRecSysClient("localhost:12121/rec")
 
 	outboxRep := postgres6.NewOutboxRepo(db)
 
@@ -121,6 +125,7 @@ func App() {
 	userUseCase := usecase7.NewUserUseCase(userRep, trackRep, encryptor)
 	trackUseCase := usecase8.NewTrackUseCase(trackRep, trackStorage)
 	outbox := usecase5.NewOutboxUseCase(producer, outboxRep)
+	recSysUseCase := usecase9.NewRecSysUseCase(recSysClient, trackRep)
 
 	// TODO: нормально завершать эту горутину, чтобы не потерять данные
 	go func() {
@@ -262,6 +267,7 @@ func App() {
 	router.Group(func(r chi.Router) {
 		r.Use(basicAuthMiddleware)
 		r.Get("/api/track", delivery7.FindTracks(trackUseCase))
+		r.Get("/api/track/recs", delivery4.GetRecommendedTracks(recSysUseCase))
 		r.Get("/api/track/{id}", delivery7.GetTrack(trackUseCase))
 		r.Get("/api/playlist/{playlist_id}/track", delivery6.GetAllTracks(playlistUseCase))
 		r.Get("/api/playlist/{id}", delivery6.GetPlaylist(playlistUseCase))

@@ -34,16 +34,16 @@ func (m *MockRecSysProvider) EXPECT() *MockRecSysProviderMockRecorder {
 }
 
 // GetRecs mocks base method.
-func (m *MockRecSysProvider) GetRecs(id uint64) ([]uint64, error) {
+func (m *MockRecSysProvider) GetRecs(id uint64, page, pageSize int) ([]uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetRecs", id)
+	ret := m.ctrl.Call(m, "GetRecs", id, page, pageSize)
 	ret0, _ := ret[0].([]uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetRecs indicates an expected call of GetRecs.
-func (mr *MockRecSysProviderMockRecorder) GetRecs(id interface{}) *gomock.Call {
+func (mr *MockRecSysProviderMockRecorder) GetRecs(id, page, pageSize interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRecs", reflect.TypeOf((*MockRecSysProvider)(nil).GetRecs), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRecs", reflect.TypeOf((*MockRecSysProvider)(nil).GetRecs), id, page, pageSize)
 }

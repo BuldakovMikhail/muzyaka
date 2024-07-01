@@ -63,6 +63,21 @@ func (mr *MockTrackRepositoryMockRecorder) GetTrack(id interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTrack", reflect.TypeOf((*MockTrackRepository)(nil).GetTrack), id)
 }
 
+// GetTracksByPartName mocks base method.
+func (m *MockTrackRepository) GetTracksByPartName(name string, offset, limit int) ([]*models.TrackMeta, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTracksByPartName", name, offset, limit)
+	ret0, _ := ret[0].([]*models.TrackMeta)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTracksByPartName indicates an expected call of GetTracksByPartName.
+func (mr *MockTrackRepositoryMockRecorder) GetTracksByPartName(name, offset, limit interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTracksByPartName", reflect.TypeOf((*MockTrackRepository)(nil).GetTracksByPartName), name, offset, limit)
+}
+
 // UpdateTrack mocks base method.
 func (m *MockTrackRepository) UpdateTrack(track *models.TrackMeta) error {
 	m.ctrl.T.Helper()

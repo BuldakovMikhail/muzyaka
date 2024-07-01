@@ -1642,6 +1642,56 @@ paths:
       summary: UpdateTrack
       tags:
       - track
+  /api/track/recs:
+    get:
+      consumes:
+      - application/json
+      description: get recommended tracks
+      operationId: get-recommended-tracks
+      parameters:
+      - description: id of song
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: number of page from 1
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: size of page
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TracksMetaCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetRecommendedTracks
+      tags:
+      - track
   /api/user/{user_id}:
     delete:
       consumes:
