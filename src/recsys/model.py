@@ -16,13 +16,14 @@ class Model:
         self.n_neighbors = n_neighbors
         self.update_recs()
 
-    def get_recs(self, id:int, num:int):
+    def get_recs(self, id:int, offset:int, limit:int):
         res = self.nn.kneighbors(
             self.scaled_data[self.df["id"] == id],
-            num
+            limit + offset,
+            False
         )
-
-        return self.df.iloc[res[1][0]]["id"]
+        print(res)
+        return self.df.iloc[res[0][offset:]]["id"]
 
     def update_recs(self):
         self.scaler = StandardScaler()

@@ -10,6 +10,8 @@ from flask import Flask, jsonify, request
 from threading import Thread
 
 #TODO
+MIN_PAGE_SIZE = 10
+MAX_PAGE_SIZE = 100
 
 creds = minio.credentials.StaticProvider("minioadmin", "minioadmin", "")
 client = Minio("localhost:9000", credentials=creds, secure=False)
@@ -69,8 +71,18 @@ def get_recs(id):
     id = request.args.get('id', type=int)
     page = request.args.get('page', type=int)
     page_size = request.args.get('page_size', type=int)
-    
-    recs = model.get_recs(id, 10)
+
+    if page <= 0:
+        page = 1
+
+    if page_size < MIN_PAGE_SIZE:
+        page_size = MIN_PAGE_SIZE
+    elif page_size > MAX_PAGE_SIZE:
+        page_size = MAX_PAGE_SIZE
+
+    offset = (page - 1) * page_size
+
+    recs = model.get_recs(id, offset, page_size)
     return jsonify({"ids": recs})
 
 def main():
