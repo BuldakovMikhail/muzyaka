@@ -36,9 +36,9 @@ func (op *OutboxProducer) ProduceMessages() error {
 				fmt.Sprintf(
 					"{\"event_id\": \"%s\","+
 						" \"track_id\": %d,"+
-						" \"operation\": %s,"+
-						" \"source\": %s,"+
-						" \"name\": %s,"+
+						" \"operation\": \"%s\","+
+						" \"source\": \"%s\","+
+						" \"name\": \"%s\","+
 						" \"genre_id\": %d}",
 					v.EventId,
 					v.TrackId,

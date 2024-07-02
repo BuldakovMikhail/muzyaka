@@ -28,7 +28,11 @@ class Model:
     def update_recs(self):
         self.scaler = StandardScaler()
         self.df = self.db.convert_to_dataframe()
-        self.embedding_indexes = [f"X{i}" for i in range(len(self.df['embedding'][0]))]
+
+        if len(self.df['embedding']) == 0:
+            return
+
+        self.embedding_indexes = [f"{i}" for i in range(len(self.df['embedding'][0]))]
 
         self.df[self.embedding_indexes] = pd.DataFrame(
             self.df['embedding'].tolist(),

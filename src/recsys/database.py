@@ -63,7 +63,7 @@ class DataBase(IDataBase):
         cursor.execute(query, (id, pickle.dumps(data)))
 
         query = """
-                        INSERT INTO events(event_id) VALUES (?,)
+                        INSERT INTO events(event_id) VALUES (?)
                             """
         cursor.execute(query, (event_id,))
 
@@ -125,7 +125,7 @@ class DataBase(IDataBase):
         cursor = conn.cursor()
 
         df = pd.read_sql_query("SELECT * FROM tracks", conn)
-        df = df.apply(lambda x: pickle.loads(x),axis=1)
+        df['embedding'] = df['embedding'].apply(lambda x: pickle.loads(x))
         cursor.close()
         conn.close()
 

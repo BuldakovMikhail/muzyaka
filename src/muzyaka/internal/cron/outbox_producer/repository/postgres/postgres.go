@@ -18,7 +18,7 @@ func NewOutboxRepo(db *gorm.DB) repository.OutboxRepository {
 func (o outboxRepo) GetWaitingEvents() ([]*dao.Outbox, error) {
 	var events []*dao.Outbox
 
-	tx := o.db.Limit(dao.MaxLimit).Find(&events, "sent = false")
+	tx := o.db.Limit(dao.MaxLimit).Find(&events, "sent = false").Order("id")
 
 	if tx.Error != nil {
 		return nil, errors.Wrap(tx.Error, "GetWaitingEvents database error (table outbox)")

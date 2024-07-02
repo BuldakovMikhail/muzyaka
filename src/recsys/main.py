@@ -39,6 +39,7 @@ def create_consumer(config):
                     # действия с полученным сообщением
                     # TODO: Place model and db save here
 
+                    print(msg.value().decode('utf-8'))
                     message = json.loads(msg.value().decode('utf-8'))
                     id = int(message['track_id'])
                     event_id = message['event_id']
