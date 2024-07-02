@@ -12,7 +12,7 @@ import (
 	"strconv"
 )
 
-var (
+const (
 	albumPath = "http://localhost:8080/api/album/"
 )
 

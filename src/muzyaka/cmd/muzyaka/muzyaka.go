@@ -112,7 +112,7 @@ func App() {
 	merchRep := postgres5.NewMerchRepository(db)
 	playlistRep := postgres7.NewPlaylistRepository(db)
 	trackRep := postgres8.NewTrackRepository(db)
-	recSysClient := recsys_client.NewRecSysClient("localhost:12121/rec")
+	recSysClient := recsys_client.NewRecSysClient("http://127.0.0.1:12121/rec")
 
 	outboxRep := postgres6.NewOutboxRepo(db)
 

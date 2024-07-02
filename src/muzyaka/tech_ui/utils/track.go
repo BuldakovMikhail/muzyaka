@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
 	"net/http"
@@ -13,7 +14,7 @@ import (
 	"strconv"
 )
 
-var (
+const (
 	trackPath  = "http://localhost:8080/api/track/"
 	searchPath = "http://localhost:8080/api/track"
 )
@@ -148,6 +149,48 @@ func FindTracks(client *http.Client,
 	defer respGot.Body.Close()
 
 	var resp dto.TracksMetaCollection
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return nil, err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		var resp response.Response
+		err = render.DecodeJSON(respGot.Body, &resp)
+		return nil, errors.New(resp.Error)
+	}
+
+	return resp.Tracks, nil
+}
+
+func GetSameTracks(client *http.Client,
+	trackId uint64,
+	page int,
+	pageSize int,
+	jwt string) ([]*dto.TrackMeta, error) {
+
+	url := trackPath + "recs"
+
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Authorization", "Bearer "+jwt)
+	request.URL.RawQuery = url2.Values{
+		"id":        {strconv.FormatUint(trackId, 10)},
+		"page":      {strconv.Itoa(page)},
+		"page_size": {strconv.Itoa(pageSize)},
+	}.Encode()
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer respGot.Body.Close()
+
+	var resp dto.TracksMetaCollection
+
+	fmt.Println(respGot.Body)
 	err = render.DecodeJSON(respGot.Body, &resp)
 
 	if err != nil {

@@ -10,7 +10,7 @@ import (
 	"src/internal/models/dto"
 )
 
-var (
+const (
 	authPath = "http://localhost:8080/api/auth/"
 )
 

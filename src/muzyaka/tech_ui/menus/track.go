@@ -20,6 +20,56 @@ type trackWithClient struct {
 
 // TODO: скрыть бы это от внешнего мира
 
+func (m *Menu) GetSameTracks(opt wmenu.Opt) error {
+	item, ok := opt.Value.(trackWithClient)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	var curPage int = 1
+	for {
+		tracks, err := utils.GetSameTracks(item.Client, item.Id, curPage, -1, m.jwt)
+		if err != nil {
+			return err
+		}
+
+		tracksSubmenu := wmenu.NewMenu("Select track")
+		for _, v := range tracks {
+			genre := "None"
+			if v.Genre != nil {
+				genre = *v.Genre
+			}
+
+			tracksSubmenu.Option(
+				fmt.Sprintf("Name: %s, Genre: %s, Source: %s", v.Name, genre, v.Source),
+				trackWithClient{
+					ClientEntity: item.ClientEntity,
+					TrackMeta:    *v,
+				},
+				false,
+				m.TrackActions,
+			)
+		}
+		tracksSubmenu.Option("Next", nil, false, func(opt wmenu.Opt) error {
+			curPage++
+			return nil
+		})
+		tracksSubmenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
+			return errExit
+		})
+
+		err = tracksSubmenu.Run()
+		if errors.Is(err, errExit) {
+			break
+		} else if err != nil {
+			fmt.Printf("ERROR: %v\n\n", err)
+		}
+	}
+
+	return nil
+}
+
 func (m *Menu) DownloadTrack(opt wmenu.Opt) error {
 	item, ok := opt.Value.(trackWithClient)
 	if !ok {
@@ -63,6 +113,7 @@ func (m *Menu) TrackActions(opt wmenu.Opt) error {
 	submenu := wmenu.NewMenu("Select option")
 	submenu.Option("Download media", item, false, m.DownloadTrack)
 	submenu.Option("Like track", item, false, m.LikeTrack)
+	submenu.Option("Get same tracks", item, false, m.GetSameTracks)
 	submenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
 		return errExit
 	})
@@ -158,6 +209,7 @@ func (m *Menu) LikedTracksActions(opt wmenu.Opt) error {
 	submenu := wmenu.NewMenu("Select option")
 	submenu.Option("Download media", item, false, m.DownloadTrack)
 	submenu.Option("Dislike track", item, false, m.DislikeTrack)
+	submenu.Option("Get same tracks", item, false, m.GetSameTracks)
 	submenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
 		return errExit
 	})

@@ -51,6 +51,7 @@ func GetRecommendedTracks(useCase usecase2.RecSysUseCase) http.HandlerFunc {
 		}
 
 		tracks, err := useCase.GetSameTracks(id, page, pageSize)
+
 		if err != nil {
 			render.JSON(w, r, err.Error())
 			w.WriteHeader(http.StatusInternalServerError)

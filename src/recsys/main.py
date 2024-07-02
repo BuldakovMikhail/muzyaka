@@ -68,7 +68,7 @@ def create_consumer(config):
 
 
 @app.route("/rec", methods=["GET"])
-def get_recs(id):
+def get_recs():
     id = request.args.get('id', type=int)
     page = request.args.get('page', type=int)
     page_size = request.args.get('page_size', type=int)
@@ -84,7 +84,8 @@ def get_recs(id):
     offset = (page - 1) * page_size
 
     recs = model.get_recs(id, offset, page_size)
-    return jsonify({"ids": recs})
+    # print(list(recs))
+    return jsonify({"ids": list(recs)})
 
 def main():
     kafka_config = {

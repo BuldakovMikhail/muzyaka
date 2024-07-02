@@ -19,10 +19,9 @@ class Model:
     def get_recs(self, id:int, offset:int, limit:int):
         res = self.nn.kneighbors(
             self.scaled_data[self.df["id"] == id],
-            limit + offset,
+            min(limit + offset, len(self.scaled_data)),
             False
         )
-        print(res)
         return self.df.iloc[res[0][offset:]]["id"]
 
     def update_recs(self):

@@ -12,7 +12,7 @@ import (
 	"strconv"
 )
 
-var (
+const (
 	musicianPath = "http://localhost:8080/api/musician/"
 	merchPath    = "http://localhost:8080/api/merch/"
 )
