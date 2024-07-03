@@ -29,7 +29,7 @@ func (m *Menu) GetMyLikedTracks(opt wmenu.Opt) error {
 			}
 
 			tracksSubmenu.Option(
-				fmt.Sprintf("Name: %s, Genre: %s, Source: %s", v.Name, genre, v.Source),
+				fmt.Sprintf("Name: %s, Genre: %s, Source: %s", v.Name, genre),
 				trackWithClient{
 					ClientEntity: client,
 					TrackMeta:    *v,

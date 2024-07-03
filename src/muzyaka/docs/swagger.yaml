@@ -265,10 +265,8 @@ definitions:
         type: integer
       name:
         type: string
-      source:
-        type: string
     type: object
-  dto.TrackObject:
+  dto.TrackObjectWithSource:
     properties:
       genre:
         type: string
@@ -281,6 +279,7 @@ definitions:
           type: integer
         type: array
       payload_size:
+        description: 'TODO: mb удалить PayloadSize'
         type: integer
       source:
         type: string
@@ -297,8 +296,6 @@ definitions:
         type: array
       payload_size:
         type: integer
-      source:
-        type: string
     type: object
   dto.TracksMetaCollection:
     properties:
@@ -1575,7 +1572,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.TrackObject'
+            $ref: '#/definitions/dto.TrackObjectWithSource'
         "400":
           description: Bad Request
           schema:

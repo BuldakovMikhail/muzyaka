@@ -3,16 +3,14 @@ package dto
 import "src/internal/models"
 
 type TrackMeta struct {
-	Id     uint64  `json:"id"`
-	Source string  `json:"source"`
-	Name   string  `json:"name"`
-	Genre  *string `json:"genre"`
+	Id    uint64  `json:"id"`
+	Name  string  `json:"name"`
+	Genre *string `json:"genre"`
 }
 
 type TrackMetaWithoutId struct {
-	Source string  `json:"source"`
-	Name   string  `json:"name"`
-	Genre  *string `json:"genre"`
+	Name  string  `json:"name"`
+	Genre *string `json:"genre"`
 }
 
 type TrackObjectWithoutId struct {
@@ -24,7 +22,14 @@ type TrackObjectWithoutId struct {
 type TrackObject struct {
 	TrackMeta
 	Payload     []byte `json:"payload"`
-	PayloadSize int64  `json:"payload_size"`
+	PayloadSize int64  `json:"payload_size"` // TODO: mb удалить PayloadSize
+}
+
+type TrackObjectWithSource struct {
+	TrackMeta
+	Source      string `json:"source"`
+	Payload     []byte `json:"payload"`
+	PayloadSize int64  `json:"payload_size"` // TODO: mb удалить PayloadSize
 }
 
 type TracksMetaCollection struct {
@@ -40,49 +45,13 @@ func ToDtoTrackMeta(m *models.TrackMeta) *TrackMeta {
 	}
 
 	return &TrackMeta{
-		Id:     m.Id,
-		Source: m.Source,
-		Name:   m.Name,
-		Genre:  genre,
+		Id:    m.Id,
+		Name:  m.Name,
+		Genre: genre,
 	}
 }
 
-func ToModelTrackMeta(t *TrackMeta) *models.TrackMeta {
-	var genre string
-	if t.Genre == nil {
-		genre = ""
-	} else {
-		genre = *t.Genre
-	}
-
-	return &models.TrackMeta{
-		Id:     t.Id,
-		Source: t.Source,
-		Name:   t.Name,
-		Genre:  genre,
-	}
-}
-
-func ToModelTrackObject(t *TrackObject) *models.TrackObject {
-	var genre string
-	if t.Genre == nil {
-		genre = ""
-	} else {
-		genre = *t.Genre
-	}
-	return &models.TrackObject{
-		TrackMeta: models.TrackMeta{
-			Id:     t.Id,
-			Source: t.Source,
-			Name:   t.Name,
-			Genre:  genre,
-		},
-		Payload:     t.Payload,
-		PayloadSize: t.PayloadSize,
-	}
-}
-
-func ToModelTrackObjectWithoutId(t *TrackObjectWithoutId, id uint64) *models.TrackObject {
+func ToModelTrackObjectWithoutId(t *TrackObjectWithoutId, id uint64, source string) *models.TrackObject {
 	var genre string
 	if t.Genre == nil {
 		genre = ""
@@ -92,7 +61,7 @@ func ToModelTrackObjectWithoutId(t *TrackObjectWithoutId, id uint64) *models.Tra
 	return &models.TrackObject{
 		TrackMeta: models.TrackMeta{
 			Id:     id,
-			Source: t.Source,
+			Source: source,
 			Name:   t.Name,
 			Genre:  genre,
 		},
@@ -101,20 +70,20 @@ func ToModelTrackObjectWithoutId(t *TrackObjectWithoutId, id uint64) *models.Tra
 	}
 }
 
-func ToDtoTrackObject(t *models.TrackObject) *TrackObject {
+func ToDtoTrackObjectWithSource(t *models.TrackObject) *TrackObjectWithSource {
 	var genre *string
 	if t.Genre == "" {
 		genre = nil
 	} else {
 		genre = &t.Genre
 	}
-	return &TrackObject{
+	return &TrackObjectWithSource{
 		TrackMeta: TrackMeta{
-			Id:     t.Id,
-			Source: t.Source,
-			Name:   t.Name,
-			Genre:  genre,
+			Id:    t.Id,
+			Name:  t.Name,
+			Genre: genre,
 		},
+		Source:      t.Source,
 		Payload:     t.Payload,
 		PayloadSize: t.PayloadSize,
 	}

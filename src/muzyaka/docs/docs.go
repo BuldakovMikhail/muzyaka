@@ -1932,7 +1932,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TrackObject"
+                            "$ref": "#/definitions/dto.TrackObjectWithSource"
                         }
                     },
                     "400": {
@@ -3028,13 +3028,10 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "source": {
-                    "type": "string"
                 }
             }
         },
-        "dto.TrackObject": {
+        "dto.TrackObjectWithSource": {
             "type": "object",
             "properties": {
                 "genre": {
@@ -3053,6 +3050,7 @@ const docTemplate = `{
                     }
                 },
                 "payload_size": {
+                    "description": "TODO: mb удалить PayloadSize",
                     "type": "integer"
                 },
                 "source": {
@@ -3077,9 +3075,6 @@ const docTemplate = `{
                 },
                 "payload_size": {
                     "type": "integer"
-                },
-                "source": {
-                    "type": "string"
                 }
             }
         },

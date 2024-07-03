@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/hashicorp/go-uuid"
 	"github.com/pkg/errors"
 	"src/internal/domain/album/repository"
 	repository2 "src/internal/domain/track/repository"
@@ -78,14 +79,20 @@ func (u *usecase) UpdateAlbum(album *models.Album) error {
 	return nil
 }
 
-// TODO: Add track source generation
 // TODO: Add check that track is not empty
 // TODO: Add ownership check
 // TODO: maybe first write into db then into storage
 func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.TrackObject, musicianId uint64) (uint64, error) {
 	var tracksMeta []*models.TrackMeta
 	for _, v := range tracks {
-		err := u.storageRep.UploadObject(v)
+		newSource, err := uuid.GenerateUUID()
+		if err != nil {
+			return 0, errors.Wrap(err, "album.usecase.AddAlbum error in UUID gen")
+		}
+
+		v.Source = newSource
+
+		err = u.storageRep.UploadObject(v)
 		if err != nil {
 			return 0, errors.Wrap(err, "album.usecase.AddAlbum error while add")
 		}
@@ -124,9 +131,15 @@ func (u *usecase) DeleteAlbum(id uint64) error {
 }
 
 func (u *usecase) AddTrack(albumId uint64, track *models.TrackObject) (uint64, error) {
-	err := u.storageRep.UploadObject(track)
+	newSource, err := uuid.GenerateUUID()
 	if err != nil {
-		return 0, errors.Wrap(err, "album.usecase.AddAlbum error while add")
+		return 0, errors.Wrap(err, "album.usecase.AddTrack error in UUID gen")
+	}
+	track.Source = newSource
+
+	err = u.storageRep.UploadObject(track)
+	if err != nil {
+		return 0, errors.Wrap(err, "album.usecase.AddTrack error while add")
 	}
 
 	id, err := u.albumRep.AddTrackToAlbumOutbox(albumId, track.ExtractMeta())

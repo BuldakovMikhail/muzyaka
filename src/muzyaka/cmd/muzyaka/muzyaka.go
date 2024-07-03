@@ -271,7 +271,7 @@ func App() {
 		r.Get("/api/track", delivery7.FindTracks(trackUseCase))
 		r.Get("/api/track/recs", delivery4.GetRecommendedTracks(recSysUseCase))
 		r.Get("/api/track/{id}", delivery7.GetTrack(trackUseCase))
-		r.Get("/api/playlist/{playlist_id}/track", delivery6.GetAllTracks(playlistUseCase))
+		r.Get("/api/playlist/{playlist_id}/track", delivery6.GetAllTracksForPlaylist(playlistUseCase))
 		r.Get("/api/playlist/{id}", delivery6.GetPlaylist(playlistUseCase))
 		r.Get("/api/musician/{musician_id}", delivery5.GetMusician(musicianUseCase))
 		r.Get("/api/album/{id}/tracks", delivery2.GetAllTracks(albumUseCase))

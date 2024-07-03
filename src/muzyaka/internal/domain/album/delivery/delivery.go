@@ -156,7 +156,7 @@ func AddAlbumWithTracks(useCase usecase.AlbumUseCase) http.HandlerFunc {
 
 		var modelTracks []*models.TrackObject
 		for _, v := range req.Tracks {
-			modelTracks = append(modelTracks, dto.ToModelTrackObjectWithoutId(v, 0))
+			modelTracks = append(modelTracks, dto.ToModelTrackObjectWithoutId(v, 0, ""))
 		}
 
 		albumID, err := useCase.AddAlbumWithTracks(dto.ToModelAlbumWithId(0, &req.AlbumWithoutId), modelTracks, musicianIDUint)
@@ -201,7 +201,7 @@ func CreateTrack(useCase usecase.AlbumUseCase) http.HandlerFunc {
 			return
 		}
 
-		trackID, err := useCase.AddTrack(albumIDUint, dto.ToModelTrackObjectWithoutId(&req, 0))
+		trackID, err := useCase.AddTrack(albumIDUint, dto.ToModelTrackObjectWithoutId(&req, 0, ""))
 		if err != nil {
 			render.JSON(w, r, response.Error(err.Error()))
 			w.WriteHeader(http.StatusInternalServerError)

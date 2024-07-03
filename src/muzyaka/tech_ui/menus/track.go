@@ -42,7 +42,7 @@ func (m *Menu) GetSameTracks(opt wmenu.Opt) error {
 			}
 
 			tracksSubmenu.Option(
-				fmt.Sprintf("Name: %s, Genre: %s, Source: %s", v.Name, genre, v.Source),
+				fmt.Sprintf("Name: %s, Genre: %s", v.Name, genre),
 				trackWithClient{
 					ClientEntity: item.ClientEntity,
 					TrackMeta:    *v,
@@ -206,7 +206,7 @@ func (m *Menu) FindTracks(opt wmenu.Opt) error {
 			}
 
 			tracksSubmenu.Option(
-				fmt.Sprintf("Name: %s, Genre: %s, Source: %s", v.Name, genre, v.Source),
+				fmt.Sprintf("Name: %s, Genre: %s", v.Name, genre),
 				trackWithClient{
 					ClientEntity: client,
 					TrackMeta:    *v,

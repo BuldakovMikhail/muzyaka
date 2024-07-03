@@ -43,7 +43,7 @@ func UpdateTrack(useCase usecase.TrackUseCase) http.HandlerFunc {
 			return
 		}
 
-		err = useCase.UpdateTrack(dto.ToModelTrackObjectWithoutId(&req, trackIDUint))
+		err = useCase.UpdateTrack(dto.ToModelTrackObjectWithoutId(&req, trackIDUint, ""))
 		if err != nil {
 			render.JSON(w, r, response.Error(err.Error()))
 			w.WriteHeader(http.StatusInternalServerError)
@@ -62,7 +62,7 @@ func UpdateTrack(useCase usecase.TrackUseCase) http.HandlerFunc {
 // @Accept  json
 // @Produce  json
 // @Param id path int true "track ID"
-// @Success 200 {object} dto.TrackObject
+// @Success 200 {object} dto.TrackObjectWithSource
 // @Failure 400,404 {object} response.Response
 // @Failure 500 {object} response.Response
 // @Failure default {object} response.Response
@@ -84,7 +84,7 @@ func GetTrack(useCase usecase.TrackUseCase) http.HandlerFunc {
 			return
 		}
 
-		render.JSON(w, r, dto.ToDtoTrackObject(track))
+		render.JSON(w, r, dto.ToDtoTrackObjectWithSource(track))
 	}
 }
 

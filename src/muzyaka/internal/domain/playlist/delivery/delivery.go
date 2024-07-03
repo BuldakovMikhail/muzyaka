@@ -277,7 +277,7 @@ func DeleteTrack(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 // @Failure 500 {object} response.Response
 // @Failure default {object} response.Response
 // @Router /api/playlist/{playlist_id}/track [get]
-func GetAllTracks(useCase usecase.PlaylistUseCase) http.HandlerFunc {
+func GetAllTracksForPlaylist(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		playlistID := chi.URLParam(r, "playlist_id")
 

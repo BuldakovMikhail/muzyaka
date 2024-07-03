@@ -95,7 +95,7 @@ func (m *Menu) DeleteTrackFromPlaylist(opt wmenu.Opt) error {
 						genre = *t.Genre
 					}
 					tracksSubmenu.Option(
-						fmt.Sprintf("Name: %s, Source: %s, Genre: %s", t.Name, t.Source, genre),
+						fmt.Sprintf("Name: %s, Genre: %s", t.Name, genre),
 						*t,
 						false,
 						func(opt wmenu.Opt) error {
@@ -189,7 +189,7 @@ func (m *Menu) GetAllMyPlaylists(opt wmenu.Opt) error {
 					}
 
 					submenuTracks.Option(
-						fmt.Sprintf("Name: %s, Genre: %s, Source: %s", t.Name, genre, t.Source),
+						fmt.Sprintf("Name: %s, Genre: %s", t.Name, genre),
 						*t,
 						false,
 						func(opt wmenu.Opt) error {
@@ -200,10 +200,14 @@ func (m *Menu) GetAllMyPlaylists(opt wmenu.Opt) error {
 
 							inputReader := bufio.NewReader(os.Stdin)
 
+							genre := "None"
+							if item.Genre != nil {
+								genre = *item.Genre
+							}
+
 							fmt.Printf("ID: %d\n", item.Id)
 							fmt.Printf("Name: %s\n", item.Name)
-							fmt.Printf("Genre: %s\n", item.Genre)
-							fmt.Printf("Source: %s\n", item.Source)
+							fmt.Printf("Genre: %s\n", genre)
 
 							fmt.Printf("Enter path to media: \n")
 							path, _ := inputReader.ReadString('\n')
