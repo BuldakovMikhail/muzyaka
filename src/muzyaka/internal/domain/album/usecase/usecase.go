@@ -79,12 +79,13 @@ func (u *usecase) UpdateAlbum(album *models.Album) error {
 	return nil
 }
 
-// TODO: Add check that track is not empty
-// TODO: Add ownership check
-// TODO: maybe first write into db then into storage
 func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.TrackObject, musicianId uint64) (uint64, error) {
 	var tracksMeta []*models.TrackMeta
 	for _, v := range tracks {
+		if len(v.Payload) == 0 {
+			return 0, models.ErrInvalidPayload
+		}
+
 		newSource, err := uuid.GenerateUUID()
 		if err != nil {
 			return 0, errors.Wrap(err, "album.usecase.AddAlbum error in UUID gen")
@@ -131,6 +132,10 @@ func (u *usecase) DeleteAlbum(id uint64) error {
 }
 
 func (u *usecase) AddTrack(albumId uint64, track *models.TrackObject) (uint64, error) {
+	if len(track.Payload) == 0 {
+		return 0, models.ErrInvalidPayload
+	}
+
 	newSource, err := uuid.GenerateUUID()
 	if err != nil {
 		return 0, errors.Wrap(err, "album.usecase.AddTrack error in UUID gen")

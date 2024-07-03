@@ -14,4 +14,6 @@ var (
 
 	ErrNothingToDelete  = errors.New("nothing to delete")
 	ErrInvalidParameter = errors.New("error in query parameters")
+
+	ErrInvalidPayload = errors.New("error, invalid payload")
 )
