@@ -104,8 +104,7 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 					Source: "updated_source.mp3",
 					Genre:  "Pop",
 				},
-				Payload:     []byte{1, 2, 3},
-				PayloadSize: 3,
+				Payload: []byte{1, 2, 3},
 			},
 			mock: func(r *mock_repository.MockTrackRepository, track models.TrackObject) {
 				r.EXPECT().UpdateTrack(track.ExtractMeta()).Return(nil)
@@ -124,8 +123,7 @@ func TestUsecase_UpdatedTrack(t *testing.T) {
 					Source: "updated_source.mp3",
 					Genre:  "Pop",
 				},
-				Payload:     []byte{1, 2, 3},
-				PayloadSize: 3,
+				Payload: []byte{1, 2, 3},
 			},
 			mock: func(r *mock_repository.MockTrackRepository, track models.TrackObject) {
 				r.EXPECT().UpdateTrack(track.ExtractMeta()).Return(errors.New("error in repo"))
@@ -187,8 +185,7 @@ func TestUsecase_GetTrack(t *testing.T) {
 						Source: "test_source.mp3",
 						Genre:  "Pop",
 					},
-					Payload:     []byte{1, 2, 3},
-					PayloadSize: 3,
+					Payload: []byte{1, 2, 3},
 				}
 
 				r.EXPECT().LoadObject(&track).Return(ret, nil)
@@ -206,8 +203,7 @@ func TestUsecase_GetTrack(t *testing.T) {
 					Source: "test_source.mp3",
 					Genre:  "Pop",
 				},
-				Payload:     []byte{1, 2, 3},
-				PayloadSize: 3,
+				Payload: []byte{1, 2, 3},
 			},
 			expectedErr: nil,
 		},

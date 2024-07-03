@@ -48,8 +48,7 @@ func TestRepo_TrackStorageAdd(t *testing.T) {
 			Name:   "aboba",
 			Genre:  "aboba",
 		},
-		Payload:     []byte{1, 2, 3},
-		PayloadSize: 3,
+		Payload: []byte{1, 2, 3},
 	}
 
 	err = storage.UploadObject(&track)
@@ -58,7 +57,6 @@ func TestRepo_TrackStorageAdd(t *testing.T) {
 	trackLoaded, err := storage.LoadObject(track.ExtractMeta())
 	assert.NoError(t, err)
 
-	assert.Equal(t, trackLoaded.PayloadSize, track.PayloadSize)
 	assert.Equal(t, trackLoaded.Payload, track.Payload)
 }
 
@@ -99,8 +97,7 @@ func TestRepo_TrackStorageUpdate(t *testing.T) {
 			Name:   "aboba",
 			Genre:  "aboba",
 		},
-		Payload:     []byte{1, 2, 3},
-		PayloadSize: 3,
+		Payload: []byte{1, 2, 3},
 	}
 
 	err = storage.UploadObject(&track)
@@ -109,7 +106,6 @@ func TestRepo_TrackStorageUpdate(t *testing.T) {
 	trackLoaded, err := storage.LoadObject(track.ExtractMeta())
 	assert.NoError(t, err)
 
-	assert.Equal(t, trackLoaded.PayloadSize, track.PayloadSize)
 	assert.Equal(t, trackLoaded.Payload, track.Payload)
 
 	track.Payload = []byte{4, 5, 6}
@@ -119,7 +115,6 @@ func TestRepo_TrackStorageUpdate(t *testing.T) {
 	trackLoaded, err = storage.LoadObject(track.ExtractMeta())
 	assert.NoError(t, err)
 
-	assert.Equal(t, trackLoaded.PayloadSize, track.PayloadSize)
 	assert.Equal(t, trackLoaded.Payload, track.Payload)
 
 }
@@ -161,8 +156,7 @@ func TestRepo_TrackStorageDelete(t *testing.T) {
 			Name:   "aboba",
 			Genre:  "aboba",
 		},
-		Payload:     []byte{1, 2, 3},
-		PayloadSize: 3,
+		Payload: []byte{1, 2, 3},
 	}
 
 	err = storage.UploadObject(&track)
@@ -171,7 +165,6 @@ func TestRepo_TrackStorageDelete(t *testing.T) {
 	trackLoaded, err := storage.LoadObject(track.ExtractMeta())
 	assert.NoError(t, err)
 
-	assert.Equal(t, trackLoaded.PayloadSize, track.PayloadSize)
 	assert.Equal(t, trackLoaded.Payload, track.Payload)
 
 	err = storage.DeleteObject(track.ExtractMeta())

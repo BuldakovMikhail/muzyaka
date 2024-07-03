@@ -157,14 +157,12 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 			},
 			inputTracks: []*models.TrackObject{
 				{
-					TrackMeta:   models.TrackMeta{Id: 1, Name: "TrackMeta 2"},
-					Payload:     []byte{1, 2, 3},
-					PayloadSize: 3,
+					TrackMeta: models.TrackMeta{Id: 1, Name: "TrackMeta 2"},
+					Payload:   []byte{1, 2, 3},
 				},
 				{
-					TrackMeta:   models.TrackMeta{Id: 2, Name: "TrackMeta 2"},
-					Payload:     []byte{1, 2, 3},
-					PayloadSize: 3,
+					TrackMeta: models.TrackMeta{Id: 2, Name: "TrackMeta 2"},
+					Payload:   []byte{1, 2, 3},
 				},
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album *models.Album, tracks []*models.TrackObject) {
@@ -195,14 +193,12 @@ func TestUseCase_AddAlbumWithTracks(t *testing.T) {
 			},
 			inputTracks: []*models.TrackObject{
 				{
-					TrackMeta:   models.TrackMeta{Id: 1, Name: "TrackMeta 2"},
-					Payload:     []byte{1, 2, 3},
-					PayloadSize: 3,
+					TrackMeta: models.TrackMeta{Id: 1, Name: "TrackMeta 2"},
+					Payload:   []byte{1, 2, 3},
 				},
 				{
-					TrackMeta:   models.TrackMeta{Id: 2, Name: "TrackMeta 2"},
-					Payload:     []byte{1, 2, 3},
-					PayloadSize: 3,
+					TrackMeta: models.TrackMeta{Id: 2, Name: "TrackMeta 2"},
+					Payload:   []byte{1, 2, 3},
 				},
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album *models.Album, tracks []*models.TrackObject) {
@@ -364,8 +360,7 @@ func TestUsecase_AddTrack(t *testing.T) {
 					Name:   "test_name",
 					Genre:  "test_genre",
 				},
-				Payload:     []byte{1, 2, 3},
-				PayloadSize: 3,
+				Payload: []byte{1, 2, 3},
 			},
 			mock: func(r *mock_repository.MockAlbumRepository, album_id uint64, track models.TrackObject) {
 				r.EXPECT().AddTrackToAlbumOutbox(album_id, track.ExtractMeta()).Return(uint64(10), nil)
@@ -385,8 +380,7 @@ func TestUsecase_AddTrack(t *testing.T) {
 					Name:   "test_name",
 					Genre:  "test_genre",
 				},
-				Payload:     []byte{1, 2, 3},
-				PayloadSize: 3,
+				Payload: []byte{1, 2, 3},
 			},
 			storageMock: func(r *mock_repository2.MockTrackStorage, track models.TrackObject) {
 				r.EXPECT().UploadObject(&track).Return(nil)

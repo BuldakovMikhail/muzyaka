@@ -27,7 +27,7 @@ func (t trackStorage) UploadObject(track *models.TrackObject) error {
 		TrackBucket,
 		track.Source,
 		bytes.NewReader(track.Payload),
-		track.PayloadSize,
+		int64(len(track.Payload)),
 		minio.PutObjectOptions{ContentType: "audio"})
 
 	if err != nil {
@@ -61,8 +61,7 @@ func (t trackStorage) LoadObject(track *models.TrackMeta) (*models.TrackObject, 
 			Name:   track.Name,
 			Genre:  track.Genre,
 		},
-		Payload:     buffer,
-		PayloadSize: objectInfo.Size,
+		Payload: buffer,
 	}
 
 	return &ret, nil

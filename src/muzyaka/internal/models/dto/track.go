@@ -15,21 +15,18 @@ type TrackMetaWithoutId struct {
 
 type TrackObjectWithoutId struct {
 	TrackMetaWithoutId
-	Payload     []byte `json:"payload"`
-	PayloadSize int64  `json:"payload_size"`
+	Payload []byte `json:"payload"`
 }
 
 type TrackObject struct {
 	TrackMeta
-	Payload     []byte `json:"payload"`
-	PayloadSize int64  `json:"payload_size"` // TODO: mb удалить PayloadSize
+	Payload []byte `json:"payload"`
 }
 
 type TrackObjectWithSource struct {
 	TrackMeta
-	Source      string `json:"source"`
-	Payload     []byte `json:"payload"`
-	PayloadSize int64  `json:"payload_size"` // TODO: mb удалить PayloadSize
+	Source  string `json:"source"`
+	Payload []byte `json:"payload"`
 }
 
 type TracksMetaCollection struct {
@@ -65,8 +62,7 @@ func ToModelTrackObjectWithoutId(t *TrackObjectWithoutId, id uint64, source stri
 			Name:   t.Name,
 			Genre:  genre,
 		},
-		Payload:     t.Payload,
-		PayloadSize: t.PayloadSize,
+		Payload: t.Payload,
 	}
 }
 
@@ -83,8 +79,7 @@ func ToDtoTrackObjectWithSource(t *models.TrackObject) *TrackObjectWithSource {
 			Name:  t.Name,
 			Genre: genre,
 		},
-		Source:      t.Source,
-		Payload:     t.Payload,
-		PayloadSize: t.PayloadSize,
+		Source:  t.Source,
+		Payload: t.Payload,
 	}
 }

@@ -26,7 +26,6 @@ type usecase struct {
 	trackRep    repository2.TrackRepository
 }
 
-// TODO: добавить пагинацию
 // TODO: добавить ограничение на количество загружаемых сущностей
 
 func NewPlaylistUseCase(rep repository.PlaylistRepository, trackRep repository2.TrackRepository) PlaylistUseCase {

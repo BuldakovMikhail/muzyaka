@@ -98,8 +98,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 					Name:  trackName,
 					Genre: genreRef,
 				},
-				Payload:     payload[0],
-				PayloadSize: int64(len(payload[0])), // TODO: убрать приведение типов
+				Payload: payload[0],
 			})
 
 			return nil
@@ -444,8 +443,7 @@ func (m *Menu) AddTrackToAlbum(opt wmenu.Opt) error {
 						Name:  trackName,
 						Genre: genreRef,
 					},
-					Payload:     payload[0],
-					PayloadSize: int64(len(payload[0])), // TODO: убрать приведение типов
+					Payload: payload[0],
 				}
 
 				err = utils.AddTrack(client.Client, track, item.Id, m.jwt)
