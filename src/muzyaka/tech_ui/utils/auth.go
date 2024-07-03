@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
+	"io"
 	"net/http"
 	"src/internal/lib/api/response"
 	"src/internal/models/dto"
@@ -26,15 +27,22 @@ func SignIn(client *http.Client, query dto.SignIn) (string, error) {
 	}
 	defer respGot.Body.Close()
 
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return "", err
+	}
+	respFlow := bytes.NewReader(data)
+
 	var resp dto.SignInResponse
-	err = render.DecodeJSON(respGot.Body, &resp)
+	err = render.DecodeJSON(respFlow, &resp)
 
 	if err != nil {
 		return "", err
 	}
 	if respGot.StatusCode != http.StatusOK {
+		respFlow := bytes.NewReader(data)
 		var resp response.Response
-		err = render.DecodeJSON(respGot.Body, &resp)
+		err = render.DecodeJSON(respFlow, &resp)
 		return "", errors.New(resp.Error)
 	}
 
@@ -53,15 +61,22 @@ func SignUpAsUser(client *http.Client, query dto.SignUp) (string, error) {
 	}
 	defer respGot.Body.Close()
 
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return "", err
+	}
+	respFlow := bytes.NewReader(data)
+
 	var resp dto.SignUpResponse
-	err = render.DecodeJSON(respGot.Body, &resp)
+	err = render.DecodeJSON(respFlow, &resp)
 
 	if err != nil {
 		return "", err
 	}
 	if respGot.StatusCode != http.StatusOK {
+		respFlow := bytes.NewReader(data)
 		var resp response.Response
-		err = render.DecodeJSON(respGot.Body, &resp)
+		err = render.DecodeJSON(respFlow, &resp)
 		return "", errors.New(resp.Error)
 	}
 
@@ -80,15 +95,22 @@ func SignUpAsMusician(client *http.Client, query dto.SignUpMusician) (string, er
 	}
 	defer respGot.Body.Close()
 
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return "", err
+	}
+	respFlow := bytes.NewReader(data)
+
 	var resp dto.SignUpResponse
-	err = render.DecodeJSON(respGot.Body, &resp)
+	err = render.DecodeJSON(respFlow, &resp)
 
 	if err != nil {
 		return "", err
 	}
 	if respGot.StatusCode != http.StatusOK {
 		var resp response.Response
-		err = render.DecodeJSON(respGot.Body, &resp)
+		respFlow := bytes.NewReader(data)
+		err = render.DecodeJSON(respFlow, &resp)
 		return "", errors.New(resp.Error)
 	}
 

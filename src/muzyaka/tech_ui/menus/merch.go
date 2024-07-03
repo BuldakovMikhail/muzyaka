@@ -132,7 +132,7 @@ func (m *Menu) GetMyMerch(opt wmenu.Opt) error {
 				break
 			}
 
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 

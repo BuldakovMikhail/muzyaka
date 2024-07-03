@@ -38,7 +38,7 @@ func (m *Menu) RunMusicianMenu(client *http.Client) error {
 				break
 			}
 
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 

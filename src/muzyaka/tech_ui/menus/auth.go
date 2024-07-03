@@ -36,7 +36,7 @@ func (m *Menu) RunAuthMenu(client *http.Client) error {
 			if errors.Is(err, errExit) {
 				break
 			}
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n", err.Error())
 		}
 
 	}

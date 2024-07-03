@@ -115,7 +115,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 				break
 			}
 
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 
@@ -243,7 +243,7 @@ func (m *Menu) GetAllMyAlbums(opt wmenu.Opt) error {
 							break
 						}
 
-						fmt.Printf("ERROR: %v\n\n", err)
+						fmt.Printf("ERROR: %s\n\n", err.Error())
 					}
 				}
 				return nil
@@ -261,7 +261,7 @@ func (m *Menu) GetAllMyAlbums(opt wmenu.Opt) error {
 				break
 			}
 
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 
@@ -466,7 +466,7 @@ func (m *Menu) AddTrackToAlbum(opt wmenu.Opt) error {
 				break
 			}
 
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 
@@ -540,7 +540,7 @@ func (m *Menu) DeleteTrackFromAlbum(opt wmenu.Opt) error {
 				break
 			}
 
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 

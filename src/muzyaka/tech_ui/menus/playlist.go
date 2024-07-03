@@ -127,7 +127,7 @@ func (m *Menu) DeleteTrackFromPlaylist(opt wmenu.Opt) error {
 				break
 			}
 
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 
@@ -238,7 +238,7 @@ func (m *Menu) GetAllMyPlaylists(opt wmenu.Opt) error {
 							break
 						}
 
-						fmt.Printf("ERROR: %v\n\n", err)
+						fmt.Printf("ERROR: %s\n\n", err.Error())
 					}
 				}
 				return nil
@@ -256,7 +256,7 @@ func (m *Menu) GetAllMyPlaylists(opt wmenu.Opt) error {
 				break
 			}
 
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 

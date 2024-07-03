@@ -46,7 +46,7 @@ func (m *Menu) GetMyLikedTracks(opt wmenu.Opt) error {
 		if errors.Is(err, errExit) {
 			break
 		} else if err != nil {
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 

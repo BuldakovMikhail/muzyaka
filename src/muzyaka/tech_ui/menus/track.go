@@ -63,7 +63,7 @@ func (m *Menu) GetSameTracks(opt wmenu.Opt) error {
 		if errors.Is(err, errExit) {
 			break
 		} else if err != nil {
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 
@@ -169,7 +169,7 @@ func (m *Menu) TrackActions(opt wmenu.Opt) error {
 				break
 			}
 
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 
@@ -227,7 +227,7 @@ func (m *Menu) FindTracks(opt wmenu.Opt) error {
 		if errors.Is(err, errExit) {
 			break
 		} else if err != nil {
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 
@@ -265,7 +265,7 @@ func (m *Menu) LikedTracksActions(opt wmenu.Opt) error {
 				break
 			}
 
-			fmt.Printf("ERROR: %v\n\n", err)
+			fmt.Printf("ERROR: %s\n\n", err.Error())
 		}
 	}
 
