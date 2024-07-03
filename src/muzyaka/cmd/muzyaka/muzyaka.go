@@ -165,7 +165,6 @@ func App() {
 		return middleware.JwtParseMiddleware(h, authUseCase)
 	})
 
-	// TODO: Handlers
 	router := chi.NewRouter()
 
 	//auth
