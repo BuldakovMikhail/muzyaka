@@ -503,8 +503,12 @@ func (m *Menu) DeleteTrackFromAlbum(opt wmenu.Opt) error {
 
 				tracksSubmenu := wmenu.NewMenu("Select track for delete: ")
 				for _, t := range tracks {
+					genre := "None"
+					if t.Genre != nil {
+						genre = *t.Genre
+					}
 					tracksSubmenu.Option(
-						fmt.Sprintf("Name: %s, Source: %s, Genre: %s", t.Name, t.Source, t.Genre),
+						fmt.Sprintf("Name: %s, Source: %s, Genre: %s", t.Name, t.Source, genre),
 						*t,
 						false,
 						func(opt wmenu.Opt) error {

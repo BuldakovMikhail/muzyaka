@@ -104,16 +104,59 @@ func (m *Menu) LikeTrack(opt wmenu.Opt) error {
 	return err
 }
 
+func (m *Menu) AddTrackToPlaylist(opt wmenu.Opt) error {
+	item, ok := opt.Value.(trackWithClient)
+	if !ok {
+		log.Fatal("Could not cast option's value to Merch")
+	}
+
+	items, err := utils.GetAllPlaylists(item.Client, m.id, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Select playlist: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, Description: %s", v.Name, v.Description),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				playlist, ok := opt.Value.(dto.Playlist)
+				if !ok {
+					log.Fatal("Could not cast option's value to Merch")
+				}
+
+				err := utils.AddTrackToPlaylist(
+					item.Client,
+					playlist.Id,
+					dto.AddTrackPlaylistRequest{TrackId: item.Id},
+					m.jwt,
+				)
+
+				return err
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return nil
+	})
+
+	err = submenu.Run()
+	return err
+}
+
 func (m *Menu) TrackActions(opt wmenu.Opt) error {
 	item, ok := opt.Value.(trackWithClient)
 	if !ok {
 		log.Fatal("Could not cast option's value to Merch")
 	}
 
+	// TODO: toggle like / dislike
+
 	submenu := wmenu.NewMenu("Select option")
 	submenu.Option("Download media", item, false, m.DownloadTrack)
 	submenu.Option("Like track", item, false, m.LikeTrack)
 	submenu.Option("Get same tracks", item, false, m.GetSameTracks)
+	submenu.Option("Add track to playlist", item, false, m.AddTrackToPlaylist)
 	submenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
 		return errExit
 	})
