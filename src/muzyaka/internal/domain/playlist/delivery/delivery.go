@@ -304,3 +304,44 @@ func GetAllTracks(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 		render.JSON(w, r, dto.TracksMetaCollection{Tracks: res})
 	}
 }
+
+// @Summary GetAllPlaylistForUser
+// @Security ApiKeyAuth
+// @Tags playlist
+// @Description get all playlists for user
+// @ID get-all-playlists-for-user
+// @Accept  json
+// @Produce  json
+// @Param user_id path int true "user ID"
+// @Success 200 {array} dto.TracksMetaCollection
+// @Failure 400,404 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Failure default {object} response.Response
+// @Router /api/user/{user_id}/playlist [get]
+func GetAllPlaylists(useCase usecase.PlaylistUseCase) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID := chi.URLParam(r, "user_id")
+
+		userIDUint, err := strconv.ParseUint(userID, 10, 64)
+		if err != nil {
+			render.JSON(w, r, response.Error(err.Error()))
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		playlists, err := useCase.GetAllPlaylistsForUser(userIDUint)
+		if err != nil {
+			render.JSON(w, r, response.Error(err.Error()))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		var res []*dto.Playlist
+
+		for _, v := range playlists {
+			res = append(res, dto.ToDtoPlaylist(v))
+		}
+
+		render.JSON(w, r, dto.PlaylistsCollection{Playlists: res})
+	}
+}

@@ -16,6 +16,22 @@ func NewPlaylistRepository(db *gorm.DB) repository.PlaylistRepository {
 	return &playlistRepository{db: db}
 }
 
+func (p playlistRepository) GetAllPlaylistsForUser(userId uint64) ([]*models.Playlist, error) {
+	var playlists []*dao.Playlist
+	tx := p.db.Where("user_id = ?", userId).Limit(dao.MaxLimit).Find(&playlists)
+	if tx.Error != nil {
+		return nil, errors.Wrap(tx.Error, "database error (table playlist)")
+	}
+
+	var modelPlaylists []*models.Playlist
+
+	for _, v := range playlists {
+		modelPlaylists = append(modelPlaylists, dao.ToModelPlaylist(v))
+	}
+
+	return modelPlaylists, nil
+}
+
 func (p playlistRepository) IsPlaylistOwned(playlistId uint64, userId uint64) (bool, error) {
 	var playlist dao.Playlist
 

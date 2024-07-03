@@ -15,4 +15,5 @@ type PlaylistRepository interface {
 	GetUserForPlaylist(playlistId uint64) (uint64, error)
 
 	IsPlaylistOwned(playlistId uint64, userId uint64) (bool, error)
+	GetAllPlaylistsForUser(userId uint64) ([]*models.Playlist, error)
 }

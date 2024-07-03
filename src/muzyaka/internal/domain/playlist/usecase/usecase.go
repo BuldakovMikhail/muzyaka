@@ -18,6 +18,7 @@ type PlaylistUseCase interface {
 	GetUserForPlaylist(playlistId uint64) (uint64, error)
 
 	IsPlaylistOwned(playlistId uint64, userId uint64) (bool, error)
+	GetAllPlaylistsForUser(userId uint64) ([]*models.Playlist, error)
 }
 
 type usecase struct {
@@ -30,6 +31,15 @@ type usecase struct {
 
 func NewPlaylistUseCase(rep repository.PlaylistRepository, trackRep repository2.TrackRepository) PlaylistUseCase {
 	return &usecase{playlistRep: rep, trackRep: trackRep}
+}
+
+func (u *usecase) GetAllPlaylistsForUser(userId uint64) ([]*models.Playlist, error) {
+	playlists, err := u.playlistRep.GetAllPlaylistsForUser(userId)
+	if err != nil {
+		return nil, errors.Wrap(err, "playlist.usecase.GetAllPlaylistsForUser error while get")
+	}
+
+	return playlists, nil
 }
 
 func (u *usecase) IsPlaylistOwned(playlistId uint64, userId uint64) (bool, error) {

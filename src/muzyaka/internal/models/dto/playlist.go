@@ -32,6 +32,10 @@ type AddTrackPlaylistResponse struct {
 	Status string `json:"status"`
 }
 
+type PlaylistsCollection struct {
+	Playlists []*Playlist `json:"playlists"`
+}
+
 func ToModelPlaylist(playlist *Playlist) *models.Playlist {
 	return &models.Playlist{
 		Id:          playlist.Id,
@@ -59,5 +63,14 @@ func ToDtoPlaylistWithUser(p *models.Playlist, userId uint64) *PlaylistWithUser 
 			Description: p.Description,
 		},
 		UserId: userId,
+	}
+}
+
+func ToDtoPlaylist(playlist *models.Playlist) *Playlist {
+	return &Playlist{
+		Name:        playlist.Name,
+		CoverFile:   playlist.CoverFile,
+		Description: playlist.Description,
+		Id:          playlist.Id,
 	}
 }

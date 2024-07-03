@@ -1947,6 +1947,47 @@ paths:
       tags:
       - user
   /api/user/{user_id}/playlist:
+    get:
+      consumes:
+      - application/json
+      description: get all playlists for user
+      operationId: get-all-playlists-for-user
+      parameters:
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TracksMetaCollection'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAllPlaylistForUser
+      tags:
+      - playlist
     post:
       consumes:
       - application/json
