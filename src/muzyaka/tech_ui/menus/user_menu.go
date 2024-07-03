@@ -11,6 +11,10 @@ func (m *Menu) AddOptionsUser(client *http.Client) {
 	m.userMenu.Option("Find Track", ClientEntity{client}, false, m.FindTracks)
 	m.userMenu.Option("Get my favorites", ClientEntity{client}, false, m.GetMyLikedTracks)
 	m.userMenu.Option("Create playlist", ClientEntity{client}, false, m.CreatePlaylist)
+	m.userMenu.Option("Get all my playlists", ClientEntity{client}, false, m.GetAllMyPlaylists)
+	m.userMenu.Option("Update my playlist", ClientEntity{client}, false, m.UpdatePlaylist)
+	m.userMenu.Option("Delete my playlist", ClientEntity{client}, false, m.DeletePlaylist)
+
 	m.userMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
 		return errExit
 	})

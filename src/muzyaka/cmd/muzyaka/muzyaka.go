@@ -222,6 +222,7 @@ func App() {
 		r.Use(userMiddleware)
 
 		r.With(checkForUserId).Post("/api/user/{user_id}/playlist", delivery6.PlaylistCreate(playlistUseCase))
+		r.With(checkForUserId).Get("/api/user/{user_id}/playlist", delivery6.GetAllPlaylists(playlistUseCase))
 		r.Group(func(r chi.Router) {
 			r.Use(checkIsPlaylistRelated)
 			r.Put("/api/playlist/{id}", delivery6.UpdatePlaylist(playlistUseCase))
@@ -246,6 +247,7 @@ func App() {
 		r.Get("/api/user/{user_id}", delivery8.GetUser(userUseCase))
 		r.Put("/api/user/{user_id}", delivery8.UpdateUser(userUseCase))
 		r.Delete("/api/user/{user_id}", delivery8.DeleteUser(userUseCase))
+
 	})
 
 	// admin only

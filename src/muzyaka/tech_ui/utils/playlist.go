@@ -55,38 +55,38 @@ func CreatePlaylist(client *http.Client,
 	return nil
 }
 
-//func GetAllAlbums(client *http.Client,
-//	musicianId uint64,
-//	jwt string) ([]*dto.Album, error) {
-//
-//	url := musicianPath + strconv.FormatUint(musicianId, 10) + "/album"
-//
-//	request, err := http.NewRequest("GET", url, nil)
-//	if err != nil {
-//		return nil, err
-//	}
-//	request.Header.Set("Authorization", "Bearer "+jwt)
-//
-//	respGot, err := client.Do(request)
-//	if err != nil {
-//		return nil, err
-//	}
-//	defer respGot.Body.Close()
-//
-//	var resp dto.AlbumsCollection
-//	err = render.DecodeJSON(respGot.Body, &resp)
-//
-//	if err != nil {
-//		return nil, err
-//	}
-//	if respGot.StatusCode != http.StatusOK {
-//		var resp response.Response
-//		err = render.DecodeJSON(respGot.Body, &resp)
-//		return nil, errors.New(resp.Error)
-//	}
-//
-//	return resp.Albums, nil
-//}
+func GetAllPlaylists(client *http.Client,
+	userId uint64,
+	jwt string) ([]*dto.Playlist, error) {
+
+	url := userPath + strconv.FormatUint(userId, 10) + "/playlist"
+
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Authorization", "Bearer "+jwt)
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer respGot.Body.Close()
+
+	var resp dto.PlaylistsCollection
+	err = render.DecodeJSON(respGot.Body, &resp)
+
+	if err != nil {
+		return nil, err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		var resp response.Response
+		err = render.DecodeJSON(respGot.Body, &resp)
+		return nil, errors.New(resp.Error)
+	}
+
+	return resp.Playlists, nil
+}
 
 func GetAllTracksFromPlaylist(client *http.Client,
 	playlistId uint64,

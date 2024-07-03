@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/dixonwille/wmenu/v5"
+	"github.com/pkg/errors"
 	"log"
 	"os"
 	"src/internal/models/dto"
@@ -57,4 +58,242 @@ func (m *Menu) CreatePlaylist(opt wmenu.Opt) error {
 		m.jwt)
 
 	return err
+}
+
+func (m *Menu) GetAllMyPlaylists(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+	// TODO: убрать вложенность
+	// TODO: мета информация о треке передается 2 раза, мб в треке отдавать только пейлоад
+
+	items, err := utils.GetAllPlaylists(client.Client, m.id, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Open item: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, Description: %s", v.Name, v.Description),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				item, ok := opt.Value.(dto.Playlist)
+				if !ok {
+					log.Fatal("Could not cast option's value to Merch")
+				}
+
+				inputReader := bufio.NewReader(os.Stdin)
+
+				fmt.Printf("ID: %d\n", item.Id)
+				fmt.Printf("Name: %s\n", item.Name)
+				fmt.Printf("Description: %s\n", item.Description)
+
+				fmt.Printf("Enter path to photo: \n")
+				path, _ := inputReader.ReadString('\n')
+				path = strings.TrimRight(path, "\r\n")
+				if path != "" {
+					err := lib.SaveFile(path, item.CoverFile)
+					if err != nil {
+						return err
+					}
+				}
+
+				tracks, err := utils.GetAllTracksFromPlaylist(client.Client, item.Id, m.jwt)
+				if err != nil {
+					return err
+				}
+
+				submenuTracks := wmenu.NewMenu("Open track: ")
+
+				for _, t := range tracks {
+					genre := "None"
+					if t.Genre != nil {
+						genre = *t.Genre
+					}
+
+					submenuTracks.Option(
+						fmt.Sprintf("Name: %s, Genre: %s, Source: %s", t.Name, genre, t.Source),
+						*t,
+						false,
+						func(opt wmenu.Opt) error {
+							item, ok := opt.Value.(dto.TrackMeta)
+							if !ok {
+								log.Fatal("Could not cast option's value to Merch")
+							}
+
+							inputReader := bufio.NewReader(os.Stdin)
+
+							fmt.Printf("ID: %d\n", item.Id)
+							fmt.Printf("Name: %s\n", item.Name)
+							fmt.Printf("Genre: %s\n", item.Genre)
+							fmt.Printf("Source: %s\n", item.Source)
+
+							fmt.Printf("Enter path to media: \n")
+							path, _ := inputReader.ReadString('\n')
+							path = strings.TrimRight(path, "\r\n")
+							if path != "" {
+								trackObject, err := utils.GetTrack(client.Client, item.Id, m.jwt)
+								if err != nil {
+									return err
+								}
+
+								err = lib.SaveFile(path, trackObject.Payload)
+								if err != nil {
+									return err
+								}
+							}
+							return nil
+						})
+				}
+				submenuTracks.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+					return errExit
+				})
+
+				for {
+					err := submenuTracks.Run()
+					fmt.Println()
+					if err != nil {
+						if errors.Is(err, errExit) {
+							break
+						}
+
+						fmt.Printf("ERROR: %v\n\n", err)
+					}
+				}
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return errExit
+	})
+
+	for {
+		err := submenu.Run()
+		fmt.Println()
+		if err != nil {
+			if errors.Is(err, errExit) {
+				break
+			}
+
+			fmt.Printf("ERROR: %v\n\n", err)
+		}
+	}
+
+	return nil
+}
+
+func (m *Menu) UpdatePlaylist(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	items, err := utils.GetAllPlaylists(client.Client, m.id, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Update album: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, Description: %s", v.Name, v.Description),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				var name string
+				var path string
+				var description string
+
+				item, ok := opt.Value.(dto.Playlist)
+				if !ok {
+					log.Fatal("Could not cast option's value to Merch")
+				}
+
+				inputReader := bufio.NewReader(os.Stdin)
+
+				fmt.Println("Enter name:")
+				name, _ = inputReader.ReadString('\n')
+				name = strings.TrimRight(name, "\r\n")
+
+				fmt.Println("Enter description:")
+				description, _ = inputReader.ReadString('\n')
+				description = strings.TrimRight(description, "\r\n")
+
+				fmt.Println("Enter path to cover:")
+				path, _ = inputReader.ReadString('\n')
+				path = strings.TrimRight(path, "\r\n")
+
+				var arrOfBytes [][]byte
+				if path != "" {
+					var err error
+					arrOfBytes, err = lib.ReadAllFilesFromArray([]string{path})
+					if err != nil {
+						return err
+					}
+				}
+
+				err = utils.UpdatePlaylist(client.Client,
+					dto.PlaylistWithoutId{
+						Name:        name,
+						CoverFile:   arrOfBytes[0],
+						Description: description,
+					},
+					item.Id,
+					m.jwt,
+				)
+
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return errExit
+	})
+
+	err = submenu.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Menu) DeletePlaylist(opt wmenu.Opt) error {
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	items, err := utils.GetAllPlaylists(client.Client, m.id, m.jwt)
+	if err != nil {
+		return err
+	}
+
+	submenu := wmenu.NewMenu("Delete playlist: ")
+	for _, v := range items {
+		submenu.Option(fmt.Sprintf("Name: %s, Description: %s", v.Name, v.Description),
+			*v,
+			false,
+			func(opt wmenu.Opt) error {
+				item, ok := opt.Value.(dto.Playlist)
+				if !ok {
+					log.Fatal("Could not cast option's value to Album")
+				}
+				err = utils.DeletePlaylist(client.Client, item.Id, m.jwt)
+				return nil
+			})
+	}
+	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+		return nil
+	})
+
+	err = submenu.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
