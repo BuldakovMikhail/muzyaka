@@ -84,14 +84,13 @@ func (m musicianRepository) UpdateMusician(musician *models.Musician) error {
 		}
 	}
 
-	// TODO: added IDS maybe del by them
 	err := m.db.Transaction(func(tx *gorm.DB) error {
 		if err := m.db.Omit("id").Updates(pgMusician).Error; err != nil {
 			return err
 		}
 		for _, v := range filesToDelete {
 			if err := m.db.
-				Where("photo_file = ? AND musician_id = ?", v.PhotoFile, v.MusicianId).
+				Where("id = ?", v.ID).
 				Delete(&dao.MusicianPhotos{}).Error; err != nil {
 				return err
 			}
