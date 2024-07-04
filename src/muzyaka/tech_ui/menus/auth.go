@@ -178,11 +178,16 @@ func (m *Menu) SignUpAsMusician(opt wmenu.Opt) error {
 
 	fmt.Println("Enter paths to photos, separated by space:")
 	paths, _ = inputReader.ReadString('\n')
+	paths = strings.TrimRight(paths, "\r\n")
 
-	arrOfPaths := strings.Split(paths, " ")
-	arrOfBytes, err := lib.ReadAllFilesFromArray(arrOfPaths)
-	if err != nil {
-		return err
+	var arrOfBytes [][]byte
+	if paths != "" {
+		var err error
+		arrOfPaths := strings.Split(paths, " ")
+		arrOfBytes, err = lib.ReadAllFilesFromArray(arrOfPaths)
+		if err != nil {
+			return err
+		}
 	}
 
 	fmt.Println("Enter description:")

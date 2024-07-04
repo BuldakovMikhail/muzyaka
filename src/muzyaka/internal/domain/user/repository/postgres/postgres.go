@@ -92,8 +92,10 @@ func (u userRepository) AddUserWithMusician(musician *models.Musician, user *mod
 		temp := musician
 		temp.Id = pgMusician.ID
 		pgMusicianPhotos := dao.ToPostgresMusicianPhotos(temp)
-		if err := tx.Create(&pgMusicianPhotos).Error; err != nil {
-			return err
+		if len(pgMusicianPhotos) != 0 {
+			if err := tx.Create(&pgMusicianPhotos).Error; err != nil {
+				return err
+			}
 		}
 
 		if err := tx.Create(&pgUser).Error; err != nil {

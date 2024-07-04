@@ -13,8 +13,6 @@ import (
 	"strings"
 )
 
-// TODO: Проблемы с уникальностью мерча
-
 func (m *Menu) CreateMerch(opt wmenu.Opt) error {
 	var name string
 	var paths string

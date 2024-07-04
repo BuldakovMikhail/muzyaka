@@ -7,7 +7,6 @@ import (
 	"net/http"
 )
 
-// TODO: мб нет фото?
 func (m *Menu) AddOptionsMusician(client *http.Client) {
 	m.musicianMenu.Option("Add Merch", ClientEntity{client}, false, m.CreateMerch)
 	m.musicianMenu.Option("Get all my merch", ClientEntity{client}, false, m.GetMyMerch)

@@ -8,7 +8,6 @@ import (
 )
 
 // TODO: добавить возможность смотреть мерч
-// TODO: разобраться с фотографиями музыканта
 func (m *Menu) AddOptionsUser(client *http.Client) {
 	m.userMenu.Option("Find Track", ClientEntity{client}, false, m.FindTracks)
 	m.userMenu.Option("Get my favorites", ClientEntity{client}, false, m.GetMyLikedTracks)
