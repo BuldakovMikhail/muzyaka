@@ -80,21 +80,21 @@ func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks 
 	var pgTracks []*dao.TrackMeta
 
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
-		if err := ar.db.Create(pgAlbum).Error; err != nil {
+		if err := tx.Create(pgAlbum).Error; err != nil {
 			return err
 		}
 
 		for _, v := range tracks {
 			var pgGenre dao.Genre
-			tx := ar.db.Where("name = ?", v.Genre).Limit(1).Find(&pgGenre)
-			if tx.Error != nil {
+			txInner := tx.Where("name = ?", v.Genre).Limit(1).Find(&pgGenre)
+			if txInner.Error != nil {
 				return tx.Error
 			}
 
 			pgTracks = append(pgTracks, dao.ToPostgresTrack(v, pgGenre.ID, pgAlbum.ID))
 		}
 
-		if err := ar.db.Create(&pgTracks).Error; err != nil {
+		if err := tx.Create(&pgTracks).Error; err != nil {
 			return err
 		}
 
@@ -110,7 +110,7 @@ func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks 
 				genre = *v.GenreRefer
 			}
 
-			if err := ar.db.Create(&dao.Outbox{
+			if err := tx.Create(&dao.Outbox{
 				ID:         0,
 				EventId:    eventID,
 				TrackId:    v.ID,
@@ -137,12 +137,12 @@ func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks 
 func (ar *albumRepository) DeleteAlbumOutbox(id uint64) error {
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
 		var relations []*dao.TrackMeta
-		if err := ar.db.Limit(dao.MaxLimit).Find(&relations, "album_id = ?", id).Error; err != nil {
+		if err := tx.Limit(dao.MaxLimit).Find(&relations, "album_id = ?", id).Error; err != nil {
 			return err
 		}
 
 		for _, v := range relations {
-			if err := ar.db.Delete(&dao.TrackMeta{}, v.ID).Error; err != nil {
+			if err := tx.Delete(&dao.TrackMeta{}, v.ID).Error; err != nil {
 				return err
 			}
 
@@ -151,7 +151,7 @@ func (ar *albumRepository) DeleteAlbumOutbox(id uint64) error {
 				return err
 			}
 
-			if err := ar.db.Create(&dao.Outbox{
+			if err := tx.Create(&dao.Outbox{
 				ID:         0,
 				EventId:    eventID,
 				TrackId:    v.ID,
@@ -165,7 +165,7 @@ func (ar *albumRepository) DeleteAlbumOutbox(id uint64) error {
 			}
 		}
 
-		if err := ar.db.Delete(&dao.Album{}, id).Error; err != nil {
+		if err := tx.Delete(&dao.Album{}, id).Error; err != nil {
 			return err
 		}
 
@@ -234,7 +234,7 @@ func (ar *albumRepository) DeleteTrackFromAlbumOutbox(albumId uint64, track *mod
 	trackId := track.Id
 
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
-		if err := ar.db.Delete(dao.TrackMeta{}, trackId).Error; err != nil {
+		if err := tx.Delete(dao.TrackMeta{}, trackId).Error; err != nil {
 			return err
 		}
 
@@ -243,7 +243,7 @@ func (ar *albumRepository) DeleteTrackFromAlbumOutbox(albumId uint64, track *mod
 			return err
 		}
 
-		if err := ar.db.Create(&dao.Outbox{
+		if err := tx.Create(&dao.Outbox{
 			ID:      0,
 			EventId: eventID,
 			TrackId: trackId,
@@ -253,14 +253,14 @@ func (ar *albumRepository) DeleteTrackFromAlbumOutbox(albumId uint64, track *mod
 			return err
 		}
 
-		res := ar.db.Limit(1).Find(&dao.TrackMeta{}, "album_id = ?", albumId)
+		res := tx.Limit(1).Find(&dao.TrackMeta{}, "album_id = ?", albumId)
 		if res.Error != nil {
 			return res.Error
 		}
 
 		// Delete album if no tracks left
 		if res.RowsAffected <= 0 {
-			if err := ar.db.Delete(&dao.Album{}, albumId).Error; err != nil {
+			if err := tx.Delete(&dao.Album{}, albumId).Error; err != nil {
 				return err
 			}
 		}

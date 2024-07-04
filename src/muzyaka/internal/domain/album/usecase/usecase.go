@@ -100,7 +100,6 @@ func (u *usecase) AddAlbumWithTracks(album *models.Album, tracks []*models.Track
 
 		tracksMeta = append(tracksMeta, v.ExtractMeta())
 	}
-
 	id, err := u.albumRep.AddAlbumWithTracksOutbox(album, tracksMeta, musicianId)
 
 	if err != nil {

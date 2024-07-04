@@ -85,18 +85,18 @@ func (m musicianRepository) UpdateMusician(musician *models.Musician) error {
 	}
 
 	err := m.db.Transaction(func(tx *gorm.DB) error {
-		if err := m.db.Omit("id").Updates(pgMusician).Error; err != nil {
+		if err := tx.Omit("id").Updates(pgMusician).Error; err != nil {
 			return err
 		}
 		for _, v := range filesToDelete {
-			if err := m.db.
+			if err := tx.
 				Where("id = ?", v.ID).
 				Delete(&dao.MusicianPhotos{}).Error; err != nil {
 				return err
 			}
 		}
 		if filesToAdd != nil {
-			if err := m.db.Create(&filesToAdd).Error; err != nil {
+			if err := tx.Create(&filesToAdd).Error; err != nil {
 				return err
 			}
 		}

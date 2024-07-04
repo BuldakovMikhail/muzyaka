@@ -8,6 +8,7 @@ var (
 	ErrInvalidPassword = errors.New("invalid password")
 	ErrInvalidGenre    = errors.New("invalid genre")
 	ErrInvalidToken    = errors.New("invalid token")
+	ErrEmptyAlbum      = errors.New("album cannot be empty")
 
 	ErrAccessDenied   = errors.New("access denied")
 	ErrInvalidContext = errors.New("error in context parsing")

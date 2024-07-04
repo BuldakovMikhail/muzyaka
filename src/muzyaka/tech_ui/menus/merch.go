@@ -13,8 +13,6 @@ import (
 	"strings"
 )
 
-// TODO: не выводятся ошибки
-// TODO: не получается добавить, прочитать мерч без фото
 // TODO: Проблемы с уникальностью мерча
 
 func (m *Menu) CreateMerch(opt wmenu.Opt) error {
@@ -179,11 +177,17 @@ func (m *Menu) UpdateMerch(opt wmenu.Opt) error {
 
 				fmt.Println("Enter paths to photos, separated by space:")
 				paths, _ = inputReader.ReadString('\n')
+				paths = strings.TrimRight(paths, "\r\n")
 
-				arrOfPaths := strings.Split(paths, " ")
-				arrOfBytes, err := lib.ReadAllFilesFromArray(arrOfPaths)
-				if err != nil {
-					return err
+				var arrOfBytes [][]byte
+				if paths != "" {
+					fmt.Print("asd")
+					var err error
+					arrOfPaths := strings.Split(paths, " ")
+					arrOfBytes, err = lib.ReadAllFilesFromArray(arrOfPaths)
+					if err != nil {
+						return err
+					}
 				}
 
 				fmt.Println("Enter description:")

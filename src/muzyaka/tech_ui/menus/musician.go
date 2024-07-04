@@ -45,8 +45,6 @@ func (m *Menu) GetMyMusicianProfile(opt wmenu.Opt) error {
 	return nil
 }
 
-// TODO: при обновлении музыканта нужно дать возможность пропускать изменение фотографии
-
 func (m *Menu) UpdateMyMusicianProfile(opt wmenu.Opt) error {
 	var name string
 	var paths string
@@ -66,22 +64,27 @@ func (m *Menu) UpdateMyMusicianProfile(opt wmenu.Opt) error {
 
 	fmt.Println("Enter paths to photos, separated by space:")
 	paths, _ = inputReader.ReadString('\n')
+	paths = strings.TrimRight(paths, "\r\n")
 
-	arrOfPaths := strings.Split(paths, " ")
-	arrOfBytes, err := lib.ReadAllFilesFromArray(arrOfPaths)
-	if err != nil {
-		return err
+	var arrOfBytes [][]byte
+	if paths != "" {
+		var err error
+		arrOfPaths := strings.Split(paths, " ")
+		arrOfBytes, err = lib.ReadAllFilesFromArray(arrOfPaths)
+		if err != nil {
+			return err
+		}
 	}
 
 	fmt.Println("Enter description:")
 	description, _ = inputReader.ReadString('\n')
 	description = strings.TrimRight(description, "\r\n")
 
-	err = utils.UpdateMusician(client.Client, dto.MusicianWithoutId{
+	err := utils.UpdateMusician(client.Client, dto.MusicianWithoutId{
 		Name:        name,
 		PhotoFiles:  arrOfBytes,
 		Description: description,
 	}, m.musicianId, m.jwt)
 
-	return nil
+	return err
 }

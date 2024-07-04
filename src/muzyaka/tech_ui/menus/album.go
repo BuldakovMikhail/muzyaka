@@ -34,13 +34,9 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 	path, _ = inputReader.ReadString('\n')
 	path = strings.TrimRight(path, "\r\n")
 
-	var arrOfBytes [][]byte
-	if path != "" {
-		var err error
-		arrOfBytes, err = lib.ReadAllFilesFromArray([]string{path})
-		if err != nil {
-			return err
-		}
+	arrOfBytes, err := lib.ReadAllFilesFromArray([]string{path})
+	if err != nil {
+		return err
 	}
 
 	submenu := wmenu.NewMenu("Select album type: ")
@@ -119,7 +115,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 		}
 	}
 
-	err := utils.CreateAlbum(
+	err = utils.CreateAlbum(
 		client.Client,
 		dto.AlbumWithTracks{
 			AlbumWithoutId: dto.AlbumWithoutId{

@@ -118,19 +118,19 @@ func (m *merchRepository) UpdateMerch(merch *models.Merch) error {
 	}
 
 	err := m.db.Transaction(func(tx *gorm.DB) error {
-		if err := m.db.Omit("id", "musician_id").Updates(pgMerch).Error; err != nil {
+		if err := tx.Omit("id", "musician_id").Updates(pgMerch).Error; err != nil {
 			return err
 		}
 
 		for _, v := range filesToDelete {
-			if err := m.db.
+			if err := tx.
 				Where("photo_file = ? AND merch_id = ?", v.PhotoFile, v.MerchId).
 				Delete(&dao.MerchPhotos{}).Error; err != nil {
 				return err
 			}
 		}
 		if filesToAdd != nil {
-			if err := m.db.Create(&filesToAdd).Error; err != nil {
+			if err := tx.Create(&filesToAdd).Error; err != nil {
 				return err
 			}
 		}
@@ -154,9 +154,10 @@ func (m *merchRepository) AddMerch(merch *models.Merch, musicianId uint64) (uint
 		temp := merch
 		temp.Id = pgMerch.ID
 		pgMerchPhotos := dao.ToPostgresMerchPhotos(temp)
-
-		if err := tx.Create(&pgMerchPhotos).Error; err != nil {
-			return err
+		if len(pgMerchPhotos) != 0 {
+			if err := tx.Create(&pgMerchPhotos).Error; err != nil {
+				return err
+			}
 		}
 		return nil
 	})
