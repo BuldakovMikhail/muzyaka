@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/go-chi/render"
+	"io"
 	"net/http"
 	"src/internal/lib/api/response"
 	"src/internal/models"
@@ -40,15 +41,22 @@ func CreateAlbum(client *http.Client,
 	}
 	defer respGot.Body.Close()
 
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return err
+	}
+	respFlow := bytes.NewReader(data)
+
 	var resp dto.CreateAlbumResponse
-	err = render.DecodeJSON(respGot.Body, &resp)
+	err = render.DecodeJSON(respFlow, &resp)
 
 	if err != nil {
 		return err
 	}
 	if respGot.StatusCode != http.StatusOK {
 		var resp response.Response
-		err = render.DecodeJSON(respGot.Body, &resp)
+		respFlow := bytes.NewReader(data)
+		err = render.DecodeJSON(respFlow, &resp)
 		return errors.New(resp.Error)
 	}
 
@@ -73,15 +81,22 @@ func GetAllAlbums(client *http.Client,
 	}
 	defer respGot.Body.Close()
 
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return nil, err
+	}
+	respFlow := bytes.NewReader(data)
+
 	var resp dto.AlbumsCollection
-	err = render.DecodeJSON(respGot.Body, &resp)
+	err = render.DecodeJSON(respFlow, &resp)
 
 	if err != nil {
 		return nil, err
 	}
 	if respGot.StatusCode != http.StatusOK {
 		var resp response.Response
-		err = render.DecodeJSON(respGot.Body, &resp)
+		respFlow := bytes.NewReader(data)
+		err = render.DecodeJSON(respFlow, &resp)
 		return nil, errors.New(resp.Error)
 	}
 
@@ -106,15 +121,22 @@ func GetAllTracks(client *http.Client,
 	}
 	defer respGot.Body.Close()
 
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return nil, err
+	}
+	respFlow := bytes.NewReader(data)
+
 	var resp dto.TracksMetaCollection
-	err = render.DecodeJSON(respGot.Body, &resp)
+	err = render.DecodeJSON(respFlow, &resp)
 
 	if err != nil {
 		return nil, err
 	}
 	if respGot.StatusCode != http.StatusOK {
 		var resp response.Response
-		err = render.DecodeJSON(respGot.Body, &resp)
+		respFlow := bytes.NewReader(data)
+		err = render.DecodeJSON(respFlow, &resp)
 		return nil, errors.New(resp.Error)
 	}
 

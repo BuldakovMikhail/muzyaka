@@ -29,8 +29,8 @@ func PlaylistCreate(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 		userId := chi.URLParam(r, "user_id")
 		aid, err := strconv.ParseUint(userId, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
@@ -38,15 +38,15 @@ func PlaylistCreate(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 		err = render.DecodeJSON(r.Body, &req)
 
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		id, err := useCase.AddPlaylist(dto.ToModelPlaylistWithoutId(&req, 0), aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -75,23 +75,23 @@ func UpdatePlaylist(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 		id := chi.URLParam(r, "id")
 		aid, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		var req dto.PlaylistWithoutId
 		err = render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.UpdatedPlaylist(dto.ToModelPlaylistWithoutId(&req, aid))
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -117,15 +117,15 @@ func DeletePlaylist(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 		id := chi.URLParam(r, "id")
 		aid, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.DeletePlaylist(aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -151,22 +151,22 @@ func GetPlaylist(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 		id := chi.URLParam(r, "id")
 		aid, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		playlist, err := useCase.GetPlaylist(aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		userId, err := useCase.GetUserForPlaylist(aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -194,23 +194,23 @@ func AddTrack(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 
 		playlistIDUint, err := strconv.ParseUint(playlistID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		var req dto.AddTrackPlaylistRequest
 		err = render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.AddTrack(playlistIDUint, req.TrackId)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -241,22 +241,22 @@ func DeleteTrack(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 
 		playlistIDUint, err := strconv.ParseUint(playlistID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		trackIDUint, err := strconv.ParseUint(trackID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.DeleteTrack(playlistIDUint, trackIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -283,15 +283,15 @@ func GetAllTracksForPlaylist(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 
 		playlistIDUint, err := strconv.ParseUint(playlistID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		tracks, err := useCase.GetAllTracks(playlistIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -324,15 +324,15 @@ func GetAllPlaylists(useCase usecase.PlaylistUseCase) http.HandlerFunc {
 
 		userIDUint, err := strconv.ParseUint(userID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		playlists, err := useCase.GetAllPlaylistsForUser(userIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
+	"io"
 	"net/http"
 	"src/internal/lib/api/response"
 	"src/internal/models"
@@ -142,8 +143,14 @@ func GetLikedTracks(client *http.Client,
 	}
 	defer respGot.Body.Close()
 
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return nil, err
+	}
+	respFlow := bytes.NewReader(data)
+
 	var resp dto.TracksMetaCollection
-	err = render.DecodeJSON(respGot.Body, &resp)
+	err = render.DecodeJSON(respFlow, &resp)
 
 	if err != nil {
 		return nil, err
@@ -153,7 +160,8 @@ func GetLikedTracks(client *http.Client,
 	}
 	if respGot.StatusCode != http.StatusOK {
 		var resp response.Response
-		err = render.DecodeJSON(respGot.Body, &resp)
+		respFlow := bytes.NewReader(data)
+		err = render.DecodeJSON(respFlow, &resp)
 		return nil, errors.New(resp.Error)
 	}
 

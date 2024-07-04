@@ -30,23 +30,23 @@ func UpdateTrack(useCase usecase.TrackUseCase) http.HandlerFunc {
 		trackID := chi.URLParam(r, "id")
 		trackIDUint, err := strconv.ParseUint(trackID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		var req dto.TrackObjectWithoutId
 		err = render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.UpdateTrack(dto.ToModelTrackObjectWithoutId(&req, trackIDUint, ""))
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -72,15 +72,15 @@ func GetTrack(useCase usecase.TrackUseCase) http.HandlerFunc {
 		trackID := chi.URLParam(r, "id")
 		trackIDUint, err := strconv.ParseUint(trackID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		track, err := useCase.GetTrack(trackIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -106,15 +106,15 @@ func DeleteTrack(useCase usecase.TrackUseCase) http.HandlerFunc {
 		trackID := chi.URLParam(r, "id")
 		trackIDUint, err := strconv.ParseUint(trackID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.DeleteTrack(trackIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -141,31 +141,31 @@ func FindTracks(useCase usecase.TrackUseCase) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		name := r.URL.Query().Get("q")
 		if name == "" {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(models.ErrInvalidParameter.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		pageStr := r.URL.Query().Get("page")
 		page, err := strconv.Atoi(pageStr)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		pageSizeStr := r.URL.Query().Get("page_size")
 		pageSize, err := strconv.Atoi(pageSizeStr)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		tracks, err := useCase.GetTracksByPartName(name, page, pageSize)
 		if err != nil {
-			render.JSON(w, r, err.Error())
-			w.WriteHeader(http.StatusInternalServerError)
+			render.Status(r, http.StatusInternalServerError)
+			render.JSON(w, r, response.Error(err.Error()))
 			return
 		}
 

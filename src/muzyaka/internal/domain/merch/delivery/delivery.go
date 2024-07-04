@@ -29,23 +29,23 @@ func MerchCreate(merchUseCase usecase.MerchUseCase) http.HandlerFunc {
 		musicianID := chi.URLParam(r, "musician_id")
 		musicianIDUint, err := strconv.ParseUint(musicianID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		var req dto.MerchWithoutId
 		err = render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		id, err := merchUseCase.AddMerch(dto.ToModelMerchWithoutId(&req, 0), musicianIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -74,8 +74,8 @@ func UpdateMerch(useCase usecase.MerchUseCase) http.HandlerFunc {
 		merchID := chi.URLParam(r, "id")
 		merchIDUint, err := strconv.ParseUint(merchID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
@@ -83,15 +83,15 @@ func UpdateMerch(useCase usecase.MerchUseCase) http.HandlerFunc {
 		err = render.DecodeJSON(r.Body, &req)
 
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.UpdateMerch(dto.ToModelMerchWithoutId(&req, merchIDUint))
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -117,15 +117,15 @@ func DeleteMerch(useCase usecase.MerchUseCase) http.HandlerFunc {
 		id := chi.URLParam(r, "id")
 		aid, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.DeleteMerch(aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -151,22 +151,22 @@ func GetMerch(useCase usecase.MerchUseCase) http.HandlerFunc {
 		id := chi.URLParam(r, "id")
 		aid, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		merch, err := useCase.GetMerch(aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		musicianId, err := useCase.GetMusicianForMerch(aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -192,15 +192,15 @@ func GetAllMerchForMusician(useCase usecase.MerchUseCase) http.HandlerFunc {
 		id := chi.URLParam(r, "musician_id")
 		aid, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		merch, err := useCase.GetAllMerchForMusician(aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 

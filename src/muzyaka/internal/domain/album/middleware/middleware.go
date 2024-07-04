@@ -20,8 +20,8 @@ func CheckAlbumOwnership(next http.Handler,
 		albumID := chi.URLParam(r, "id")
 		albumIDUint, err := strconv.ParseUint(albumID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
@@ -65,8 +65,8 @@ func CheckIsUserRelatedToMusician(next http.Handler, musicianUseCase usecase2.Mu
 		musicianId := chi.URLParam(r, "musician_id")
 		musicianIdUint, err := strconv.ParseUint(musicianId, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		userInfo, isOk := r.Context().Value(middleware.ValuesFromContext).(middleware.ContextValues)

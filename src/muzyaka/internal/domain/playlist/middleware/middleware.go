@@ -17,8 +17,8 @@ func CheckPlaylistOwnership(next http.Handler, useCase usecase.PlaylistUseCase) 
 		playlistID := chi.URLParam(r, "id")
 		playlistIDUint, err := strconv.ParseUint(playlistID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 

@@ -29,15 +29,15 @@ func GetAlbum(useCase usecase.AlbumUseCase) http.HandlerFunc {
 		albumID := chi.URLParam(r, "id")
 		albumIDUint, err := strconv.ParseUint(albumID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		album, err := useCase.GetAlbum(albumIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -64,23 +64,23 @@ func UpdateAlbum(useCase usecase.AlbumUseCase) http.HandlerFunc {
 		albumID := chi.URLParam(r, "id")
 		albumIDUint, err := strconv.ParseUint(albumID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		var req dto.AlbumWithoutId
 		err = render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.UpdateAlbum(dto.ToModelAlbumWithId(albumIDUint, &req))
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -106,15 +106,15 @@ func DeleteAlbum(useCase usecase.AlbumUseCase) http.HandlerFunc {
 		albumID := chi.URLParam(r, "id")
 		albumIDUint, err := strconv.ParseUint(albumID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.DeleteAlbum(albumIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -141,16 +141,16 @@ func AddAlbumWithTracks(useCase usecase.AlbumUseCase) http.HandlerFunc {
 		musicianID := chi.URLParam(r, "musician_id")
 		musicianIDUint, err := strconv.ParseUint(musicianID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		var req dto.AlbumWithTracks
 		err = render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
@@ -161,8 +161,8 @@ func AddAlbumWithTracks(useCase usecase.AlbumUseCase) http.HandlerFunc {
 
 		albumID, err := useCase.AddAlbumWithTracks(dto.ToModelAlbumWithId(0, &req.AlbumWithoutId), modelTracks, musicianIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -188,23 +188,23 @@ func CreateTrack(useCase usecase.AlbumUseCase) http.HandlerFunc {
 		albumID := chi.URLParam(r, "id")
 		albumIDUint, err := strconv.ParseUint(albumID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		var req dto.TrackObjectWithoutId
 		err = render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		trackID, err := useCase.AddTrack(albumIDUint, dto.ToModelTrackObjectWithoutId(&req, 0, ""))
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -230,15 +230,15 @@ func GetAllTracks(useCase usecase.AlbumUseCase) http.HandlerFunc {
 		albumID := chi.URLParam(r, "id")
 		albumIDUint, err := strconv.ParseUint(albumID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		tracks, err := useCase.GetAllTracks(albumIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -269,15 +269,15 @@ func GetAllAlbumForMusician(useCase usecase.AlbumUseCase) http.HandlerFunc {
 		id := chi.URLParam(r, "musician_id")
 		aid, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		merch, err := useCase.GetAllAlbumsForMusician(aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 

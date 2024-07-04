@@ -17,8 +17,8 @@ func CheckIsUserRelated(next http.Handler, userUseCase usecase.UserUseCase) http
 		userId := chi.URLParam(r, "user_id")
 		userIdUint, err := strconv.ParseUint(userId, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		userInfo, isOk := r.Context().Value(middleware.ValuesFromContext).(middleware.ContextValues)

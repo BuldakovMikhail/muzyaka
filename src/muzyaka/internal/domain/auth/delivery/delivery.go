@@ -25,13 +25,13 @@ func SignIn(useCase usecase.AuthUseCase) http.HandlerFunc {
 		var req dto.SignIn
 		err := render.DecodeJSON(r.Body, &req)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
 			return
 		}
 		token, err := useCase.SignIn(req.Email, req.Password)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
 			return
 		}
@@ -59,14 +59,14 @@ func SignUp(useCase usecase.AuthUseCase) http.HandlerFunc {
 		var req dto.SignUp
 		err := render.DecodeJSON(r.Body, &req)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
 			return
 		}
 
 		token, err := useCase.SignUp(dto.ToModelUserWithRole(&req.UserInfo, 0, usecase.UserRole))
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
 			return
 		}
@@ -94,14 +94,14 @@ func SignUpAdmin(useCase usecase.AuthUseCase) http.HandlerFunc {
 		var req dto.SignUp
 		err := render.DecodeJSON(r.Body, &req)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
 			return
 		}
 
 		token, err := useCase.SignUp(dto.ToModelUserWithRole(&req.UserInfo, 0, usecase.AdminRole))
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
 			return
 		}
@@ -129,7 +129,7 @@ func SignUpMusician(useCase usecase.AuthUseCase) http.HandlerFunc {
 		var req dto.SignUpMusician
 		err := render.DecodeJSON(r.Body, &req)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
 			return
 		}
@@ -138,7 +138,7 @@ func SignUpMusician(useCase usecase.AuthUseCase) http.HandlerFunc {
 			dto.ToModelUserWithRole(&req.UserInfo, 0, usecase.MusicianRole),
 			dto.ToModelMusicianWithoutId(&req.MusicianWithoutId, 0))
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
 			return
 		}

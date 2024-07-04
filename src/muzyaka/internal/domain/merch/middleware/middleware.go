@@ -20,8 +20,8 @@ func CheckMerchOwnership(next http.Handler,
 		merchID := chi.URLParam(r, "id")
 		merchIDUint, err := strconv.ParseUint(merchID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 

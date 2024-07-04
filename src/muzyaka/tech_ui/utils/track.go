@@ -3,9 +3,9 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
+	"io"
 	"net/http"
 	url2 "net/url"
 	"src/internal/lib/api/response"
@@ -37,15 +37,22 @@ func GetTrack(client *http.Client,
 	}
 	defer respGot.Body.Close()
 
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return nil, err
+	}
+	respFlow := bytes.NewReader(data)
+
 	var resp dto.TrackObject
-	err = render.DecodeJSON(respGot.Body, &resp)
+	err = render.DecodeJSON(respFlow, &resp)
 
 	if err != nil {
 		return nil, err
 	}
 	if respGot.StatusCode != http.StatusOK {
 		var resp response.Response
-		err = render.DecodeJSON(respGot.Body, &resp)
+		respFlow := bytes.NewReader(data)
+		err = render.DecodeJSON(respFlow, &resp)
 		return nil, errors.New(resp.Error)
 	}
 
@@ -76,12 +83,6 @@ func AddTrack(client *http.Client,
 	}
 	defer respGot.Body.Close()
 
-	var resp dto.CreateTrackResponse
-	err = render.DecodeJSON(respGot.Body, &resp)
-
-	if err != nil {
-		return err
-	}
 	if respGot.StatusCode != http.StatusOK {
 		var resp response.Response
 		err = render.DecodeJSON(respGot.Body, &resp)
@@ -148,15 +149,22 @@ func FindTracks(client *http.Client,
 	}
 	defer respGot.Body.Close()
 
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return nil, err
+	}
+	respFlow := bytes.NewReader(data)
+
 	var resp dto.TracksMetaCollection
-	err = render.DecodeJSON(respGot.Body, &resp)
+	err = render.DecodeJSON(respFlow, &resp)
 
 	if err != nil {
 		return nil, err
 	}
 	if respGot.StatusCode != http.StatusOK {
 		var resp response.Response
-		err = render.DecodeJSON(respGot.Body, &resp)
+		respFlow := bytes.NewReader(data)
+		err = render.DecodeJSON(respFlow, &resp)
 		return nil, errors.New(resp.Error)
 	}
 
@@ -188,17 +196,23 @@ func GetSameTracks(client *http.Client,
 	}
 	defer respGot.Body.Close()
 
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return nil, err
+	}
+	respFlow := bytes.NewReader(data)
+
 	var resp dto.TracksMetaCollection
 
-	fmt.Println(respGot.Body)
-	err = render.DecodeJSON(respGot.Body, &resp)
+	err = render.DecodeJSON(respFlow, &resp)
 
 	if err != nil {
 		return nil, err
 	}
 	if respGot.StatusCode != http.StatusOK {
 		var resp response.Response
-		err = render.DecodeJSON(respGot.Body, &resp)
+		respFlow := bytes.NewReader(data)
+		err = render.DecodeJSON(respFlow, &resp)
 		return nil, errors.New(resp.Error)
 	}
 

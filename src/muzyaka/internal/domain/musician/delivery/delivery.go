@@ -29,15 +29,15 @@ func CreateMusician(musicianUseCase usecase.MusicianUseCase) http.HandlerFunc {
 		err := render.DecodeJSON(r.Body, &req)
 
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		id, err := musicianUseCase.AddMusician(dto.ToModelMusicianWithoutId(&req, 0))
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -66,23 +66,23 @@ func UpdateMusician(musicianUseCase usecase.MusicianUseCase) http.HandlerFunc {
 		var req dto.MusicianWithoutId
 		err := render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		id := chi.URLParam(r, "musician_id")
 		aid, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = musicianUseCase.UpdatedMusician(dto.ToModelMusicianWithoutId(&req, aid))
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -108,20 +108,20 @@ func DeleteMusician(musicianUseCase usecase.MusicianUseCase) http.HandlerFunc {
 		id := chi.URLParam(r, "musician_id")
 		aid, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = musicianUseCase.DeleteMusician(aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -147,15 +147,15 @@ func GetMusician(musicianUseCase usecase.MusicianUseCase) http.HandlerFunc {
 		id := chi.URLParam(r, "musician_id")
 		aid, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		mus, err := musicianUseCase.GetMusician(aid)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 

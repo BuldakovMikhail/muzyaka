@@ -33,16 +33,16 @@ func UpdateUser(useCase usecase.UserUseCase) http.HandlerFunc {
 		var req dto.UserInfo
 		err := render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		userID := chi.URLParam(r, "user_id")
 		userIDUint, err := strconv.ParseUint(userID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
@@ -55,8 +55,8 @@ func UpdateUser(useCase usecase.UserUseCase) http.HandlerFunc {
 
 		err = useCase.UpdateUser(dto.ToModelUserWithRole(&req, userIDUint, userInfo.Role))
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -82,15 +82,15 @@ func GetUser(useCase usecase.UserUseCase) http.HandlerFunc {
 		userID := chi.URLParam(r, "user_id")
 		userIDUint, err := strconv.ParseUint(userID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		user, err := useCase.GetUser(userIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -116,15 +116,15 @@ func DeleteUser(useCase usecase.UserUseCase) http.HandlerFunc {
 		userID := chi.URLParam(r, "user_id")
 		userIDUint, err := strconv.ParseUint(userID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.DeleteUser(userIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -159,7 +159,7 @@ func GetMe(musicianUseCase usecase2.MusicianUseCase) http.HandlerFunc {
 		if userInfo.Role == usecase3.MusicianRole {
 			musicianId, err := musicianUseCase.GetMusicianIdForUser(userInfo.Id)
 			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
+				render.Status(r, http.StatusInternalServerError)
 				render.JSON(w, r, response.Error(err.Error()))
 				return
 			}
@@ -190,23 +190,23 @@ func Like(useCase usecase.UserUseCase) http.HandlerFunc {
 		userID := chi.URLParam(r, "user_id")
 		userIDUint, err := strconv.ParseUint(userID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		var req dto.Like
 		err = render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.LikeTrack(userIDUint, req.TrackId)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -233,23 +233,23 @@ func Dislike(useCase usecase.UserUseCase) http.HandlerFunc {
 		userID := chi.URLParam(r, "user_id")
 		userIDUint, err := strconv.ParseUint(userID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		var req dto.Dislike
 		err = render.DecodeJSON(r.Body, &req)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		err = useCase.DislikeTrack(userIDUint, req.TrackId)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -275,15 +275,15 @@ func GetAllLiked(useCase usecase.UserUseCase) http.HandlerFunc {
 		userID := chi.URLParam(r, "user_id")
 		userIDUint, err := strconv.ParseUint(userID, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		likedTracks, err := useCase.GetAllLikedTracks(userIDUint)
 		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 

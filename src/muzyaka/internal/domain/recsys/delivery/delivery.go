@@ -29,32 +29,32 @@ func GetRecommendedTracks(useCase usecase2.RecSysUseCase) http.HandlerFunc {
 		idStr := r.URL.Query().Get("id")
 		id, err := strconv.ParseUint(idStr, 10, 64)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		pageStr := r.URL.Query().Get("page")
 		page, err := strconv.Atoi(pageStr)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		pageSizeStr := r.URL.Query().Get("page_size")
 		pageSize, err := strconv.Atoi(pageSizeStr)
 		if err != nil {
+			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, response.Error(err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		tracks, err := useCase.GetSameTracks(id, page, pageSize)
 
 		if err != nil {
-			render.JSON(w, r, err.Error())
-			w.WriteHeader(http.StatusInternalServerError)
+			render.Status(r, http.StatusInternalServerError)
+			render.JSON(w, r, response.Error(err.Error()))
 			return
 		}
 
