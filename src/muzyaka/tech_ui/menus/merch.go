@@ -307,10 +307,19 @@ func (m *Menu) FindMerch(opt wmenu.Opt) error {
 					return nil
 				})
 		}
-		submenu.Option("Next", nil, false, func(opt wmenu.Opt) error {
-			curPage++
-			return nil
-		})
+		if len(merch) != 0 {
+			submenu.Option("Next", nil, false, func(opt wmenu.Opt) error {
+				curPage++
+				return nil
+			})
+		}
+		if curPage > 1 {
+			submenu.Option("Prev", nil, false, func(opt wmenu.Opt) error {
+				curPage--
+				return nil
+			})
+		}
+
 		submenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
 			return errExit
 		})

@@ -51,10 +51,19 @@ func (m *Menu) GetSameTracks(opt wmenu.Opt) error {
 				m.TrackActions,
 			)
 		}
-		tracksSubmenu.Option("Next", nil, false, func(opt wmenu.Opt) error {
-			curPage++
-			return nil
-		})
+		if len(tracks) != 0 {
+			tracksSubmenu.Option("Next", nil, false, func(opt wmenu.Opt) error {
+				curPage++
+				return nil
+			})
+		}
+		if curPage > 1 {
+			tracksSubmenu.Option("Prev", nil, false, func(opt wmenu.Opt) error {
+				curPage--
+				return nil
+			})
+		}
+
 		tracksSubmenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
 			return errExit
 		})
@@ -215,10 +224,18 @@ func (m *Menu) FindTracks(opt wmenu.Opt) error {
 				m.TrackActions,
 			)
 		}
-		tracksSubmenu.Option("Next", nil, false, func(opt wmenu.Opt) error {
-			curPage++
-			return nil
-		})
+		if len(tracks) != 0 {
+			tracksSubmenu.Option("Next", nil, false, func(opt wmenu.Opt) error {
+				curPage++
+				return nil
+			})
+		}
+		if curPage > 1 {
+			tracksSubmenu.Option("Prev", nil, false, func(opt wmenu.Opt) error {
+				curPage--
+				return nil
+			})
+		}
 		tracksSubmenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
 			return errExit
 		})
