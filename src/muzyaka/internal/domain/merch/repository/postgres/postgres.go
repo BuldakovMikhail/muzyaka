@@ -17,6 +17,33 @@ func NewMerchRepository(db *gorm.DB) repository2.MerchRepository {
 	return &merchRepository{db: db}
 }
 
+func (m *merchRepository) GetMerchByPartName(name string, offset int, limit int) ([]*models.Merch, error) {
+	var merch []*dao.Merch
+
+	tx := m.db.
+		Offset(offset).
+		Limit(limit).
+		Where("name LIKE ?", "%"+name+"%").
+		Order("name").
+		Find(&merch)
+	if err := tx.Error; err != nil {
+		return nil, errors.Wrap(err, "database error (table track)")
+	}
+
+	var modelMerch []*models.Merch
+
+	for _, v := range merch {
+		var photos []*dao.MerchPhotos
+		tx = m.db.Where("merch_id = ?", v.ID).Limit(dao.MaxLimit).Find(&photos)
+		if tx.Error != nil {
+			return nil, errors.Wrap(tx.Error, "database error (table track)")
+		}
+		modelMerch = append(modelMerch, dao.ToModelMerch(v, photos))
+	}
+
+	return modelMerch, nil
+}
+
 func (m *merchRepository) IsMerchOwned(merchId uint64, musicianId uint64) (bool, error) {
 	var merch dao.Merch
 	tx := m.db.Where("id = ?", merchId).Take(&merch)

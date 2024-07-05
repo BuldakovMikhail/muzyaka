@@ -267,6 +267,7 @@ func App() {
 	router.Group(func(r chi.Router) {
 		r.Use(basicAuthMiddleware)
 		r.Get("/api/track", delivery7.FindTracks(trackUseCase))
+		r.Get("/api/merch", delivery3.FindMerch(merchUseCase))
 		r.Get("/api/track/recs", delivery4.GetRecommendedTracks(recSysUseCase))
 		r.Get("/api/track/{id}", delivery7.GetTrack(trackUseCase))
 		r.Get("/api/playlist/{playlist_id}/track", delivery6.GetAllTracksForPlaylist(playlistUseCase))

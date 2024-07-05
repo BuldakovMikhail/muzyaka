@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS genres
 CREATE TABLE IF NOT EXISTS tracks
 (
     id       INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    source   VARCHAR(254) NOT NULL UNIQUE,
+    source   VARCHAR(254) NOT NULL,
     name     VARCHAR(100) NOT NULL,
     genre    INT REFERENCES genres (id),
     album_id INT          NOT NULL

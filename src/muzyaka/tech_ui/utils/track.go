@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	trackPath  = "http://localhost:8080/api/track/"
-	searchPath = "http://localhost:8080/api/track"
+	trackPath       = "http://localhost:8080/api/track/"
+	trackSearchPath = "http://localhost:8080/api/track"
 )
 
 func GetTrack(client *http.Client,
@@ -130,7 +130,7 @@ func FindTracks(client *http.Client,
 	pageSize int,
 	jwt string) ([]*dto.TrackMeta, error) {
 
-	url := searchPath
+	url := trackSearchPath
 
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {

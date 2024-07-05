@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"src/internal/domain/merch/usecase"
 	"src/internal/lib/api/response"
+	"src/internal/models"
 	"src/internal/models/dto"
 	"strconv"
 )
@@ -206,6 +207,62 @@ func GetAllMerchForMusician(useCase usecase.MerchUseCase) http.HandlerFunc {
 
 		var res []*dto.Merch
 
+		for _, v := range merch {
+			res = append(res, dto.ToDtoMerch(v))
+		}
+
+		render.JSON(w, r, dto.MerchCollection{Items: res})
+	}
+}
+
+// @Summary FindMerch
+// @Security ApiKeyAuth
+// @Tags merch
+// @Description find merch
+// @ID find-merch
+// @Accept  json
+// @Produce  json
+// @Param        q    query     string  true  "name search by q"
+// @Param        page    query     int  true  "number of page from 1"
+// @Param        page_size    query     int  true  "size of page"
+// @Success 200 {object} dto.MerchCollection
+// @Failure 400,404 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Failure default {object} response.Response
+// @Router /api/merch [get]
+func FindMerch(useCase usecase.MerchUseCase) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		name := r.URL.Query().Get("q")
+		if name == "" {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, response.Error(models.ErrInvalidParameter.Error()))
+			return
+		}
+
+		pageStr := r.URL.Query().Get("page")
+		page, err := strconv.Atoi(pageStr)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, response.Error(err.Error()))
+			return
+		}
+
+		pageSizeStr := r.URL.Query().Get("page_size")
+		pageSize, err := strconv.Atoi(pageSizeStr)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, response.Error(err.Error()))
+			return
+		}
+
+		merch, err := useCase.GetMerchByPartName(name, page, pageSize)
+		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
+			render.JSON(w, r, response.Error(err.Error()))
+			return
+		}
+
+		var res []*dto.Merch
 		for _, v := range merch {
 			res = append(res, dto.ToDtoMerch(v))
 		}

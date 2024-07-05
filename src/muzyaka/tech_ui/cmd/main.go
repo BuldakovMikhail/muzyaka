@@ -6,7 +6,7 @@ import (
 )
 
 // TODO: добавить проверку на формат трека при загрузке
-// TODO: поиск мерча у пользователя
+// TODO: если есть next, то добавить prev
 func main() {
 	menu := menus.NewMenu()
 	menu.RunAuthMenu(http.DefaultClient)

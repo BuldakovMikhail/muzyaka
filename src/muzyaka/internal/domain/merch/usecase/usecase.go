@@ -6,6 +6,9 @@ import (
 	"src/internal/models"
 )
 
+const MinPageSize = 10
+const MaxPageSize = 100
+
 type MerchUseCase interface {
 	GetMerch(id uint64) (*models.Merch, error)
 	GetAllMerchForMusician(musicianId uint64) ([]*models.Merch, error)
@@ -15,6 +18,8 @@ type MerchUseCase interface {
 	GetMusicianForMerch(merchId uint64) (uint64, error)
 
 	IsMerchOwned(merchId uint64, musicianId uint64) (bool, error)
+
+	GetMerchByPartName(name string, page int, pageSize int) ([]*models.Merch, error)
 }
 
 type usecase struct {
@@ -23,6 +28,27 @@ type usecase struct {
 
 func NewMerchUseCase(merchRepository repository.MerchRepository) MerchUseCase {
 	return &usecase{merchRep: merchRepository}
+}
+
+func (u *usecase) GetMerchByPartName(name string, page int, pageSize int) ([]*models.Merch, error) {
+	if page <= 0 {
+		page = 1
+	}
+
+	switch {
+	case pageSize > MaxPageSize:
+		pageSize = MaxPageSize
+	case pageSize < MinPageSize:
+		pageSize = MinPageSize
+	}
+
+	offset := (page - 1) * pageSize
+	merch, err := u.merchRep.GetMerchByPartName(name, offset, pageSize)
+	if err != nil {
+		return nil, errors.Wrap(err, "merch.usecase.GetMerchByPartName error while get")
+	}
+
+	return merch, nil
 }
 
 func (u *usecase) IsMerchOwned(merchId uint64, musicianId uint64) (bool, error) {

@@ -7,7 +7,6 @@ import (
 	"net/http"
 )
 
-// TODO: добавить возможность смотреть мерч
 func (m *Menu) AddOptionsUser(client *http.Client) {
 	m.userMenu.Option("Find Track", ClientEntity{client}, false, m.FindTracks)
 	m.userMenu.Option("Get my favorites", ClientEntity{client}, false, m.GetMyLikedTracks)
@@ -16,6 +15,7 @@ func (m *Menu) AddOptionsUser(client *http.Client) {
 	m.userMenu.Option("Update my playlist", ClientEntity{client}, false, m.UpdatePlaylist)
 	m.userMenu.Option("Delete my playlist", ClientEntity{client}, false, m.DeletePlaylist)
 	m.userMenu.Option("Delete tracks from playlist", ClientEntity{client}, false, m.DeleteTrackFromPlaylist)
+	m.userMenu.Option("Find Merch", ClientEntity{client}, false, m.FindMerch)
 	m.userMenu.Option("Exit", ClientEntity{client}, false, func(_ wmenu.Opt) error {
 		return errExit
 	})

@@ -638,6 +638,82 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/merch": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "find merch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "merch"
+                ],
+                "summary": "FindMerch",
+                "operationId": "find-merch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "name search by q",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "number of page from 1",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size of page",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MerchCollection"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/merch/{id}": {
             "get": {
                 "security": [
@@ -3049,10 +3125,6 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
-                "payload_size": {
-                    "description": "TODO: mb удалить PayloadSize",
-                    "type": "integer"
-                },
                 "source": {
                     "type": "string"
                 }
@@ -3072,9 +3144,6 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
-                },
-                "payload_size": {
-                    "type": "integer"
                 }
             }
         },

@@ -13,4 +13,5 @@ type MerchRepository interface {
 	GetMusicianForMerch(merchId uint64) (uint64, error)
 
 	IsMerchOwned(merchId uint64, musicianId uint64) (bool, error)
+	GetMerchByPartName(name string, offset int, limit int) ([]*models.Merch, error)
 }

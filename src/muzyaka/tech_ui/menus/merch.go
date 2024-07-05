@@ -251,3 +251,77 @@ func (m *Menu) DeleteMerch(opt wmenu.Opt) error {
 
 	return nil
 }
+
+func (m *Menu) FindMerch(opt wmenu.Opt) error {
+	var name string
+
+	client, ok := opt.Value.(ClientEntity)
+
+	if !ok {
+		log.Fatal("Could not cast option's value to ClientEntity")
+	}
+
+	inputReader := bufio.NewReader(os.Stdin)
+	fmt.Println("Enter merch name:")
+	name, _ = inputReader.ReadString('\n')
+	name = strings.TrimRight(name, "\r\n")
+
+	var curPage int = 1
+
+	for {
+		merch, err := utils.FindMerch(client.Client, name, curPage, -1, m.jwt)
+		if err != nil {
+			return err
+		}
+
+		submenu := wmenu.NewMenu("Select merch")
+		for _, v := range merch {
+			submenu.Option(fmt.Sprintf("Name: %s, URL: %s", v.Name, v.OrderUrl),
+				*v,
+				false,
+				func(opt wmenu.Opt) error {
+					item, ok := opt.Value.(dto.Merch)
+					if !ok {
+						log.Fatal("Could not cast option's value to Merch")
+					}
+
+					inputReader := bufio.NewReader(os.Stdin)
+
+					fmt.Printf("ID: %d\n", item.Id)
+					fmt.Printf("Name: %s\n", item.Name)
+					fmt.Printf("URL: %s\n", item.OrderUrl)
+					fmt.Printf("Description: %s\n", item.Description)
+
+					for i, v := range item.PhotoFiles {
+						fmt.Printf("Enter path to photo №%d: \n", i+1)
+						path, _ := inputReader.ReadString('\n')
+						path = strings.TrimRight(path, "\r\n")
+						if path != "" {
+							err := lib.SaveFile(path, v)
+							if err != nil {
+								return err
+							}
+						}
+					}
+
+					return nil
+				})
+		}
+		submenu.Option("Next", nil, false, func(opt wmenu.Opt) error {
+			curPage++
+			return nil
+		})
+		submenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
+			return errExit
+		})
+
+		err = submenu.Run()
+		if errors.Is(err, errExit) {
+			break
+		} else if err != nil {
+			fmt.Printf("ERROR: %s\n\n", err.Error())
+		}
+	}
+
+	return nil
+}
