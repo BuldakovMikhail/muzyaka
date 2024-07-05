@@ -28,3 +28,15 @@ func SaveFile(fileName string, content []byte) error {
 
 	return nil
 }
+
+func IsPNGFormat(fileName string) bool {
+	splittedName := strings.Split(fileName, ".")
+	ext := splittedName[len(splittedName)-1]
+	return ext == "png"
+}
+
+func IsMP3Format(fileName string) bool {
+	splittedName := strings.Split(fileName, ".")
+	ext := splittedName[len(splittedName)-1]
+	return ext == "mp3"
+}

@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"log"
 	"os"
+	"src/internal/models"
 	"src/internal/models/dto"
 	"src/tech_ui/lib"
 	"src/tech_ui/utils"
@@ -34,9 +35,12 @@ func (m *Menu) CreatePlaylist(opt wmenu.Opt) error {
 	description, _ = inputReader.ReadString('\n')
 	description = strings.TrimRight(description, "\r\n")
 
-	fmt.Println("Enter path to cover:")
+	fmt.Println("Enter path to cover (*.png):")
 	path, _ = inputReader.ReadString('\n')
 	path = strings.TrimRight(path, "\r\n")
+	if !lib.IsPNGFormat(path) {
+		return models.ErrInvalidFileFormat
+	}
 
 	var arrOfBytes [][]byte
 	if path != "" {
@@ -165,7 +169,7 @@ func (m *Menu) GetAllMyPlaylists(opt wmenu.Opt) error {
 				fmt.Printf("Name: %s\n", item.Name)
 				fmt.Printf("Description: %s\n", item.Description)
 
-				fmt.Printf("Enter path to photo: \n")
+				fmt.Printf("Enter path for saving photo: \n")
 				path, _ := inputReader.ReadString('\n')
 				path = strings.TrimRight(path, "\r\n")
 				if path != "" {
@@ -209,7 +213,7 @@ func (m *Menu) GetAllMyPlaylists(opt wmenu.Opt) error {
 							fmt.Printf("Name: %s\n", item.Name)
 							fmt.Printf("Genre: %s\n", genre)
 
-							fmt.Printf("Enter path to media: \n")
+							fmt.Printf("Enter path for saving media: \n")
 							path, _ := inputReader.ReadString('\n')
 							path = strings.TrimRight(path, "\r\n")
 							if path != "" {
@@ -300,9 +304,12 @@ func (m *Menu) UpdatePlaylist(opt wmenu.Opt) error {
 				description, _ = inputReader.ReadString('\n')
 				description = strings.TrimRight(description, "\r\n")
 
-				fmt.Println("Enter path to cover:")
+				fmt.Println("Enter path to cover (*.png):")
 				path, _ = inputReader.ReadString('\n')
 				path = strings.TrimRight(path, "\r\n")
+				if !lib.IsPNGFormat(path) {
+					return models.ErrInvalidFileFormat
+				}
 
 				var arrOfBytes [][]byte
 				if path != "" {

@@ -7,6 +7,7 @@ import (
 	"github.com/dixonwille/wmenu/v5"
 	"log"
 	"os"
+	"src/internal/models"
 	"src/internal/models/dto"
 	"src/tech_ui/lib"
 	"src/tech_ui/utils"
@@ -35,7 +36,7 @@ func (m *Menu) CreateMerch(opt wmenu.Opt) error {
 	orderUrl, _ = inputReader.ReadString('\n')
 	orderUrl = strings.TrimRight(orderUrl, "\r\n")
 
-	fmt.Println("Enter paths to photos, separated by space:")
+	fmt.Println("Enter paths to photos, separated by space (*.png):")
 	paths, _ = inputReader.ReadString('\n')
 	paths = strings.TrimRight(paths, "\r\n")
 
@@ -43,6 +44,11 @@ func (m *Menu) CreateMerch(opt wmenu.Opt) error {
 	if paths != "" {
 		var err error
 		arrOfPaths := strings.Split(paths, " ")
+		for _, v := range arrOfPaths {
+			if !lib.IsPNGFormat(v) {
+				return models.ErrInvalidFileFormat
+			}
+		}
 		arrOfBytes, err = lib.ReadAllFilesFromArray(arrOfPaths)
 		if err != nil {
 			return err
@@ -173,7 +179,7 @@ func (m *Menu) UpdateMerch(opt wmenu.Opt) error {
 				orderUrl, _ = inputReader.ReadString('\n')
 				orderUrl = strings.TrimRight(orderUrl, "\r\n")
 
-				fmt.Println("Enter paths to photos, separated by space:")
+				fmt.Println("Enter paths to photos, separated by space (*.png):")
 				paths, _ = inputReader.ReadString('\n')
 				paths = strings.TrimRight(paths, "\r\n")
 
@@ -182,6 +188,11 @@ func (m *Menu) UpdateMerch(opt wmenu.Opt) error {
 					fmt.Print("asd")
 					var err error
 					arrOfPaths := strings.Split(paths, " ")
+					for _, v := range arrOfPaths {
+						if !lib.IsPNGFormat(v) {
+							return models.ErrInvalidFileFormat
+						}
+					}
 					arrOfBytes, err = lib.ReadAllFilesFromArray(arrOfPaths)
 					if err != nil {
 						return err

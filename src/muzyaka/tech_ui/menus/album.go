@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"log"
 	"os"
+	"src/internal/models"
 	"src/internal/models/dto"
 	"src/tech_ui/lib"
 	"src/tech_ui/utils"
@@ -30,9 +31,12 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 	name, _ = inputReader.ReadString('\n')
 	name = strings.TrimRight(name, "\r\n")
 
-	fmt.Println("Enter path to cover:")
+	fmt.Println("Enter path to cover (*.png):")
 	path, _ = inputReader.ReadString('\n')
 	path = strings.TrimRight(path, "\r\n")
+	if !lib.IsPNGFormat(path) {
+		return models.ErrInvalidFileFormat
+	}
 
 	arrOfBytes, err := lib.ReadAllFilesFromArray([]string{path})
 	if err != nil {
@@ -71,9 +75,12 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 			genre, _ := inputReader.ReadString('\n')
 			genre = strings.TrimRight(genre, "\r\n")
 
-			fmt.Println("Enter path to payload:")
+			fmt.Println("Enter path to payload (*.mp3):")
 			source, _ := inputReader.ReadString('\n')
 			source = strings.TrimRight(source, "\r\n")
+			if !lib.IsMP3Format(path) {
+				return models.ErrInvalidFileFormat
+			}
 
 			var payload [][]byte
 			if source != "" {
@@ -166,7 +173,7 @@ func (m *Menu) GetAllMyAlbums(opt wmenu.Opt) error {
 				fmt.Printf("Name: %s\n", item.Name)
 				fmt.Printf("Type: %s\n", item.Type)
 
-				fmt.Printf("Enter path to photo: \n")
+				fmt.Printf("Enter path for saving photo: \n")
 				path, _ := inputReader.ReadString('\n')
 				path = strings.TrimRight(path, "\r\n")
 				if path != "" {
@@ -210,7 +217,7 @@ func (m *Menu) GetAllMyAlbums(opt wmenu.Opt) error {
 							fmt.Printf("Name: %s\n", item.Name)
 							fmt.Printf("Genre: %s\n", genre)
 
-							fmt.Printf("Enter path to media: \n")
+							fmt.Printf("Enter path for saving media: \n")
 							path, _ := inputReader.ReadString('\n')
 							path = strings.TrimRight(path, "\r\n")
 							if path != "" {
@@ -297,9 +304,12 @@ func (m *Menu) UpdateAlbum(opt wmenu.Opt) error {
 				name, _ = inputReader.ReadString('\n')
 				name = strings.TrimRight(name, "\r\n")
 
-				fmt.Println("Enter path to cover:")
+				fmt.Println("Enter path to cover (*.png):")
 				path, _ = inputReader.ReadString('\n')
 				path = strings.TrimRight(path, "\r\n")
+				if !lib.IsPNGFormat(path) {
+					return models.ErrInvalidFileFormat
+				}
 
 				var arrOfBytes [][]byte
 				if path != "" {
@@ -416,9 +426,12 @@ func (m *Menu) AddTrackToAlbum(opt wmenu.Opt) error {
 				genre, _ := inputReader.ReadString('\n')
 				genre = strings.TrimRight(genre, "\r\n")
 
-				fmt.Println("Enter path to payload:")
+				fmt.Println("Enter path to payload (*.mp3):")
 				source, _ := inputReader.ReadString('\n')
 				source = strings.TrimRight(source, "\r\n")
+				if !lib.IsMP3Format(source) {
+					return models.ErrInvalidFileFormat
+				}
 
 				var payload [][]byte
 				if source != "" {

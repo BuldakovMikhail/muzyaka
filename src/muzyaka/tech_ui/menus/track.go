@@ -86,7 +86,7 @@ func (m *Menu) DownloadTrack(opt wmenu.Opt) error {
 	}
 	inputReader := bufio.NewReader(os.Stdin)
 
-	fmt.Printf("Enter path to media: \n")
+	fmt.Printf("Enter path for saving media: \n")
 	path, _ := inputReader.ReadString('\n')
 	path = strings.TrimRight(path, "\r\n")
 	if path != "" {

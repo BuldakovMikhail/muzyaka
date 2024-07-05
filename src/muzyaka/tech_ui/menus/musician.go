@@ -6,6 +6,7 @@ import (
 	"github.com/dixonwille/wmenu/v5"
 	"log"
 	"os"
+	"src/internal/models"
 	"src/internal/models/dto"
 	"src/tech_ui/lib"
 	"src/tech_ui/utils"
@@ -62,7 +63,7 @@ func (m *Menu) UpdateMyMusicianProfile(opt wmenu.Opt) error {
 	name, _ = inputReader.ReadString('\n')
 	name = strings.TrimRight(name, "\r\n")
 
-	fmt.Println("Enter paths to photos, separated by space:")
+	fmt.Println("Enter paths to photos, separated by space (*.png):")
 	paths, _ = inputReader.ReadString('\n')
 	paths = strings.TrimRight(paths, "\r\n")
 
@@ -70,6 +71,11 @@ func (m *Menu) UpdateMyMusicianProfile(opt wmenu.Opt) error {
 	if paths != "" {
 		var err error
 		arrOfPaths := strings.Split(paths, " ")
+		for _, v := range arrOfPaths {
+			if !lib.IsPNGFormat(v) {
+				return models.ErrInvalidFileFormat
+			}
+		}
 		arrOfBytes, err = lib.ReadAllFilesFromArray(arrOfPaths)
 		if err != nil {
 			return err
