@@ -9,7 +9,7 @@ from minio import Minio
 from flask import Flask, jsonify, request
 from threading import Thread
 
-#TODO
+
 MIN_PAGE_SIZE = 10
 MAX_PAGE_SIZE = 100
 
@@ -37,8 +37,6 @@ def create_consumer(config):
                     raise KafkaException(msg.error())
                 else:
                     # действия с полученным сообщением
-                    # TODO: Place model and db save here
-
                     print(msg.value().decode('utf-8'))
                     message = json.loads(msg.value().decode('utf-8'))
                     id = int(message['track_id'])
