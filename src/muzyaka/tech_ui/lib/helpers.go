@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"os"
 	"strings"
 )
@@ -38,5 +39,6 @@ func IsPNGFormat(fileName string) bool {
 func IsMP3Format(fileName string) bool {
 	splittedName := strings.Split(fileName, ".")
 	ext := splittedName[len(splittedName)-1]
+	fmt.Println(splittedName, ext)
 	return ext == "mp3"
 }

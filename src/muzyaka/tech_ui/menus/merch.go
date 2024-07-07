@@ -185,7 +185,6 @@ func (m *Menu) UpdateMerch(opt wmenu.Opt) error {
 
 				var arrOfBytes [][]byte
 				if paths != "" {
-					fmt.Print("asd")
 					var err error
 					arrOfPaths := strings.Split(paths, " ")
 					for _, v := range arrOfPaths {

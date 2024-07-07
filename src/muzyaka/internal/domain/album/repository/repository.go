@@ -10,6 +10,7 @@ type AlbumRepository interface {
 	AddAlbumWithTracksOutbox(album *models.Album, tracks []*models.TrackMeta, musicianId uint64) (uint64, error)
 	DeleteAlbumOutbox(id uint64) error
 	AddTrackToAlbumOutbox(albumId uint64, track *models.TrackMeta) (uint64, error)
+	// TODO: нужен ли метод ниже? как будто его не используют
 	DeleteTrackFromAlbumOutbox(albumId uint64, track *models.TrackMeta) error
 	GetAllTracksForAlbum(albumId uint64) ([]*models.TrackMeta, error)
 

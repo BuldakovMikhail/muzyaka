@@ -78,7 +78,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 			fmt.Println("Enter path to payload (*.mp3):")
 			source, _ := inputReader.ReadString('\n')
 			source = strings.TrimRight(source, "\r\n")
-			if !lib.IsMP3Format(path) {
+			if !lib.IsMP3Format(source) {
 				return models.ErrInvalidFileFormat
 			}
 

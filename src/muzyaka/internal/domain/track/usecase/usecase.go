@@ -12,6 +12,7 @@ const MaxPageSize = 100
 type TrackUseCase interface {
 	UpdateTrack(track *models.TrackObject) error
 	GetTrack(id uint64) (*models.TrackObject, error)
+	// TODO: нужен ли метод ниже? как будто его не используют
 	DeleteTrack(trackId uint64) error
 
 	GetTracksByPartName(name string, page int, pageSize int) ([]*models.TrackMeta, error)
