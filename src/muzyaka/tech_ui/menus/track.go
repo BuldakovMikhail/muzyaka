@@ -159,19 +159,28 @@ func (m *Menu) TrackActions(opt wmenu.Opt) error {
 		log.Fatal("Could not cast option's value to Merch")
 	}
 
-	// TODO: toggle like / dislike
-
-	submenu := wmenu.NewMenu("Select option")
-	submenu.Option("Download media", item, false, m.DownloadTrack)
-	submenu.Option("Like track", item, false, m.LikeTrack)
-	submenu.Option("Get same tracks", item, false, m.GetSameTracks)
-	submenu.Option("Add track to playlist", item, false, m.AddTrackToPlaylist)
-	submenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
-		return errExit
-	})
-
 	for {
-		err := submenu.Run()
+		fmt.Println(m.id, item.Id)
+		isLiked, err := utils.IsTrackLiked(item.Client, m.id, item.Id, m.jwt)
+		if err != nil {
+			return err
+		}
+		submenu := wmenu.NewMenu("Select option")
+		submenu.Option("Download media", item, false, m.DownloadTrack)
+
+		fmt.Println(isLiked)
+		if !isLiked {
+			submenu.Option("Like track", item, false, m.LikeTrack)
+		} else {
+			submenu.Option("Dislike track", item, false, m.DislikeTrack)
+		}
+		submenu.Option("Get same tracks", item, false, m.GetSameTracks)
+		submenu.Option("Add track to playlist", item, false, m.AddTrackToPlaylist)
+		submenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
+			return errExit
+		})
+
+		err = submenu.Run()
 		fmt.Println()
 		if err != nil {
 			if errors.Is(err, errExit) {
@@ -258,33 +267,4 @@ func (m *Menu) DislikeTrack(opt wmenu.Opt) error {
 	}
 	err := utils.DislikeTrack(item.Client, dto.Dislike{TrackId: item.Id}, m.id, m.jwt)
 	return err
-}
-
-func (m *Menu) LikedTracksActions(opt wmenu.Opt) error {
-	item, ok := opt.Value.(trackWithClient)
-	if !ok {
-		log.Fatal("Could not cast option's value to Merch")
-	}
-
-	submenu := wmenu.NewMenu("Select option")
-	submenu.Option("Download media", item, false, m.DownloadTrack)
-	submenu.Option("Dislike track", item, false, m.DislikeTrack)
-	submenu.Option("Get same tracks", item, false, m.GetSameTracks)
-	submenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
-		return errExit
-	})
-
-	for {
-		err := submenu.Run()
-		fmt.Println()
-		if err != nil {
-			if errors.Is(err, errExit) {
-				break
-			}
-
-			fmt.Printf("ERROR: %s\n\n", err.Error())
-		}
-	}
-
-	return nil
 }

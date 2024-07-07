@@ -320,7 +320,7 @@ func IsLiked(useCase usecase.UserUseCase) http.HandlerFunc {
 			return
 		}
 
-		trackID := chi.URLParam(r, "user_id")
+		trackID := chi.URLParam(r, "track_id")
 		trackIDUint, err := strconv.ParseUint(trackID, 10, 64)
 		if err != nil {
 			render.Status(r, http.StatusBadRequest)

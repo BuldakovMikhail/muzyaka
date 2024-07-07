@@ -95,6 +95,11 @@ definitions:
       user_id:
         type: integer
     type: object
+  dto.IsLikedResponse:
+    properties:
+      is_liked:
+        type: boolean
+    type: object
   dto.Like:
     properties:
       track_id:
@@ -1986,6 +1991,51 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: LikeTrack
+      tags:
+      - user
+  /api/user/{user_id}/favorite/{track_id}:
+    get:
+      consumes:
+      - application/json
+      description: check if track is liked
+      operationId: is-liked
+      parameters:
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: track ID
+        in: path
+        name: track_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IsLikedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: IsTrackLiked
       tags:
       - user
   /api/user/{user_id}/playlist:
