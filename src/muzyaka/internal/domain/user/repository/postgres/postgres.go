@@ -16,6 +16,20 @@ func NewUserRepository(db *gorm.DB) repository2.UserRepository {
 	return &userRepository{db: db}
 }
 
+func (u userRepository) IsTrackLiked(userId uint64, trackId uint64) (bool, error) {
+	tx := u.db.
+		Where("user_id = ? AND track_id = ?", userId, trackId).
+		First(&dao.UserTrack{})
+
+	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+		return false, nil
+	} else if tx.Error != nil {
+		return false, errors.Wrap(tx.Error, "database error (table user_track)")
+	}
+
+	return true, nil
+}
+
 func (u userRepository) GetAllLikedTracks(userId uint64) ([]uint64, error) {
 	var rels []*dao.UserTrack
 	tx := u.db.Where("user_id = ?", userId).Limit(dao.MaxLimit).Find(&rels)

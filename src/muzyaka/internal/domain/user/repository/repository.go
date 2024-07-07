@@ -16,4 +16,5 @@ type UserRepository interface {
 	LikeTrack(userId uint64, trackId uint64) error
 	DislikeTrack(userId uint64, trackId uint64) error
 	GetAllLikedTracks(userId uint64) ([]uint64, error)
+	IsTrackLiked(userId uint64, trackId uint64) (bool, error)
 }

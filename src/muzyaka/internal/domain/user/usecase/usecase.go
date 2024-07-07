@@ -17,6 +17,7 @@ type UserUseCase interface {
 	LikeTrack(userId uint64, trackId uint64) error
 	DislikeTrack(userId uint64, trackId uint64) error
 	GetAllLikedTracks(userId uint64) ([]*models.TrackMeta, error)
+	IsTrackLiked(userId uint64, trackId uint64) (bool, error)
 }
 
 type usecase struct {
@@ -27,6 +28,15 @@ type usecase struct {
 
 func NewUserUseCase(rep repository.UserRepository, trackRep repository2.TrackRepository, encryptor usecase2.Encryptor) UserUseCase {
 	return &usecase{userRep: rep, trackRep: trackRep, encryptor: encryptor}
+}
+
+func (u *usecase) IsTrackLiked(userId uint64, trackId uint64) (bool, error) {
+	ans, err := u.userRep.IsTrackLiked(userId, trackId)
+	if err != nil {
+		return false, errors.Wrap(err, "user.usecase.IsTrackLiked error while check")
+	}
+
+	return ans, nil
 }
 
 func (u *usecase) GetAllLikedTracks(userId uint64) ([]*models.TrackMeta, error) {

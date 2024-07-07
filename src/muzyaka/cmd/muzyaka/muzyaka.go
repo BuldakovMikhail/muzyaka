@@ -261,6 +261,7 @@ func App() {
 		r.Post("/api/user/{user_id}/favorite", delivery8.Like(userUseCase))
 		r.Delete("/api/user/{user_id}/favorite", delivery8.Dislike(userUseCase))
 		r.Get("/api/user/{user_id}/favorite", delivery8.GetAllLiked(userUseCase))
+		r.Get("/api/user/{user_id}/favorite/{track_id}", delivery8.IsLiked(userUseCase))
 	})
 
 	// Other opened requests

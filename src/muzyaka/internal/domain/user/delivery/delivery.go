@@ -94,7 +94,7 @@ func GetUser(useCase usecase.UserUseCase) http.HandlerFunc {
 			return
 		}
 
-		render.JSON(w, r, user)
+		render.JSON(w, r, dto.ToDtoUser(user))
 	}
 }
 
@@ -293,5 +293,48 @@ func GetAllLiked(useCase usecase.UserUseCase) http.HandlerFunc {
 		}
 
 		render.JSON(w, r, dto.TracksMetaCollection{Tracks: dtoLikedTracks})
+	}
+}
+
+// @Summary IsTrackLiked
+// @Security ApiKeyAuth
+// @Tags user
+// @Description check if track is liked
+// @ID is-liked
+// @Accept  json
+// @Produce  json
+// @Param user_id path int true "user ID"
+// @Param track_id path int true "track ID"
+// @Success 200 {object} dto.IsLikedResponse
+// @Failure 400,404 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Failure default {object} response.Response
+// @Router /api/user/{user_id}/favorite/{track_id} [get]
+func IsLiked(useCase usecase.UserUseCase) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID := chi.URLParam(r, "user_id")
+		userIDUint, err := strconv.ParseUint(userID, 10, 64)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, response.Error(err.Error()))
+			return
+		}
+
+		trackID := chi.URLParam(r, "user_id")
+		trackIDUint, err := strconv.ParseUint(trackID, 10, 64)
+		if err != nil {
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, response.Error(err.Error()))
+			return
+		}
+
+		ans, err := useCase.IsTrackLiked(userIDUint, trackIDUint)
+		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
+			render.JSON(w, r, response.Error(err.Error()))
+			return
+		}
+
+		render.JSON(w, r, dto.IsLikedResponse{IsLiked: ans})
 	}
 }

@@ -16,6 +16,10 @@ type Dislike struct {
 	TrackId uint64 `json:"track_id"`
 }
 
+type IsLikedResponse struct {
+	IsLiked bool `json:"is_liked"`
+}
+
 type User struct {
 	UserInfo
 	Role string `json:"role"`
