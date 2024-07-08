@@ -306,15 +306,15 @@ func (m *Menu) UpdateAlbum(opt wmenu.Opt) error {
 				fmt.Println("Enter path to cover (*.png):")
 				path, _ = inputReader.ReadString('\n')
 				path = strings.TrimRight(path, "\r\n")
-				if !lib.IsPNGFormat(path) {
-					return models.ErrInvalidFileFormat
-				}
-
-				// TODO: потенциальный выстрел в колено, лучше сделать функцию, которая
-				// читает один файл
-				arrOfBytes, err := lib.ReadAllFilesFromArray([]string{path})
-				if err != nil {
-					return err
+				var arrOfBytes []byte
+				if path != "" {
+					if !lib.IsPNGFormat(path) {
+						return models.ErrInvalidFileFormat
+					}
+					arrOfBytes, err = lib.ReadFile(path)
+					if err != nil {
+						return err
+					}
 				}
 
 				submenu := wmenu.NewMenu("Select album type: ")
@@ -334,7 +334,7 @@ func (m *Menu) UpdateAlbum(opt wmenu.Opt) error {
 
 				err = utils.UpdateAlbum(client.Client, dto.AlbumWithoutId{
 					Name:      name,
-					CoverFile: arrOfBytes[0],
+					CoverFile: arrOfBytes,
 					Type:      albumType,
 				}, item.Id, m.jwt)
 

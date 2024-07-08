@@ -6,12 +6,20 @@ import (
 	"strings"
 )
 
+func ReadFile(path string) ([]byte, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func ReadAllFilesFromArray(paths []string) ([][]byte, error) {
 	var resultArr [][]byte
 
 	for _, v := range paths {
-		trimmedVal := strings.TrimRight(v, "\r\n")
-		data, err := os.ReadFile(trimmedVal)
+		data, err := os.ReadFile(v)
 		if err != nil {
 			return nil, err
 		}
