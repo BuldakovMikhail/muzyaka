@@ -43,10 +43,10 @@ func (m *Menu) CreatePlaylist(opt wmenu.Opt) error {
 		return models.ErrInvalidFileFormat
 	}
 
-	var arrOfBytes [][]byte
+	var arrOfBytes []byte
 	if path != "" {
 		var err error
-		arrOfBytes, err = lib.ReadAllFilesFromArray([]string{path})
+		arrOfBytes, err = lib.ReadFile(path)
 		if err != nil {
 			return err
 		}
@@ -56,7 +56,7 @@ func (m *Menu) CreatePlaylist(opt wmenu.Opt) error {
 		client.Client,
 		dto.PlaylistWithoutId{
 			Name:        name,
-			CoverFile:   arrOfBytes[0],
+			CoverFile:   arrOfBytes,
 			Description: description,
 		},
 		m.id,
@@ -313,10 +313,10 @@ func (m *Menu) UpdatePlaylist(opt wmenu.Opt) error {
 					return models.ErrInvalidFileFormat
 				}
 
-				var arrOfBytes [][]byte
+				var arrOfBytes []byte
 				if path != "" {
 					var err error
-					arrOfBytes, err = lib.ReadAllFilesFromArray([]string{path})
+					arrOfBytes, err = lib.ReadFile(path)
 					if err != nil {
 						return err
 					}
@@ -325,7 +325,7 @@ func (m *Menu) UpdatePlaylist(opt wmenu.Opt) error {
 				err = utils.UpdatePlaylist(client.Client,
 					dto.PlaylistWithoutId{
 						Name:        name,
-						CoverFile:   arrOfBytes[0],
+						CoverFile:   arrOfBytes,
 						Description: description,
 					},
 					item.Id,

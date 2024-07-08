@@ -39,7 +39,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 		return models.ErrInvalidFileFormat
 	}
 
-	arrOfBytes, err := lib.ReadAllFilesFromArray([]string{path})
+	arrOfBytes, err := lib.ReadFile(path)
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 				return models.ErrInvalidFileFormat
 			}
 
-			payload, err := lib.ReadAllFilesFromArray([]string{source})
+			payload, err := lib.ReadFile(source)
 			if err != nil {
 				return err
 			}
@@ -99,7 +99,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 					Name:  trackName,
 					Genre: genreRef,
 				},
-				Payload: payload[0],
+				Payload: payload,
 			})
 
 			return nil
@@ -125,7 +125,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 		dto.AlbumWithTracks{
 			AlbumWithoutId: dto.AlbumWithoutId{
 				Name:      name,
-				CoverFile: arrOfBytes[0],
+				CoverFile: arrOfBytes,
 				Type:      albumType,
 			},
 			Tracks: tracks,
@@ -431,10 +431,10 @@ func (m *Menu) AddTrackToAlbum(opt wmenu.Opt) error {
 					return models.ErrInvalidFileFormat
 				}
 
-				var payload [][]byte
+				var payload []byte
 				if source != "" {
 					var err error
-					payload, err = lib.ReadAllFilesFromArray([]string{source})
+					payload, err = lib.ReadFile(source)
 					if err != nil {
 						return err
 					}
@@ -450,7 +450,7 @@ func (m *Menu) AddTrackToAlbum(opt wmenu.Opt) error {
 						Name:  trackName,
 						Genre: genreRef,
 					},
-					Payload: payload[0],
+					Payload: payload,
 				}
 
 				err = utils.AddTrack(client.Client, track, item.Id, m.jwt)
