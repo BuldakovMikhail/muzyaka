@@ -6,6 +6,7 @@ var (
 	ErrNotFound        = errors.New("item is not found")
 	ErrAlredyExists    = errors.New("email already exists")
 	ErrInvalidPassword = errors.New("invalid password")
+	ErrInvalidLogin    = errors.New("invalid login")
 	ErrInvalidGenre    = errors.New("invalid genre")
 	ErrInvalidToken    = errors.New("invalid token")
 	ErrEmptyAlbum      = errors.New("album cannot be empty")

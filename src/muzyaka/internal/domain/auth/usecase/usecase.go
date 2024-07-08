@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"src/internal/domain/user/repository"
 	"src/internal/lib/jwt"
+	"src/internal/lib/validation"
 	"src/internal/models"
 )
 
@@ -43,6 +44,14 @@ func (u *usecase) SignUp(user *models.User) (*models.AuthToken, error) {
 		return nil, models.ErrInvalidPassword
 	}
 
+	if !validation.ValidateWithoutSpace(user.Password) {
+		return nil, models.ErrInvalidPassword
+	}
+
+	if !validation.ValidateWithoutSpace(user.Email) {
+		return nil, models.ErrInvalidLogin
+	}
+
 	encPassword, err := u.encryptor.EncodePassword([]byte(user.Password))
 	if err != nil {
 		return nil, errors.Wrap(err, "auth.usecase.SignUp encode error")
@@ -70,6 +79,14 @@ func (u *usecase) SignUp(user *models.User) (*models.AuthToken, error) {
 func (u *usecase) SignUpMusician(user *models.User, musician *models.Musician) (*models.AuthToken, error) {
 	if user.Password == "" {
 		return nil, models.ErrInvalidPassword
+	}
+
+	if !validation.ValidateWithoutSpace(user.Password) {
+		return nil, models.ErrInvalidPassword
+	}
+
+	if !validation.ValidateWithoutSpace(user.Email) {
+		return nil, models.ErrInvalidLogin
 	}
 
 	encPassword, err := u.encryptor.EncodePassword([]byte(user.Password))
