@@ -145,8 +145,6 @@ func (m *Menu) GetAllMyPlaylists(opt wmenu.Opt) error {
 	if !ok {
 		log.Fatal("Could not cast option's value to ClientEntity")
 	}
-	// TODO: убрать вложенность
-	// TODO: мета информация о треке передается 2 раза, мб в треке отдавать только пейлоад
 
 	items, err := utils.GetAllPlaylists(client.Client, m.id, m.jwt)
 	if err != nil {
@@ -195,41 +193,13 @@ func (m *Menu) GetAllMyPlaylists(opt wmenu.Opt) error {
 
 					submenuTracks.Option(
 						fmt.Sprintf("Name: %s, Genre: %s", t.Name, genre),
-						*t,
+						TrackWithClient{
+							ClientEntity: client,
+							TrackMeta:    *t,
+						},
 						false,
-						func(opt wmenu.Opt) error {
-							item, ok := opt.Value.(dto.TrackMeta)
-							if !ok {
-								log.Fatal("Could not cast option's value to Merch")
-							}
-
-							inputReader := bufio.NewReader(os.Stdin)
-
-							genre := "None"
-							if item.Genre != nil {
-								genre = *item.Genre
-							}
-
-							fmt.Printf("ID: %d\n", item.Id)
-							fmt.Printf("Name: %s\n", item.Name)
-							fmt.Printf("Genre: %s\n", genre)
-
-							fmt.Printf("Enter path for saving media: \n")
-							path, _ := inputReader.ReadString('\n')
-							path = strings.TrimRight(path, "\r\n")
-							if path != "" {
-								trackObject, err := utils.GetTrack(client.Client, item.Id, m.jwt)
-								if err != nil {
-									return err
-								}
-
-								err = lib.SaveFile(path, trackObject.Payload)
-								if err != nil {
-									return err
-								}
-							}
-							return nil
-						})
+						m.TrackActions,
+					)
 				}
 				submenuTracks.Option("Exit", nil, true, func(_ wmenu.Opt) error {
 					return errExit

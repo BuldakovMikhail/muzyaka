@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-type trackWithClient struct {
+type TrackWithClient struct {
 	ClientEntity
 	dto.TrackMeta
 }
@@ -21,7 +21,7 @@ type trackWithClient struct {
 // TODO: скрыть бы это от внешнего мира
 
 func (m *Menu) GetSameTracks(opt wmenu.Opt) error {
-	item, ok := opt.Value.(trackWithClient)
+	item, ok := opt.Value.(TrackWithClient)
 
 	if !ok {
 		log.Fatal("Could not cast option's value to ClientEntity")
@@ -43,7 +43,7 @@ func (m *Menu) GetSameTracks(opt wmenu.Opt) error {
 
 			tracksSubmenu.Option(
 				fmt.Sprintf("Name: %s, Genre: %s", v.Name, genre),
-				trackWithClient{
+				TrackWithClient{
 					ClientEntity: item.ClientEntity,
 					TrackMeta:    *v,
 				},
@@ -80,7 +80,7 @@ func (m *Menu) GetSameTracks(opt wmenu.Opt) error {
 }
 
 func (m *Menu) DownloadTrack(opt wmenu.Opt) error {
-	item, ok := opt.Value.(trackWithClient)
+	item, ok := opt.Value.(TrackWithClient)
 	if !ok {
 		log.Fatal("Could not cast option's value to Merch")
 	}
@@ -105,7 +105,7 @@ func (m *Menu) DownloadTrack(opt wmenu.Opt) error {
 }
 
 func (m *Menu) LikeTrack(opt wmenu.Opt) error {
-	item, ok := opt.Value.(trackWithClient)
+	item, ok := opt.Value.(TrackWithClient)
 	if !ok {
 		log.Fatal("Could not cast option's value to Merch")
 	}
@@ -114,7 +114,7 @@ func (m *Menu) LikeTrack(opt wmenu.Opt) error {
 }
 
 func (m *Menu) AddTrackToPlaylist(opt wmenu.Opt) error {
-	item, ok := opt.Value.(trackWithClient)
+	item, ok := opt.Value.(TrackWithClient)
 	if !ok {
 		log.Fatal("Could not cast option's value to Merch")
 	}
@@ -154,13 +154,12 @@ func (m *Menu) AddTrackToPlaylist(opt wmenu.Opt) error {
 }
 
 func (m *Menu) TrackActions(opt wmenu.Opt) error {
-	item, ok := opt.Value.(trackWithClient)
+	item, ok := opt.Value.(TrackWithClient)
 	if !ok {
 		log.Fatal("Could not cast option's value to Merch")
 	}
 
 	for {
-		fmt.Println(m.id, item.Id)
 		isLiked, err := utils.IsTrackLiked(item.Client, m.id, item.Id, m.jwt)
 		if err != nil {
 			return err
@@ -168,7 +167,6 @@ func (m *Menu) TrackActions(opt wmenu.Opt) error {
 		submenu := wmenu.NewMenu("Select option")
 		submenu.Option("Download media", item, false, m.DownloadTrack)
 
-		fmt.Println(isLiked)
 		if !isLiked {
 			submenu.Option("Like track", item, false, m.LikeTrack)
 		} else {
@@ -226,7 +224,7 @@ func (m *Menu) FindTracks(opt wmenu.Opt) error {
 
 			tracksSubmenu.Option(
 				fmt.Sprintf("Name: %s, Genre: %s", v.Name, genre),
-				trackWithClient{
+				TrackWithClient{
 					ClientEntity: client,
 					TrackMeta:    *v,
 				},
@@ -262,7 +260,7 @@ func (m *Menu) FindTracks(opt wmenu.Opt) error {
 }
 
 func (m *Menu) DislikeTrack(opt wmenu.Opt) error {
-	item, ok := opt.Value.(trackWithClient)
+	item, ok := opt.Value.(TrackWithClient)
 	if !ok {
 		log.Fatal("Could not cast option's value to Merch")
 	}
