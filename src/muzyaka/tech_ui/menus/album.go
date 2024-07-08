@@ -64,8 +64,10 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 	submenuTracks := wmenu.NewMenu("Add tracks: ")
 	submenuTracks.Option("Add track",
 		nil,
-		true,
+		false,
 		func(opt wmenu.Opt) error {
+			var genre string
+
 			inputReader := bufio.NewReader(os.Stdin)
 
 			fmt.Println("Enter name:")
@@ -73,9 +75,22 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 			trackName = strings.TrimRight(trackName, "\r\n")
 			trackName = strings.Trim(trackName, " ")
 
-			fmt.Println("Enter genre:")
-			genre, _ := inputReader.ReadString('\n')
-			genre = strings.TrimRight(genre, "\r\n")
+			genres, err := utils.GetGenres(client.Client, m.jwt)
+			if err != nil {
+				return err
+			}
+			genresSubmenu := wmenu.NewMenu("Select genre")
+			for _, v := range genres {
+				genresSubmenu.Option(v, nil, false, func(opt wmenu.Opt) error {
+					genre = v
+					return nil
+				})
+			}
+			genresSubmenu.Option("None", nil, true, func(opt wmenu.Opt) error {
+				genre = ""
+				return nil
+			})
+			genresSubmenu.Run()
 
 			fmt.Println("Enter path to payload (*.mp3):")
 			source, _ := inputReader.ReadString('\n')
@@ -104,7 +119,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 
 			return nil
 		})
-	submenuTracks.Option("Exit", nil, false, func(_ wmenu.Opt) error {
+	submenuTracks.Option("Exit", nil, true, func(_ wmenu.Opt) error {
 		return errExit
 	})
 
@@ -419,10 +434,24 @@ func (m *Menu) AddTrackToAlbum(opt wmenu.Opt) error {
 				trackName, _ := inputReader.ReadString('\n')
 				trackName = strings.TrimRight(trackName, "\r\n")
 				trackName = strings.Trim(trackName, " ")
+				var genre string
 
-				fmt.Println("Enter genre:")
-				genre, _ := inputReader.ReadString('\n')
-				genre = strings.TrimRight(genre, "\r\n")
+				genres, err := utils.GetGenres(client.Client, m.jwt)
+				if err != nil {
+					return err
+				}
+				genresSubmenu := wmenu.NewMenu("Select genre")
+				for _, v := range genres {
+					genresSubmenu.Option(v, nil, false, func(opt wmenu.Opt) error {
+						genre = v
+						return nil
+					})
+				}
+				genresSubmenu.Option("None", nil, true, func(opt wmenu.Opt) error {
+					genre = ""
+					return nil
+				})
+				genresSubmenu.Run()
 
 				fmt.Println("Enter path to payload (*.mp3):")
 				source, _ := inputReader.ReadString('\n')

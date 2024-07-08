@@ -143,3 +143,28 @@ func FindTracks(useCase usecase.TrackUseCase) http.HandlerFunc {
 		render.JSON(w, r, dto.TracksMetaCollection{Tracks: res})
 	}
 }
+
+// @Summary GetGenres
+// @Security ApiKeyAuth
+// @Tags track
+// @Description get all genres
+// @ID get-genres
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} dto.Genres
+// @Failure 400,404 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Failure default {object} response.Response
+// @Router /api/track/genres [get]
+func GetGenres(useCase usecase.TrackUseCase) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		genres, err := useCase.GetGenres()
+		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
+			render.JSON(w, r, response.Error(err.Error()))
+			return
+		}
+
+		render.JSON(w, r, dto.Genres{Genres: genres})
+	}
+}

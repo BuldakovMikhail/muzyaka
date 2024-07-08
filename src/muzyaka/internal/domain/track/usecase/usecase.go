@@ -13,6 +13,8 @@ type TrackUseCase interface {
 	UpdateTrack(track *models.TrackObject) error
 	GetTrack(id uint64) (*models.TrackObject, error)
 	GetTracksByPartName(name string, page int, pageSize int) ([]*models.TrackMeta, error)
+
+	GetGenres() ([]string, error)
 }
 
 type usecase struct {
@@ -22,6 +24,15 @@ type usecase struct {
 
 func NewTrackUseCase(rep repository.TrackRepository, storage repository.TrackStorage) TrackUseCase {
 	return &usecase{trackRep: rep, storageRep: storage}
+}
+
+func (u *usecase) GetGenres() ([]string, error) {
+	genres, err := u.trackRep.GetGenres()
+	if err != nil {
+		return nil, errors.Wrap(err, "track.usecase.GetGenres error while get")
+	}
+
+	return genres, nil
 }
 
 func (u *usecase) GetTracksByPartName(name string, page int, pageSize int) ([]*models.TrackMeta, error) {

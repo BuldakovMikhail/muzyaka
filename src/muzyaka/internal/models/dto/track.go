@@ -2,6 +2,10 @@ package dto
 
 import "src/internal/models"
 
+type Genres struct {
+	Genres []string `json:"genres"`
+}
+
 type TrackMeta struct {
 	Id    uint64  `json:"id"`
 	Name  string  `json:"name"`

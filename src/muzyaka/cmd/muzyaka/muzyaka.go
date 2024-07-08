@@ -268,6 +268,7 @@ func App() {
 	// Other opened requests
 	router.Group(func(r chi.Router) {
 		r.Use(basicAuthMiddleware)
+		r.Get("/api/track/genres", delivery7.GetGenres(trackUseCase))
 		r.Get("/api/track", delivery7.FindTracks(trackUseCase))
 		r.Get("/api/merch", delivery3.FindMerch(merchUseCase))
 		r.Get("/api/track/recs", delivery4.GetRecommendedTracks(recSysUseCase))

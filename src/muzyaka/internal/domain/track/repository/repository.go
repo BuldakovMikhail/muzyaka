@@ -9,4 +9,5 @@ type TrackRepository interface {
 	UpdateTrack(track *models.TrackMeta) error
 
 	GetTracksByPartName(name string, offset int, limit int) ([]*models.TrackMeta, error)
+	GetGenres() ([]string, error)
 }

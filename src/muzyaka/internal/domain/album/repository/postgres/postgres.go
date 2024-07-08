@@ -86,7 +86,7 @@ func (ar *albumRepository) AddAlbumWithTracksOutbox(album *models.Album, tracks 
 
 		for _, v := range tracks {
 			var pgGenre dao.Genre
-			txInner := tx.Where("name = ?", v.Genre).Limit(1).Find(&pgGenre)
+			txInner := tx.Where("name = ?", v.Genre).Take(&pgGenre)
 			if txInner.Error != nil {
 				return tx.Error
 			}

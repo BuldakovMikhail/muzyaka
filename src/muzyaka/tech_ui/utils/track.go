@@ -218,3 +218,41 @@ func GetSameTracks(client *http.Client,
 
 	return resp.Tracks, nil
 }
+
+func GetGenres(client *http.Client, jwt string) ([]string, error) {
+	url := trackPath + "genres"
+
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Authorization", "Bearer "+jwt)
+
+	respGot, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer respGot.Body.Close()
+
+	data, err := io.ReadAll(respGot.Body)
+	if err != nil {
+		return nil, err
+	}
+	respFlow := bytes.NewReader(data)
+
+	var resp dto.Genres
+
+	err = render.DecodeJSON(respFlow, &resp)
+
+	if err != nil {
+		return nil, err
+	}
+	if respGot.StatusCode != http.StatusOK {
+		var resp response.Response
+		respFlow := bytes.NewReader(data)
+		err = render.DecodeJSON(respFlow, &resp)
+		return nil, errors.New(resp.Error)
+	}
+
+	return resp.Genres, nil
+}

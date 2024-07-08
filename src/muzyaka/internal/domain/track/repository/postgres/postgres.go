@@ -16,6 +16,21 @@ func NewTrackRepository(db *gorm.DB) repository.TrackRepository {
 	return &trackRepository{db: db}
 }
 
+func (t trackRepository) GetGenres() ([]string, error) {
+	var genres []dao.Genre
+	tx := t.db.Find(&genres)
+	if tx.Error != nil {
+		return nil, errors.Wrap(tx.Error, "database error (table genre)")
+	}
+
+	var genresNames []string
+	for _, v := range genres {
+		genresNames = append(genresNames, v.Name)
+	}
+
+	return genresNames, nil
+}
+
 func (t trackRepository) GetTracksByPartName(name string, offset int, limit int) ([]*models.TrackMeta, error) {
 	var tracks []*dao.TrackMeta
 
