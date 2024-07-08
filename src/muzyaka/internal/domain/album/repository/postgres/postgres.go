@@ -230,11 +230,18 @@ func (ar *albumRepository) AddTrackToAlbumOutbox(albumId uint64, track *models.T
 	return pgTrack.ID, nil
 }
 
-func (ar *albumRepository) DeleteTrackFromAlbumOutbox(albumId uint64, track *models.TrackMeta) error {
-	trackId := track.Id
+func (ar *albumRepository) DeleteTrackFromAlbumOutbox(trackId uint64) error {
+	var pgTrack dao.TrackMeta
+	getRes := ar.db.Where("id = ?", trackId).Take(&pgTrack)
+	if err := getRes.Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return models.ErrNothingToDelete
+	} else if err != nil {
+		return errors.Wrap(err, "database error (table album)")
+	}
 
 	err := ar.db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Delete(dao.TrackMeta{}, trackId).Error; err != nil {
+		deleteRes := tx.Delete(dao.TrackMeta{}, trackId)
+		if err := deleteRes.Error; err != nil {
 			return err
 		}
 
@@ -253,14 +260,14 @@ func (ar *albumRepository) DeleteTrackFromAlbumOutbox(albumId uint64, track *mod
 			return err
 		}
 
-		res := tx.Limit(1).Find(&dao.TrackMeta{}, "album_id = ?", albumId)
+		res := tx.Limit(1).Find(&dao.TrackMeta{}, "album_id = ?", pgTrack.AlbumID)
 		if res.Error != nil {
 			return res.Error
 		}
 
 		// Delete album if no tracks left
 		if res.RowsAffected <= 0 {
-			if err := tx.Delete(&dao.Album{}, albumId).Error; err != nil {
+			if err := tx.Delete(&dao.Album{}, pgTrack.AlbumID).Error; err != nil {
 				return err
 			}
 		}

@@ -79,9 +79,9 @@ func (mr *MockAlbumRepositoryMockRecorder) DeleteAlbumOutbox(id interface{}) *go
 }
 
 // DeleteTrackFromAlbumOutbox mocks base method.
-func (m *MockAlbumRepository) DeleteTrackFromAlbumOutbox(albumId uint64, track *models.TrackMeta) error {
+func (m *MockAlbumRepository) DeleteTrackFromAlbumOutbox(trackId uint64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteTrackFromAlbumOutbox", albumId, track)
+	ret := m.ctrl.Call(m, "DeleteTrackFromAlbumOutbox", trackId, track)
 	ret0, _ := ret[0].(error)
 	return ret0
 }

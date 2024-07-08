@@ -43,21 +43,6 @@ func (t trackRepository) GetTracksByPartName(name string, offset int, limit int)
 	return modelTracks, nil
 }
 
-func (t trackRepository) DeleteTrack(trackId uint64) error {
-
-	tx := t.db.Delete(dao.TrackMeta{}, trackId)
-
-	if err := tx.Error; err != nil {
-		return errors.Wrap(err, "database error (table album)")
-	}
-
-	if tx.RowsAffected == 0 {
-		return models.ErrNothingToDelete
-	}
-
-	return nil
-}
-
 func (t trackRepository) GetTrack(id uint64) (*models.TrackMeta, error) {
 	var track dao.TrackMeta
 

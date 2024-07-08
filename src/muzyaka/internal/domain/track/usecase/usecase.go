@@ -12,9 +12,6 @@ const MaxPageSize = 100
 type TrackUseCase interface {
 	UpdateTrack(track *models.TrackObject) error
 	GetTrack(id uint64) (*models.TrackObject, error)
-	// TODO: нужен ли метод ниже? как будто его не используют
-	DeleteTrack(trackId uint64) error
-
 	GetTracksByPartName(name string, page int, pageSize int) ([]*models.TrackMeta, error)
 }
 
@@ -46,26 +43,6 @@ func (u *usecase) GetTracksByPartName(name string, page int, pageSize int) ([]*m
 	}
 
 	return tracks, nil
-}
-
-func (u *usecase) DeleteTrack(trackId uint64) error {
-
-	trackMeta, err := u.trackRep.GetTrack(trackId)
-	if err != nil {
-		return errors.Wrap(err, "track.usecase.DeleteTrack error while get")
-	}
-
-	err = u.trackRep.DeleteTrack(trackId)
-	if err != nil {
-		return errors.Wrap(err, "track.usecase.DeleteTrack error while delete")
-	}
-
-	err = u.storageRep.DeleteObject(trackMeta)
-	if err != nil {
-		return errors.Wrap(err, "track.usecase.DeleteTrack error while delete")
-	}
-
-	return nil
 }
 
 func (u *usecase) GetTrack(id uint64) (*models.TrackObject, error) {

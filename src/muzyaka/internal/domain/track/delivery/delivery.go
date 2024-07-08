@@ -88,40 +88,6 @@ func GetTrack(useCase usecase.TrackUseCase) http.HandlerFunc {
 	}
 }
 
-// @Summary DeleteTrack
-// @Security ApiKeyAuth
-// @Tags track
-// @Description delete track
-// @ID delete-track
-// @Accept  json
-// @Produce  json
-// @Param id path int true "track ID"
-// @Success 200 {object} response.Response
-// @Failure 400,404 {object} response.Response
-// @Failure 500 {object} response.Response
-// @Failure default {object} response.Response
-// @Router /api/track/{id} [delete]
-func DeleteTrack(useCase usecase.TrackUseCase) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		trackID := chi.URLParam(r, "id")
-		trackIDUint, err := strconv.ParseUint(trackID, 10, 64)
-		if err != nil {
-			render.Status(r, http.StatusBadRequest)
-			render.JSON(w, r, response.Error(err.Error()))
-			return
-		}
-
-		err = useCase.DeleteTrack(trackIDUint)
-		if err != nil {
-			render.Status(r, http.StatusInternalServerError)
-			render.JSON(w, r, response.Error(err.Error()))
-			return
-		}
-
-		render.JSON(w, r, response.OK())
-	}
-}
-
 // @Summary FindTracks
 // @Security ApiKeyAuth
 // @Tags track

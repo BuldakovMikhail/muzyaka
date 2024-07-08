@@ -479,7 +479,7 @@ func TestUsecase_DeleteTrack(t *testing.T) {
 			tc.storageMock(storage, tc.inputTrack)
 
 			s := NewAlbumUseCase(repo, storage)
-			err := s.DeleteTrack(tc.albumId, &tc.inputTrack)
+			err := s.DeleteTrack(tc.albumId)
 
 			if tc.expectedErr == nil {
 				assert.Nil(t, err)

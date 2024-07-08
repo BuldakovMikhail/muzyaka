@@ -61,6 +61,7 @@ const (
 )
 
 // TODO: мб не полагаться на проверки от репозитория, а осуществлять проверки в юзкейсах
+// TODO: не создавать бакет если он уже существует?
 func App() {
 	cfg := config.MustLoad()
 
@@ -113,7 +114,7 @@ func App() {
 	encryptor := usecase.NewEncryptor()
 	authUseCase := usecase.NewAuthUseCase(tokenProvider, userRep, encryptor)
 	musicianUseCase := usecase3.NewMusicianUseCase(musicianRep)
-	albumUseCase := usecase2.NewAlbumUseCase(albumRep, trackStorage)
+	albumUseCase := usecase2.NewAlbumUseCase(albumRep, trackStorage, trackRep)
 	merchUseCase := usecase4.NewMerchUseCase(merchRep)
 	playlistUseCase := usecase6.NewPlaylistUseCase(playlistRep, trackRep)
 	userUseCase := usecase7.NewUserUseCase(userRep, trackRep, encryptor)
@@ -235,7 +236,7 @@ func App() {
 		r.Use(musicianMiddleware)
 		r.Use(checkIsTrackRelated)
 		r.Put("/api/track/{id}", delivery7.UpdateTrack(trackUseCase))
-		r.Delete("/api/track/{id}", delivery7.DeleteTrack(trackUseCase))
+		r.Delete("/api/track/{id}", delivery2.DeleteTrack(albumUseCase))
 	})
 
 	// User

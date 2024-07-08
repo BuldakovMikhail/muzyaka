@@ -14,7 +14,7 @@ type AlbumUseCase interface {
 	AddAlbumWithTracks(album *models.Album, tracks []*models.TrackObject, musicianId uint64) (uint64, error)
 	DeleteAlbum(id uint64) error
 	AddTrack(albumId uint64, track *models.TrackObject) (uint64, error)
-	DeleteTrack(albumId uint64, track *models.TrackMeta) error
+	DeleteTrack(trackId uint64) error
 	GetAllTracks(albumId uint64) ([]*models.TrackMeta, error)
 
 	IsAlbumOwned(albumId uint64, musicianId uint64) (bool, error)
@@ -25,10 +25,13 @@ type AlbumUseCase interface {
 type usecase struct {
 	albumRep   repository.AlbumRepository
 	storageRep repository2.TrackStorage
+	trackRep   repository2.TrackRepository
 }
 
-func NewAlbumUseCase(albumRepository repository.AlbumRepository, storage repository2.TrackStorage) AlbumUseCase {
-	return &usecase{albumRep: albumRepository, storageRep: storage}
+func NewAlbumUseCase(albumRepository repository.AlbumRepository,
+	storage repository2.TrackStorage,
+	trackRepository repository2.TrackRepository) AlbumUseCase {
+	return &usecase{albumRep: albumRepository, storageRep: storage, trackRep: trackRepository}
 }
 
 func (u *usecase) GetAllAlbumsForMusician(musicianId uint64) ([]*models.Album, error) {
@@ -154,14 +157,18 @@ func (u *usecase) AddTrack(albumId uint64, track *models.TrackObject) (uint64, e
 	return id, nil
 }
 
-func (u *usecase) DeleteTrack(album_id uint64, track *models.TrackMeta) error {
+func (u *usecase) DeleteTrack(trackId uint64) error {
+	trackMeta, err := u.trackRep.GetTrack(trackId)
+	if err != nil {
+		return errors.Wrap(err, "album.usecase.DeleteTrack error while get")
+	}
 
-	err := u.albumRep.DeleteTrackFromAlbumOutbox(album_id, track)
+	err = u.albumRep.DeleteTrackFromAlbumOutbox(trackId)
 	if err != nil {
 		return errors.Wrap(err, "album.usecase.DeleteTrack error while delete")
 	}
 
-	err = u.storageRep.DeleteObject(track)
+	err = u.storageRep.DeleteObject(trackMeta)
 	if err != nil {
 		return errors.Wrap(err, "album.usecase.DeleteTrack error while add")
 	}

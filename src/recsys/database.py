@@ -94,7 +94,7 @@ class DataBase(IDataBase):
                 """
         cursor.execute(query, (id,))
         query = """
-                                INSERT INTO events(event_id) VALUES (?,)
+                                INSERT INTO events(event_id) VALUES (?)
                                     """
         cursor.execute(query, (event_id,))
 
