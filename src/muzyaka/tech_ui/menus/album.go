@@ -30,6 +30,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 	fmt.Println("Enter name:")
 	name, _ = inputReader.ReadString('\n')
 	name = strings.TrimRight(name, "\r\n")
+	name = strings.Trim(name, " ")
 
 	fmt.Println("Enter path to cover (*.png):")
 	path, _ = inputReader.ReadString('\n')
@@ -70,6 +71,7 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 			fmt.Println("Enter name:")
 			trackName, _ := inputReader.ReadString('\n')
 			trackName = strings.TrimRight(trackName, "\r\n")
+			trackName = strings.Trim(trackName, " ")
 
 			fmt.Println("Enter genre:")
 			genre, _ := inputReader.ReadString('\n')
@@ -82,13 +84,9 @@ func (m *Menu) CreateAlbum(opt wmenu.Opt) error {
 				return models.ErrInvalidFileFormat
 			}
 
-			var payload [][]byte
-			if source != "" {
-				var err error
-				payload, err = lib.ReadAllFilesFromArray([]string{source})
-				if err != nil {
-					return err
-				}
+			payload, err := lib.ReadAllFilesFromArray([]string{source})
+			if err != nil {
+				return err
 			}
 
 			genreRef := &genre
@@ -303,6 +301,7 @@ func (m *Menu) UpdateAlbum(opt wmenu.Opt) error {
 				fmt.Println("Enter name:")
 				name, _ = inputReader.ReadString('\n')
 				name = strings.TrimRight(name, "\r\n")
+				name = strings.Trim(name, " ")
 
 				fmt.Println("Enter path to cover (*.png):")
 				path, _ = inputReader.ReadString('\n')
@@ -311,13 +310,11 @@ func (m *Menu) UpdateAlbum(opt wmenu.Opt) error {
 					return models.ErrInvalidFileFormat
 				}
 
-				var arrOfBytes [][]byte
-				if path != "" {
-					var err error
-					arrOfBytes, err = lib.ReadAllFilesFromArray([]string{path})
-					if err != nil {
-						return err
-					}
+				// TODO: потенциальный выстрел в колено, лучше сделать функцию, которая
+				// читает один файл
+				arrOfBytes, err := lib.ReadAllFilesFromArray([]string{path})
+				if err != nil {
+					return err
 				}
 
 				submenu := wmenu.NewMenu("Select album type: ")
@@ -421,6 +418,7 @@ func (m *Menu) AddTrackToAlbum(opt wmenu.Opt) error {
 				fmt.Println("Enter name:")
 				trackName, _ := inputReader.ReadString('\n')
 				trackName = strings.TrimRight(trackName, "\r\n")
+				trackName = strings.Trim(trackName, " ")
 
 				fmt.Println("Enter genre:")
 				genre, _ := inputReader.ReadString('\n')

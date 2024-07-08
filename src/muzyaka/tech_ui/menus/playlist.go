@@ -30,6 +30,7 @@ func (m *Menu) CreatePlaylist(opt wmenu.Opt) error {
 	fmt.Println("Enter name:")
 	name, _ = inputReader.ReadString('\n')
 	name = strings.TrimRight(name, "\r\n")
+	name = strings.Trim(name, " ")
 
 	fmt.Println("Enter description:")
 	description, _ = inputReader.ReadString('\n')
@@ -299,6 +300,7 @@ func (m *Menu) UpdatePlaylist(opt wmenu.Opt) error {
 				fmt.Println("Enter name:")
 				name, _ = inputReader.ReadString('\n')
 				name = strings.TrimRight(name, "\r\n")
+				name = strings.Trim(name, " ")
 
 				fmt.Println("Enter description:")
 				description, _ = inputReader.ReadString('\n')

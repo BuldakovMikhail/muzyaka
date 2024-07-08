@@ -31,10 +31,12 @@ func (m *Menu) CreateMerch(opt wmenu.Opt) error {
 	fmt.Println("Enter name:")
 	name, _ = inputReader.ReadString('\n')
 	name = strings.TrimRight(name, "\r\n")
+	name = strings.Trim(name, " ")
 
 	fmt.Println("Enter order URL:")
 	orderUrl, _ = inputReader.ReadString('\n')
 	orderUrl = strings.TrimRight(orderUrl, "\r\n")
+	orderUrl = strings.Trim(orderUrl, "\r\n")
 
 	fmt.Println("Enter paths to photos, separated by space (*.png):")
 	paths, _ = inputReader.ReadString('\n')
@@ -174,10 +176,12 @@ func (m *Menu) UpdateMerch(opt wmenu.Opt) error {
 				fmt.Println("Enter name:")
 				name, _ = inputReader.ReadString('\n')
 				name = strings.TrimRight(name, "\r\n")
+				name = strings.Trim(name, " ")
 
 				fmt.Println("Enter order URL:")
 				orderUrl, _ = inputReader.ReadString('\n')
 				orderUrl = strings.TrimRight(orderUrl, "\r\n")
+				orderUrl = strings.Trim(orderUrl, "\r\n")
 
 				fmt.Println("Enter paths to photos, separated by space (*.png):")
 				paths, _ = inputReader.ReadString('\n')
@@ -275,6 +279,7 @@ func (m *Menu) FindMerch(opt wmenu.Opt) error {
 	fmt.Println("Enter merch name:")
 	name, _ = inputReader.ReadString('\n')
 	name = strings.TrimRight(name, "\r\n")
+	name = strings.Trim(name, " ")
 
 	var curPage int = 1
 

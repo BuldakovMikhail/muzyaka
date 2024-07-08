@@ -121,6 +121,7 @@ func (m *Menu) SignUpAsUser(opt wmenu.Opt) error {
 	fmt.Println("Enter name:")
 	name, _ = inputReader.ReadString('\n')
 	name = strings.TrimRight(name, "\r\n")
+	name = strings.Trim(name, " ")
 
 	jwt, err := utils.SignUpAsUser(client.Client,
 		dto.SignUp{
@@ -176,6 +177,7 @@ func (m *Menu) SignUpAsMusician(opt wmenu.Opt) error {
 	fmt.Println("Enter name:")
 	name, _ = inputReader.ReadString('\n')
 	name = strings.TrimRight(name, "\r\n")
+	name = strings.Trim(name, " ")
 
 	fmt.Println("Enter paths to photos, separated by space (*.png):")
 	paths, _ = inputReader.ReadString('\n')

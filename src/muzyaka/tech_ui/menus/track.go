@@ -207,6 +207,7 @@ func (m *Menu) FindTracks(opt wmenu.Opt) error {
 	fmt.Println("Enter track name:")
 	name, _ = inputReader.ReadString('\n')
 	name = strings.TrimRight(name, "\r\n")
+	name = strings.Trim(name, " ")
 
 	var curPage int = 1
 
