@@ -487,60 +487,60 @@ func (m *Menu) DeleteTrackFromAlbum(opt wmenu.Opt) error {
 		log.Fatal("Could not cast option's value to ClientEntity")
 	}
 
-	items, err := utils.GetAllAlbums(client.Client, m.musicianId, m.jwt)
-	if err != nil {
-		return err
-	}
+	for {
+		items, err := utils.GetAllAlbums(client.Client, m.musicianId, m.jwt)
+		if err != nil {
+			return err
+		}
 
-	submenu := wmenu.NewMenu("Select album: ")
-	for _, v := range items {
-		submenu.Option(fmt.Sprintf("Name: %s, Type: %s", v.Name, v.Type),
-			*v,
-			false,
-			func(opt wmenu.Opt) error {
-				item, ok := opt.Value.(dto.Album)
-				if !ok {
-					log.Fatal("Could not cast option's value to Album")
-				}
-
-				tracks, err := utils.GetAllTracks(client.Client, item.Id, m.jwt)
-				if err != nil {
-					return err
-				}
-
-				tracksSubmenu := wmenu.NewMenu("Select track for delete: ")
-				for _, t := range tracks {
-					genre := "None"
-					if t.Genre != nil {
-						genre = *t.Genre
+		submenu := wmenu.NewMenu("Select album: ")
+		for _, v := range items {
+			submenu.Option(fmt.Sprintf("Name: %s, Type: %s", v.Name, v.Type),
+				*v,
+				false,
+				func(opt wmenu.Opt) error {
+					item, ok := opt.Value.(dto.Album)
+					if !ok {
+						log.Fatal("Could not cast option's value to Album")
 					}
-					tracksSubmenu.Option(
-						fmt.Sprintf("Name: %s,  Genre: %s", t.Name, genre),
-						*t,
-						false,
-						func(opt wmenu.Opt) error {
-							item, ok := opt.Value.(dto.TrackMeta)
-							if !ok {
-								log.Fatal("Could not cast option's value to Album")
-							}
 
-							err := utils.DeleteTrack(client.Client, item.Id, m.jwt)
-							return err
-						})
-				}
-				tracksSubmenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
+					tracks, err := utils.GetAllTracks(client.Client, item.Id, m.jwt)
+					if err != nil {
+						return err
+					}
+
+					tracksSubmenu := wmenu.NewMenu("Select track for delete: ")
+					for _, t := range tracks {
+						genre := "None"
+						if t.Genre != nil {
+							genre = *t.Genre
+						}
+						tracksSubmenu.Option(
+							fmt.Sprintf("Name: %s,  Genre: %s", t.Name, genre),
+							*t,
+							false,
+							func(opt wmenu.Opt) error {
+								item, ok := opt.Value.(dto.TrackMeta)
+								if !ok {
+									log.Fatal("Could not cast option's value to Album")
+								}
+
+								err := utils.DeleteTrack(client.Client, item.Id, m.jwt)
+								return err
+							})
+					}
+					tracksSubmenu.Option("Exit", nil, true, func(opt wmenu.Opt) error {
+						return nil
+					})
+					tracksSubmenu.Run()
 					return nil
 				})
-				tracksSubmenu.Run()
-				return nil
-			})
-	}
-	submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
-		return errExit
-	})
+		}
+		submenu.Option("Exit", nil, true, func(_ wmenu.Opt) error {
+			return errExit
+		})
 
-	for {
-		err := submenu.Run()
+		err = submenu.Run()
 		fmt.Println()
 		if err != nil {
 			if errors.Is(err, errExit) {
