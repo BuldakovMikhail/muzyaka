@@ -1,0 +1,48 @@
+<mxfile host="app.diagrams.net" modified="2024-03-20T18:05:57.638Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0" etag="Ylx9gqEgEv_Btqx7K_4C" version="24.0.7" type="device">
+  <diagram name="Страница — 1" id="F0dyf2Io5g1IZgXmvbbo">
+    <mxGraphModel dx="1290" dy="538" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="SW-o9fP6w4DmSt5TqJ0Z-1" target="SW-o9fP6w4DmSt5TqJ0Z-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-1" value="UI" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="140" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="SW-o9fP6w4DmSt5TqJ0Z-4" target="SW-o9fP6w4DmSt5TqJ0Z-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-2" value="BL" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="370" y="140" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.09;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="SW-o9fP6w4DmSt5TqJ0Z-3" target="SW-o9fP6w4DmSt5TqJ0Z-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="SW-o9fP6w4DmSt5TqJ0Z-3" target="SW-o9fP6w4DmSt5TqJ0Z-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-3" value="DB" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="520" y="140" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-4" value="&lt;div&gt;RecSys&lt;/div&gt;&lt;div&gt;model&lt;br&gt;&lt;/div&gt;" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="370" y="60" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-8" value="" style="shape=datastore;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="670" y="135" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.9;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="SW-o9fP6w4DmSt5TqJ0Z-10" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="165.33333333333337" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-10" value="" style="shape=actor;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="135" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SW-o9fP6w4DmSt5TqJ0Z-13" value="Подменяемый модуль с RecSys" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="330" y="30" width="200" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

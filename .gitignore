@@ -19,3 +19,10 @@
 
 # Go workspace file
 go.work
+.idea
+venv
+img1.png
+img2.png
+*.db
+data_format
+test.mp3

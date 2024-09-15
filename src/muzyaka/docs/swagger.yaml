@@ -1,0 +1,2133 @@
+basePath: /
+definitions:
+  dto.AddTrackPlaylistRequest:
+    properties:
+      track_id:
+        type: integer
+    type: object
+  dto.AddTrackPlaylistResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  dto.Album:
+    properties:
+      cover_file:
+        items:
+          type: integer
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  dto.AlbumWithTracks:
+    properties:
+      cover_file:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      tracks:
+        items:
+          $ref: '#/definitions/dto.TrackObjectWithoutId'
+        type: array
+      type:
+        type: string
+    type: object
+  dto.AlbumWithoutId:
+    properties:
+      cover_file:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  dto.AlbumsCollection:
+    properties:
+      albums:
+        items:
+          $ref: '#/definitions/dto.Album'
+        type: array
+    type: object
+  dto.CreateAlbumResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  dto.CreateMerchResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  dto.CreateMusicianResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  dto.CreatePlaylistResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  dto.CreateTrackResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  dto.Dislike:
+    properties:
+      track_id:
+        type: integer
+    type: object
+  dto.GetMeResponse:
+    properties:
+      musician_id:
+        type: integer
+      role:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  dto.IsLikedResponse:
+    properties:
+      is_liked:
+        type: boolean
+    type: object
+  dto.Like:
+    properties:
+      track_id:
+        type: integer
+    type: object
+  dto.Merch:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      order_url:
+        type: string
+      photo_files:
+        items:
+          items:
+            type: integer
+          type: array
+        type: array
+    type: object
+  dto.MerchCollection:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/dto.Merch'
+        type: array
+    type: object
+  dto.MerchWithMusician:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      musician_id:
+        type: integer
+      name:
+        type: string
+      order_url:
+        type: string
+      photo_files:
+        items:
+          items:
+            type: integer
+          type: array
+        type: array
+    type: object
+  dto.MerchWithoutId:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      order_url:
+        type: string
+      photo_files:
+        items:
+          items:
+            type: integer
+          type: array
+        type: array
+    type: object
+  dto.Musician:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      musician_name:
+        type: string
+      photo_files:
+        items:
+          items:
+            type: integer
+          type: array
+        type: array
+    type: object
+  dto.MusicianWithoutId:
+    properties:
+      description:
+        type: string
+      musician_name:
+        type: string
+      photo_files:
+        items:
+          items:
+            type: integer
+          type: array
+        type: array
+    type: object
+  dto.PlaylistWithUser:
+    properties:
+      cover_file:
+        items:
+          type: integer
+        type: array
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  dto.PlaylistWithoutId:
+    properties:
+      cover_file:
+        items:
+          type: integer
+        type: array
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.SignIn:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.SignInResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  dto.SignUp:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      user_name:
+        type: string
+    type: object
+  dto.SignUpMusician:
+    properties:
+      description:
+        type: string
+      email:
+        type: string
+      musician_name:
+        type: string
+      password:
+        type: string
+      photo_files:
+        items:
+          items:
+            type: integer
+          type: array
+        type: array
+      user_name:
+        type: string
+    type: object
+  dto.SignUpResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  dto.TrackMeta:
+    properties:
+      genre:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  dto.TrackObjectWithSource:
+    properties:
+      genre:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      payload:
+        items:
+          type: integer
+        type: array
+      source:
+        type: string
+    type: object
+  dto.TrackObjectWithoutId:
+    properties:
+      genre:
+        type: string
+      name:
+        type: string
+      payload:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.TracksMetaCollection:
+    properties:
+      tracks:
+        items:
+          $ref: '#/definitions/dto.TrackMeta'
+        type: array
+    type: object
+  dto.User:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      user_name:
+        type: string
+    type: object
+  dto.UserInfo:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      user_name:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      error:
+        type: string
+      status:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server for musical service
+  title: Muzyaka API
+  version: "1.0"
+paths:
+  /api/album/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete album
+      operationId: delete-album
+      parameters:
+      - description: album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteAlbum
+      tags:
+      - album
+    get:
+      consumes:
+      - application/json
+      description: get album by ID
+      operationId: get-album
+      parameters:
+      - description: album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Album'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAlbum
+      tags:
+      - album
+    put:
+      consumes:
+      - application/json
+      description: update album
+      operationId: update-album
+      parameters:
+      - description: album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: album info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AlbumWithoutId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateAlbum
+      tags:
+      - album
+  /api/album/{id}/tracks:
+    get:
+      consumes:
+      - application/json
+      description: get all tracks from album
+      operationId: get-all-tracks-from-album
+      parameters:
+      - description: album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TracksMetaCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAllTracks
+      tags:
+      - album
+    post:
+      consumes:
+      - application/json
+      description: add track to album
+      operationId: add-track-to-album
+      parameters:
+      - description: album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: track info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TrackObjectWithoutId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CreateTrackResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateTrack
+      tags:
+      - album
+  /api/auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: sign in
+      operationId: sign-in
+      parameters:
+      - description: login and password
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SignInResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: SignIn
+      tags:
+      - auth
+  /api/auth/sign-up/admin:
+    post:
+      consumes:
+      - application/json
+      description: sign up admin
+      operationId: sign-up-admin
+      parameters:
+      - description: user info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignUp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SignUpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: SignUpAdmin
+      tags:
+      - auth
+  /api/auth/sign-up/musician:
+    post:
+      consumes:
+      - application/json
+      description: sign up musician
+      operationId: sign-up-musician
+      parameters:
+      - description: user and musician info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignUpMusician'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SignUpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: SignUpMusician
+      tags:
+      - auth
+  /api/auth/sign-up/user:
+    post:
+      consumes:
+      - application/json
+      description: sign up
+      operationId: sign-up
+      parameters:
+      - description: user info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignUp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SignUpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: SignUp
+      tags:
+      - auth
+  /api/get-me:
+    get:
+      consumes:
+      - application/json
+      description: get me
+      operationId: get-me
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetMeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetMe
+      tags:
+      - user
+  /api/merch:
+    get:
+      consumes:
+      - application/json
+      description: find merch
+      operationId: find-merch
+      parameters:
+      - description: name search by q
+        in: query
+        name: q
+        required: true
+        type: string
+      - description: number of page from 1
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: size of page
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MerchCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: FindMerch
+      tags:
+      - merch
+  /api/merch/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete merch
+      operationId: delete-merch
+      parameters:
+      - description: Merch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: MerchDelete
+      tags:
+      - merch
+    get:
+      consumes:
+      - application/json
+      description: get merch
+      operationId: get-merch
+      parameters:
+      - description: Merch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MerchWithMusician'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: MerchGet
+      tags:
+      - merch
+    put:
+      consumes:
+      - application/json
+      description: update merch
+      operationId: update-merch
+      parameters:
+      - description: merch info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MerchWithoutId'
+      - description: Merch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: MerchUpdate
+      tags:
+      - merch
+  /api/musician:
+    post:
+      consumes:
+      - application/json
+      description: create musician
+      operationId: create-musician
+      parameters:
+      - description: musician info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MusicianWithoutId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CreateMusicianResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateMusician
+      tags:
+      - musician
+  /api/musician/{musician_id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete musician
+      operationId: delete-musician
+      parameters:
+      - description: Musician ID
+        in: path
+        name: musician_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: MusicianDelete
+      tags:
+      - musician
+    get:
+      consumes:
+      - application/json
+      description: get musician
+      operationId: get-musician
+      parameters:
+      - description: Musician ID
+        in: path
+        name: musician_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Musician'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: MusicianGet
+      tags:
+      - musician
+    put:
+      consumes:
+      - application/json
+      description: update musician
+      operationId: update-musician
+      parameters:
+      - description: musician info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MusicianWithoutId'
+      - description: Musician ID
+        in: path
+        name: musician_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: MusicianUpdate
+      tags:
+      - musician
+  /api/musician/{musician_id}/album:
+    get:
+      consumes:
+      - application/json
+      description: get all albums
+      operationId: get-albums-all
+      parameters:
+      - description: Musician ID
+        in: path
+        name: musician_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AlbumsCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAllAlbums
+      tags:
+      - musician
+    post:
+      consumes:
+      - application/json
+      description: add album with tracks
+      operationId: add-album-with-tracks
+      parameters:
+      - description: musician ID
+        in: path
+        name: musician_id
+        required: true
+        type: integer
+      - description: album info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AlbumWithTracks'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CreateAlbumResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: AddAlbumWithTracks
+      tags:
+      - musician
+  /api/musician/{musician_id}/merch:
+    get:
+      consumes:
+      - application/json
+      description: get all merch
+      operationId: get-merch-all
+      parameters:
+      - description: Musician ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MerchCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: MerchGetAll
+      tags:
+      - musician
+    post:
+      consumes:
+      - application/json
+      description: create merch
+      operationId: create-merch
+      parameters:
+      - description: merch info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MerchWithoutId'
+      - description: Musician ID
+        in: path
+        name: musician_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CreateMerchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: MerchCreate
+      tags:
+      - musician
+  /api/playlist/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete playlist
+      operationId: delete-playlist
+      parameters:
+      - description: playlist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: PlaylistDelete
+      tags:
+      - playlist
+    get:
+      consumes:
+      - application/json
+      description: get playlist
+      operationId: get-playlist
+      parameters:
+      - description: playlist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PlaylistWithUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: PlaylistGet
+      tags:
+      - playlist
+    put:
+      consumes:
+      - application/json
+      description: update playlist
+      operationId: update-playlist
+      parameters:
+      - description: playlist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: playlist info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PlaylistWithoutId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: PlaylistUpdate
+      tags:
+      - playlist
+  /api/playlist/{id}/track:
+    post:
+      consumes:
+      - application/json
+      description: add track to playlist
+      operationId: add-track-playlist
+      parameters:
+      - description: playlist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: track info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AddTrackPlaylistRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AddTrackPlaylistResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: AddTrackPlaylist
+      tags:
+      - playlist
+  /api/playlist/{id}/track/{track_id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete track from playlist
+      operationId: delete-track-playlist
+      parameters:
+      - description: playlist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: track ID
+        in: path
+        name: track_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteTrackPlaylist
+      tags:
+      - playlist
+  /api/playlist/{playlist_id}/track:
+    get:
+      consumes:
+      - application/json
+      description: get all tracks from playlist
+      operationId: get-all-tracks-playlist
+      parameters:
+      - description: playlist ID
+        in: path
+        name: playlist_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TracksMetaCollection'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAllTracksPlaylist
+      tags:
+      - playlist
+  /api/track:
+    get:
+      consumes:
+      - application/json
+      description: find tracks
+      operationId: find-tracks
+      parameters:
+      - description: name search by q
+        in: query
+        name: q
+        required: true
+        type: string
+      - description: number of page from 1
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: size of page
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TracksMetaCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: FindTracks
+      tags:
+      - track
+  /api/track/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete track
+      operationId: delete-track
+      parameters:
+      - description: track ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteTrack
+      tags:
+      - track
+    get:
+      consumes:
+      - application/json
+      description: get track by ID
+      operationId: get-track
+      parameters:
+      - description: track ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TrackObjectWithSource'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetTrack
+      tags:
+      - track
+    put:
+      consumes:
+      - application/json
+      description: update track
+      operationId: update-track
+      parameters:
+      - description: track ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: track info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TrackObjectWithoutId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateTrack
+      tags:
+      - track
+  /api/track/recs:
+    get:
+      consumes:
+      - application/json
+      description: get recommended tracks
+      operationId: get-recommended-tracks
+      parameters:
+      - description: id of song
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: number of page from 1
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: size of page
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TracksMetaCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetRecommendedTracks
+      tags:
+      - track
+  /api/user/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete user
+      operationId: delete-user
+      parameters:
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteUser
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: get user by ID
+      operationId: get-user
+      parameters:
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetUser
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: update user
+      operationId: update-user
+      parameters:
+      - description: user info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserInfo'
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateUser
+      tags:
+      - user
+  /api/user/{user_id}/favorite:
+    delete:
+      consumes:
+      - application/json
+      description: dislike track
+      operationId: dislike-track
+      parameters:
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: disliked track
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Dislike'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: DislikeTrack
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: get all liked tracks
+      operationId: get-all-liked-tracks
+      parameters:
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TracksMetaCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAllLiked
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      description: like track
+      operationId: like-track
+      parameters:
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: liked track
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Like'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: LikeTrack
+      tags:
+      - user
+  /api/user/{user_id}/favorite/{track_id}:
+    get:
+      consumes:
+      - application/json
+      description: check if track is liked
+      operationId: is-liked
+      parameters:
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: track ID
+        in: path
+        name: track_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IsLikedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: IsTrackLiked
+      tags:
+      - user
+  /api/user/{user_id}/playlist:
+    get:
+      consumes:
+      - application/json
+      description: get all playlists for user
+      operationId: get-all-playlists-for-user
+      parameters:
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TracksMetaCollection'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAllPlaylistForUser
+      tags:
+      - playlist
+    post:
+      consumes:
+      - application/json
+      description: create playlist
+      operationId: create-playlist
+      parameters:
+      - description: user ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: playlist info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PlaylistWithoutId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CreatePlaylistResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: PlaylistCreate
+      tags:
+      - playlist
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
